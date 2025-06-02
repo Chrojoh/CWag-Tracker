@@ -807,42 +807,59 @@
         }
 
         function formatRegistrationNumber(input) {
+            if (!input) return '';
+            
             // Remove any non-digits and dashes
             let cleaned = input.replace(/[^0-9-]/g, '');
             
-            // Split by dashes
-            let parts = cleaned.split('-');
-            
-            if (parts.length === 3) {
-                // Format as XX-XXXX-XX
-                let part1 = parts[0].padStart(2, '0').substring(0, 2);
-                let part2 = parts[1].padStart(4, '0').substring(0, 4);
-                let part3 = parts[2].padStart(2, '0').substring(0, 2);
-                return `${part1}-${part2}-${part3}`;
-            } else if (parts.length === 1 && cleaned.length >= 6) {
-                // If no dashes, try to format automatically
-                const digits = cleaned.replace(/-/g, '');
-                if (digits.length >= 6) {
-                    const part1 = digits.substring(0, 2);
-                    const part2 = digits.substring(2, 6);
-                    const part3 = digits.substring(6, 8).padEnd(2, '0');
+            // If input has dashes, work with parts
+            if (cleaned.includes('-')) {
+                let parts = cleaned.split('-');
+                if (parts.length === 3) {
+                    // Format as XX-XXXX-XX with leading zeros
+                    let part1 = parts[0].padStart(2, '0').substring(0, 2);
+                    let part2 = parts[1].padStart(4, '0').substring(0, 4);
+                    let part3 = parts[2].padStart(2, '0').substring(0, 2);
                     return `${part1}-${part2}-${part3}`;
                 }
             }
             
-            return input; // Return original if can't format
+            // If no dashes but enough digits, auto-format
+            const digitsOnly = cleaned.replace(/-/g, '');
+            if (digitsOnly.length >= 6) {
+                const part1 = digitsOnly.substring(0, 2).padStart(2, '0');
+                const part2 = digitsOnly.substring(2, 6).padStart(4, '0');
+                const part3 = digitsOnly.substring(6, 8).padStart(2, '0');
+                return `${part1}-${part2}-${part3}`;
+            }
+            
+            // If partial entry, try to format what we have
+            if (digitsOnly.length === 4) {
+                // Assume this is the middle part (most common entry)
+                return `XX-${digitsOnly}-XX`;
+            }
+            
+            return cleaned; // Return what we have if can't format
         }
 
-        // Auto-format as user types
+        // Auto-format as user types with better handling
         function handleSearchInput(event) {
             const input = event.target;
             const cursorPosition = input.selectionStart;
-            const formatted = formatRegistrationNumber(input.value);
+            const originalValue = input.value;
             
-            if (formatted !== input.value) {
+            // Don't format if user is deleting
+            if (event.inputType === 'deleteContentBackward' || event.inputType === 'deleteContentForward') {
+                return;
+            }
+            
+            const formatted = formatRegistrationNumber(originalValue);
+            
+            if (formatted !== originalValue && formatted !== '') {
                 input.value = formatted;
-                // Try to maintain cursor position
-                const newPosition = Math.min(cursorPosition + (formatted.length - input.value.length), formatted.length);
+                // Adjust cursor position
+                const diff = formatted.length - originalValue.length;
+                const newPosition = cursorPosition + diff;
                 input.setSelectionRange(newPosition, newPosition);
             }
         }
@@ -862,21 +879,42 @@
             // Format the search input
             const formattedSearch = formatRegistrationNumber(searchInput);
             
-            // Find matching records
+            // Find exact matching records only
             const dogRecords = trainingData.filter(record => 
                 record.registrationNumber && 
-                record.registrationNumber.toLowerCase().includes(formattedSearch.toLowerCase())
+                record.registrationNumber.toLowerCase() === formattedSearch.toLowerCase()
             );
 
             if (dogRecords.length === 0) {
+                // If no exact match, show suggestion with partial matches
+                const partialMatches = trainingData.filter(record =>
+                    record.registrationNumber && 
+                    record.registrationNumber.toLowerCase().includes(formattedSearch.toLowerCase())
+                ).slice(0, 5); // Limit to 5 suggestions
+
+                let errorMessage = `No dog found with registration number: <strong>${formattedSearch}</strong>`;
+                
+                if (partialMatches.length > 0) {
+                    errorMessage += '<br><br><strong>Did you mean:</strong><ul style="text-align: left; margin: 10px 0;">';
+                    partialMatches.forEach(match => {
+                        errorMessage += `<li><a href="#" onclick="searchSpecific('${match.registrationNumber}')" style="color: #007bff; text-decoration: underline;">${match.registrationNumber} (${match.callName || 'Unknown'})</a></li>`;
+                    });
+                    errorMessage += '</ul>';
+                }
+
                 document.getElementById('summaryContent').innerHTML = 
-                    '<div class="error-message">No dog found with that registration number</div>';
+                    `<div class="error-message">${errorMessage}</div>`;
                 return;
             }
 
             // Store records globally for modal access
             currentDogRecords = dogRecords;
             displaySummary(dogRecords);
+        }
+
+        function searchSpecific(regNumber) {
+            document.getElementById('searchInput').value = regNumber;
+            searchDog();
         }
 
         function displaySummary(records) {
