@@ -785,4 +785,259 @@
                                     <div style="color: #dc3545;">
                                         <div><span>Need:</span> ${summary.totalPoints < 4 ? `${4 - summary.totalPoints} more points` : ''}
                                         ${summary.totalPoints < 4 && judgeCount < 2 ? ', ' : ''}
-                                        ${judgeCount < 2
+                                        ${judgeCount < 2 ? `${2 - judgeCount} more judge${judgeCount === 0 ? 's' : ''}` : ''}
+                                        ${level.startsWith('Games ') && getUniqueGames(summary.records).size < 2 ? 
+                                            `${(summary.totalPoints < 4 || judgeCount < 2) ? ', ' : ''}${2 - getUniqueGames(summary.records).size} more different game${getUniqueGames(summary.records).size === 0 ? 's' : ''}` : ''}</div>
+                                        ${!isValidated && !level.startsWith('Games ') ? `<div><span>Prerequisites:</span> ${getPrerequisiteText(level)}</div>` : ''}
+                                    </div>
+                                `}
+                            </div>
+                        </div>
+                        <button class="details-btn" onclick="showLevelDetails('${level}', '${dogName}')">Details</button>
+                    </div>
+                `;
+            });
+
+            document.getElementById('summaryContent').innerHTML = html || '<div class="error-message">No level data to display</div>';
+        }
+
+        function calculateTitlePoints(records) {
+            // Sort records chronologically
+            const sortedRecords = records
+                .filter(r => r.points > 0 && r.date instanceof Date && !isNaN(r.date))
+                .sort((a, b) => a.date - b.date);
+            
+            let cumulativePoints = 0;
+            let judges = new Set();
+            
+            for (const record of sortedRecords) {
+                const prevPoints = cumulativePoints;
+                const prevJudgeCount = judges.size;
+                
+                cumulativePoints += record.points;
+                if (record.judge) judges.add(record.judge);
+                
+                // Check if title requirements are NOW met (but weren't before)
+                const nowHasTitle = cumulativePoints >= 4 && judges.size >= 2;
+                const previouslyHadTitle = prevPoints >= 4 && prevJudgeCount >= 2;
+                
+                if (nowHasTitle && !previouslyHadTitle) {
+                    // Title was just earned with this record
+                    // Calculate how many points from this record went to earning the title
+                    let pointsTowardTitle = record.points;
+                    
+                    // If we already had 4+ points but needed another judge
+                    if (prevPoints >= 4 && prevJudgeCount < 2) {
+                        // Only 1 point goes to title (to satisfy the minimum), rest goes to ace
+                        pointsTowardTitle = 1;
+                    }
+                    // If we had 2+ judges but needed more points
+                    else if (prevJudgeCount >= 2 && prevPoints < 4) {
+                        // Only enough points to reach 4 go to title
+                        pointsTowardTitle = 4 - prevPoints;
+                    }
+                    // If we needed both conditions
+                    else if (prevPoints < 4 && prevJudgeCount < 2) {
+                        // Enough points to reach 4, or all the points if less than needed
+                        pointsTowardTitle = Math.min(record.points, 4 - prevPoints);
+                    }
+                    
+                    return {
+                        titlePoints: prevPoints + pointsTowardTitle,
+                        titleDate: record.date
+                    };
+                }
+            }
+            
+            // If we get here, either no title was earned, or all points go to title
+            return {
+                titlePoints: cumulativePoints,
+                titleDate: sortedRecords[sortedRecords.length - 1]?.date
+            };
+        }
+
+        function findAceEarnedDates(records, titlePoints) {
+            const sortedRecords = records
+                .filter(r => r.points > 0 && r.date instanceof Date && !isNaN(r.date))
+                .sort((a, b) => a.date - b.date);
+            
+            let cumulativePoints = 0;
+            const aceEarnedDates = [];
+            
+            for (const record of sortedRecords) {
+                const prevPoints = cumulativePoints;
+                cumulativePoints += record.points;
+                
+                // Check for ace milestones after title was earned
+                if (prevPoints >= titlePoints && cumulativePoints > titlePoints) {
+                    const prevAcePoints = prevPoints - titlePoints;
+                    const newAcePoints = cumulativePoints - titlePoints;
+                    
+                    const prevAceCount = Math.floor(prevAcePoints / 10);
+                    const newAceCount = Math.floor(newAcePoints / 10);
+                    
+                    // If ace count increased, record when each ace was earned
+                    for (let i = prevAceCount + 1; i <= newAceCount; i++) {
+                        aceEarnedDates.push({
+                            aceNumber: i,
+                            date: record.date
+                        });
+                    }
+                }
+            }
+            
+            return aceEarnedDates;
+        }
+
+        function applyValidationRules(levelSummary) {
+            const validatedLevels = {};
+            
+            // First, mark all levels without prerequisites as valid (but check Games separately)
+            Object.keys(levelSummary).forEach(level => {
+                if (!prerequisites[level] && !level.startsWith('Games ')) {
+                    validatedLevels[level] = true;
+                }
+            });
+
+            // Handle Games levels specially - they need 2+ different games
+            Object.keys(levelSummary).forEach(level => {
+                if (level.startsWith('Games ')) {
+                    const summary = levelSummary[level];
+                    const uniqueGames = getUniqueGames(summary.records);
+                    const hasEnoughGames = uniqueGames.size >= 2;
+                    const hasBasicRequirements = summary.totalPoints >= 4 && summary.judges.size >= 2;
+                    validatedLevels[level] = hasEnoughGames && hasBasicRequirements;
+                }
+            });
+
+            // Then validate levels with prerequisites
+            Object.keys(prerequisites).forEach(level => {
+                if (!levelSummary[level]) {
+                    validatedLevels[level] = false;
+                    return;
+                }
+
+                let meetsPrereqCriteria = false;
+
+                if (level === "Investigator 3") {
+                    // Special case: requires either Patrol 1 OR Detective 2
+                    const patrol1Valid = checkLevelRequirements(levelSummary["Patrol 1"]);
+                    const detective2Valid = checkLevelRequirements(levelSummary["Detective 2"]);
+                    meetsPrereqCriteria = patrol1Valid || detective2Valid;
+                } else {
+                    // Standard case: check direct prerequisite
+                    const prereqLevel = prerequisites[level][0];
+                    meetsPrereqCriteria = checkLevelRequirements(levelSummary[prereqLevel]);
+                }
+
+                validatedLevels[level] = meetsPrereqCriteria;
+            });
+
+            return validatedLevels;
+        }
+
+        function getUniqueGames(records) {
+            const games = new Set();
+            const gamesList = ['BJ', 'C', 'P', 'T', 'GB'];
+            
+            records.forEach(record => {
+                if (record.results) {
+                    const results = record.results.toString().toUpperCase();
+                    gamesList.forEach(game => {
+                        if (results.includes(game)) {
+                            games.add(game);
+                        }
+                    });
+                }
+            });
+            
+            return games;
+        }
+
+        function checkLevelRequirements(levelData) {
+            if (!levelData) return false;
+            return levelData.totalPoints >= 4 && levelData.judges.size >= 2;
+        }
+
+        function getPrerequisiteText(level) {
+            if (!prerequisites[level]) return 'None';
+            
+            if (level === "Investigator 3") {
+                return 'Either "Patrol 1" OR "Detective 2" (4+ points, 2+ judges each)';
+            }
+            
+            return `"${prerequisites[level][0]}" (4+ points, 2+ judges)`;
+        }
+
+        function showLevelDetails(level, dogName) {
+            const records = currentDogRecords.filter(r => r.level === level);
+            
+            document.getElementById('modalTitle').textContent = `${dogName} - ${level} Details`;
+            
+            let html = `
+                <table class="records-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Judge</th>
+                            <th>Results</th>
+                            <th>Points</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            records.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            records.forEach(record => {
+                const date = record.date && record.date instanceof Date && !isNaN(record.date) 
+                    ? record.date.toLocaleDateString() 
+                    : 'N/A';
+                const pointsClass = record.points > 0 ? 'points-badge' : 'points-badge zero';
+                
+                html += `
+                    <tr>
+                        <td>${date}</td>
+                        <td>${record.judge || 'N/A'}</td>
+                        <td>${record.results || 'N/A'}</td>
+                        <td><span class="${pointsClass}">${record.points}</span></td>
+                    </tr>
+                `;
+            });
+
+            html += '</tbody></table>';
+            
+            document.getElementById('modalBody').innerHTML = html;
+            document.getElementById('detailsModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('detailsModal').style.display = 'none';
+        }
+
+        // Initialize
+        window.onload = function() {
+            console.log('Dog Trialing Tracker loaded - loading data from file');
+            loadDataFromFile();
+        };
+
+        // Also try DOMContentLoaded as backup
+        document.addEventListener('DOMContentLoaded', function() {
+            // Only run if window.onload hasn't fired yet
+            if (trialingData.length === 0) {
+                setTimeout(() => {
+                    loadDataFromFile();
+                }, 200);
+            }
+        });
+
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            const modal = document.getElementById('detailsModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        };
+    </script>
+</body>
+</html>
