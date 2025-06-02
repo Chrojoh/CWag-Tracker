@@ -1,33 +1,4 @@
-// Configuration for different data sources
-        const DATA_CONFIG = {
-            // Set your preferred method:
-            // 'embedded' - Data built into file (most private) - NOW ENABLED!
-            // 'upload' - Always show upload option (flexible)
-            // 'online' - Try online first, fallback to upload (hybrid)
-            mode: 'embedded',
-            
-            // For online mode - your Google Sheets ID
-            googleSheetId: '1uMRRSdKe6hMM4fD0u8lf5VImCFfSQUEH',
-            
-            // For embedded mode - your complete training data (97,197 records!)
-            embeddedData: null // Will be loaded from compressed data below
-        };
-
-        // Compressed training data to save space
-        const COMPRESSED_DATA = 'H4sIAAAAAAAAA+2deXgTVRfGkz1N0jRJ0zbpkqZNmjRJmqZJm6ZJmqZJmjVJm6ZJmqZJmqZJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjVJmjV        function retryLoading() {
-            // Show loading screen again
-            const loadingScreen = document.getElementById('loadingScreen');
-            const mainContent = document.getElementById('mainContent');
-            
-            if (loadingScreen) loadingScreen.style.display = 'flex';
-            if (mainContent) mainContent.style.display = 'none';
-            
-            // Clear any previous data
-            trainingData = [];
-            
-            // Retry the data loading
-            loadDataAutomatically();
-        }<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -536,74 +507,90 @@
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>CWag's Progression Tracker</h1>
-            <p>Track your dog's progress, points, and title eligibility</p>
+        <!-- Loading Screen -->
+        <div id="loadingScreen" class="loading-screen">
+            <div class="loading-content">
+                <div class="loading-spinner"></div>
+                <h2>🐕 Loading Training Data</h2>
+                <p>Connecting to database and processing records...</p>
+                <div class="loading-progress"></div>
+                <div id="loadingProgress"></div>
+            </div>
         </div>
 
-        <div class="upload-section">
-            <div class="upload-container">
-                <div class="data-source-options">
-                    <div class="source-option">
-                        <label for="dataUrl" class="url-input">
-                            <strong>Load from URL:</strong>
-                            <input type="url" id="dataUrl" placeholder="https://example.com/training-data.xlsx" style="margin-left: 10px; width: 400px;">
-                        </label>
-                        <button class="upload-btn" onclick="loadDataFromUrl()">Load from URL</button>
+        <!-- Main Application -->
+        <div id="mainContent" class="main-app" style="display: none;">
+            <div class="header">
+                <h1>CWAGS Progression Tracker</h1>
+                <p>Track your dog's progress, points, and title eligibility</p>
+            </div>
+
+            <div class="upload-section">
+                <div class="upload-container">
+                    <div class="data-source-options">
+                        <div class="source-option">
+                            <label for="dataUrl" class="url-input">
+                                <strong>Load from URL:</strong>
+                                <input type="url" id="dataUrl" placeholder="https://example.com/training-data.xlsx" style="margin-left: 10px; width: 400px;">
+                            </label>
+                            <button class="upload-btn" onclick="loadDataFromUrl()">Load from URL</button>
+                        </div>
+                        <div class="source-divider">OR</div>
+                        <div class="source-option">
+                            <label for="dataFile" class="file-input">
+                                <strong>Upload File:</strong>
+                                <input type="file" id="dataFile" accept=".xlsx,.xls,.csv" style="margin-left: 10px;">
+                            </label>
+                            <button class="upload-btn" onclick="loadDataFromFile()">Load File</button>
+                        </div>
                     </div>
-                    <div class="source-divider">OR</div>
-                    <div class="source-option">
-                        <label for="dataFile" class="file-input">
-                            <strong>Upload File:</strong>
-                            <input type="file" id="dataFile" accept=".xlsx,.xls,.csv" style="margin-left: 10px;">
-                        </label>
-                        <button class="upload-btn" onclick="loadDataFromFile()">Load File</button>
-                    </div>
+                    <span id="uploadStatus"></span>
                 </div>
-                <span id="uploadStatus"></span>
             </div>
-        </div>
 
-        <div class="search-section">
-            <div class="search-container">
-                <input type="text" id="searchInput" class="search-input" 
-                       placeholder="Enter Registration Number (e.g., 17-1734-06)" 
-                       onkeypress="handleKeyPress(event)">
-                <button class="search-btn" onclick="searchDog()">Search Dog Records</button>
+            <div class="search-section">
+                <div class="search-container">
+                    <input type="text" id="searchInput" class="search-input" 
+                           placeholder="Enter Registration Number (e.g., 17-1734-06)" 
+                           onkeypress="handleKeyPress(event)">
+                    <button class="search-btn" onclick="searchDog()">Search Dog Records</button>
+                </div>
             </div>
-        </div>
 
-        <div class="main-content">
-            <div class="summary-section">
-                <div class="section-header">Points Summary & Title Progress</div>
-                <div class="section-content" id="summaryContent">
-                    <div class="validation-rules">
-                        <h4>Title Requirements</h4>
-                        <ul>
-                            <li>Minimum 4 points required for each level</li>
-                            <li>Points must come from at least 2 different judges</li>
-                            <li>Prerequisites must be met before advancing to higher levels</li>
-                            <li>Special case: "Investigator 3" requires either "Patrol 1" OR "Detective 2"</li>
-                            <li>Games levels require at least 2 different games (BJ, C, P, T, GB)</li>
-                            <li>Ace awards given every 10 points after title is earned</li>
-                        </ul>
+            <div class="main-content">
+                <div class="summary-section">
+                    <div class="section-header">Points Summary & Title Progress</div>
+                    <div class="section-content" id="summaryContent">
+                        <div class="validation-rules">
+                            <h4>Title Requirements</h4>
+                            <ul>
+                                <li>Minimum 4 points required for each level</li>
+                                <li>Points must come from at least 2 different judges</li>
+                                <li>Prerequisites must be met before advancing to higher levels</li>
+                                <li>Special case: "Investigator 3" requires either "Patrol 1" OR "Detective 2"</li>
+                                <li>Games levels require at least 2 different games (BJ, C, P, T, GB)</li>
+                                <li>Ace awards given every 10 points after title is earned</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Modal for showing detailed records -->
-        <div id="detailsModal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 id="modalTitle">Level Details</h2>
-                    <span class="close" onclick="closeModal()">&times;</span>
-                </div>
-                <div class="modal-body" id="modalBody">
-                    <!-- Details will be populated here -->
+            <!-- Modal for showing detailed records -->
+            <div id="detailsModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 id="modalTitle">Level Details</h2>
+                        <span class="close" onclick="closeModal()">&times;</span>
+                    </div>
+                    <div class="modal-body" id="modalBody">
+                        <!-- Details will be populated here -->
+                    </div>
                 </div>
             </div>
         </div>
+        
+        <div class="data-status" id="dataStatus"></div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -801,11 +788,6 @@
             }
         }
 
-        // Keep the old loadData function for backward compatibility
-        function loadData() {
-            loadDataFromFile();
-        }
-
         function formatRegistrationNumber(input) {
             if (!input) return '';
             
@@ -840,28 +822,6 @@
             }
             
             return cleaned; // Return what we have if can't format
-        }
-
-        // Auto-format as user types with better handling
-        function handleSearchInput(event) {
-            const input = event.target;
-            const cursorPosition = input.selectionStart;
-            const originalValue = input.value;
-            
-            // Don't format if user is deleting
-            if (event.inputType === 'deleteContentBackward' || event.inputType === 'deleteContentForward') {
-                return;
-            }
-            
-            const formatted = formatRegistrationNumber(originalValue);
-            
-            if (formatted !== originalValue && formatted !== '') {
-                input.value = formatted;
-                // Adjust cursor position
-                const diff = formatted.length - originalValue.length;
-                const newPosition = cursorPosition + diff;
-                input.setSelectionRange(newPosition, newPosition);
-            }
         }
 
         function searchDog() {
@@ -1259,6 +1219,21 @@
 
         function closeModal() {
             document.getElementById('detailsModal').style.display = 'none';
+        }
+
+        function retryLoading() {
+            // Show loading screen again
+            const loadingScreen = document.getElementById('loadingScreen');
+            const mainContent = document.getElementById('mainContent');
+            
+            if (loadingScreen) loadingScreen.style.display = 'flex';
+            if (mainContent) mainContent.style.display = 'none';
+            
+            // Clear any previous data
+            trainingData = [];
+            
+            // Retry the data loading
+            loadDataAutomatically();
         }
 
         // Google Sheets URL for automatic loading
