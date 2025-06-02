@@ -807,18 +807,44 @@
         }
 
         function formatRegistrationNumber(input) {
-            // Remove any non-digits
-            const cleaned = input.replace(/[^0-9]/g, '');
+            // Remove any non-digits and dashes
+            let cleaned = input.replace(/[^0-9-]/g, '');
             
-            if (cleaned.length >= 6) {
+            // Split by dashes
+            let parts = cleaned.split('-');
+            
+            if (parts.length === 3) {
                 // Format as XX-XXXX-XX
-                const part1 = cleaned.substring(0, 2);
-                const part2 = cleaned.substring(2, 6);
-                const part3 = cleaned.substring(6, 8).padEnd(2, '0');
+                let part1 = parts[0].padStart(2, '0').substring(0, 2);
+                let part2 = parts[1].padStart(4, '0').substring(0, 4);
+                let part3 = parts[2].padStart(2, '0').substring(0, 2);
                 return `${part1}-${part2}-${part3}`;
+            } else if (parts.length === 1 && cleaned.length >= 6) {
+                // If no dashes, try to format automatically
+                const digits = cleaned.replace(/-/g, '');
+                if (digits.length >= 6) {
+                    const part1 = digits.substring(0, 2);
+                    const part2 = digits.substring(2, 6);
+                    const part3 = digits.substring(6, 8).padEnd(2, '0');
+                    return `${part1}-${part2}-${part3}`;
+                }
             }
             
-            return input;
+            return input; // Return original if can't format
+        }
+
+        // Auto-format as user types
+        function handleSearchInput(event) {
+            const input = event.target;
+            const cursorPosition = input.selectionStart;
+            const formatted = formatRegistrationNumber(input.value);
+            
+            if (formatted !== input.value) {
+                input.value = formatted;
+                // Try to maintain cursor position
+                const newPosition = Math.min(cursorPosition + (formatted.length - input.value.length), formatted.length);
+                input.setSelectionRange(newPosition, newPosition);
+            }
         }
 
         function searchDog() {
