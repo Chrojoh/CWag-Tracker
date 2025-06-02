@@ -485,15 +485,106 @@
         }
 
         function loadDataFromFile() {
-            fetch('Data for Tracker web.xlsx')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
+            // Try different possible file paths/names
+            const possiblePaths = [
+                'Data for Tracker web.xlsx',
+                './Data for Tracker web.xlsx',
+                'Data%20for%20Tracker%20web.xlsx',
+                'data.xlsx',
+                'tracker-data.xlsx'
+            ];
+
+            async function tryLoadFile(paths) {
+                for (const path of paths) {
+                    try {
+                        console.log(`Trying to load: ${path}`);
+                        const response = await fetch(path);
+                        if (response.ok) {
+                            console.log(`Successfully found file at: ${path}`);
+                            const data = await response.arrayBuffer();
+                            processExcelData(new Uint8Array(data));
+                            updateLastUpdatedDate();
+                            document.getElementById('summaryContent').innerHTML = `
+                                <div class="validation-rules">
+                                    <h4>Title Requirements</h4>
+                                    <ul>
+                                        <li>Minimum 4 points required for each level</li>
+                                        <li>Points must come from at least 2 different judges</li>
+                                        <li>Prerequisites must be met before advancing to higher levels</li>
+                                        <li>Special case: "Investigator 3" requires either "Patrol 1" OR "Detective 2"</li>
+                                        <li>Games levels require at least 2 different games (BJ, C, P, T, GB)</li>
+                                        <li>Ace awards given every 10 points after title is earned</li>
+                                    </ul>
+                                </div>
+                            `;
+                            return true;
+                        }
+                    } catch (error) {
+                        console.log(`Failed to load ${path}:`, error.message);
+                        continue;
                     }
-                    return response.arrayBuffer();
-                })
-                .then(data => {
-                    processExcelData(new Uint8Array(data));
+                }
+                return false;
+            }
+
+            tryLoadFile(possiblePaths).then(success => {
+                if (!success) {
+                    console.error('Could not load data file from any path');
+                    document.getElementById('lastUpdated').textContent = 'Error loading data';
+                    document.getElementById('summaryContent').innerHTML = `
+                        <div class="error-message">
+                            <h3>Unable to Load Data File</h3>
+                            <p>Could not find the Excel file. Please ensure one of these files is available:</p>
+                            <ul style="text-align: left; margin: 10px 0;">
+                                <li>Data for Tracker web.xlsx</li>
+                                <li>data.xlsx</li>
+                                <li>tracker-data.xlsx</li>
+                            </ul>
+                            <p style="margin-top: 15px;">The file should be in the same directory as this HTML file.</p>
+                            <button onclick="showFileUpload()" style="background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; margin-top: 15px;">
+                                Upload File Manually
+                            </button>
+                        </div>
+                    `;
+                }
+            });
+        }
+
+        function showFileUpload() {
+            document.getElementById('summaryContent').innerHTML = `
+                <div style="text-align: center; padding: 40px;">
+                    <h3 style="color: #17a2b8; margin-bottom: 20px;">📁 Upload Data File</h3>
+                    <p style="margin-bottom: 20px;">Select your Excel file to load the trialing data:</p>
+                    
+                    <div style="background: #f8f9fa; padding: 30px; border-radius: 12px; border: 2px dashed #dee2e6; margin: 20px 0;">
+                        <input type="file" id="manualDataFile" accept=".xlsx,.xls,.csv" style="margin-bottom: 15px;">
+                        <br>
+                        <button onclick="loadManualFile()" style="background: #28a745; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 1rem;">
+                            📤 Load File
+                        </button>
+                    </div>
+                    
+                    <button onclick="loadDataFromFile()" style="background: #6c757d; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; margin-top: 15px;">
+                        ← Try Auto-Loading Again
+                    </button>
+                </div>
+            `;
+        }
+
+        function loadManualFile() {
+            const fileInput = document.getElementById('manualDataFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Please select a file first');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    processExcelData(data);
                     updateLastUpdatedDate();
                     document.getElementById('summaryContent').innerHTML = `
                         <div class="validation-rules">
@@ -508,16 +599,18 @@
                             </ul>
                         </div>
                     `;
-                })
-                .catch(error => {
-                    console.error('Error loading data:', error);
-                    document.getElementById('lastUpdated').textContent = 'Error loading data';
-                    document.getElementById('summaryContent').innerHTML = `
-                        <div class="error-message">
-                            Error loading trialing data. Please check that 'Data for Tracker web.xlsx' is available.
-                        </div>
-                    `;
-                });
+                    alert(`Successfully loaded ${trialingData.length} records!`);
+                } catch (error) {
+                    console.error('Error loading manual file:', error);
+                    alert(`Error loading file: ${error.message}`);
+                }
+            };
+            
+            reader.onerror = function() {
+                alert('Error reading file. Please try again.');
+            };
+            
+            reader.readAsArrayBuffer(file);
         }
 
         function processExcelData(data) {
