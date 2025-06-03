@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dog Trialing Records Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .header {
+            background: linear-gradient(90deg, #2c3e50, #34495e);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .last-updated {
+            opacity: 0.8;
+            font-size: 0.95rem;
+            font-style: italic;
+        }
+
+        .search-section {
+            padding: 30px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            width: 300px;
+            max-width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-btn {
+            padding: 15px 30px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .main-content {
+            padding: 30px;
+        }
+
+        .summary-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .section-header {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .section-content {
+            padding: 20px;
+        }
+
+        .dog-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .dog-info h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.4rem;
+        }
+
+        .dog-info p {
+            color: #7f8c8d;
+            margin: 5px 0;
+        }
+
+        .level-summary {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 15px;
+            align-items: start;
+        }
+
+        .level-info {
+            flex: 1;
+        }
+
+        .level-summary h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .title-status {
+            font-size: 0.9rem;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .title-earned {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .no-title {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .points-breakdown {
+            font-size: 0.9rem;
+            margin: 8px 0;
+        }
+
+        .points-breakdown div {
+            margin: 4px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .ace-info {
+            color: #6f42c1;
+            font-weight: 600;
+        }
+
+        .details-btn {
+            background: linear-gradient(45deg, #17a2b8, #20c997);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            align-self: start;
+        }
+
+        .details-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(23, 162, 184, 0.3);
+        }
+
+        .records-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .records-table th,
+        .records-table td {
+            padding: 12px 8px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+            font-size: 0.9rem;
+        }
+
+        .records-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .records-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .points-badge {
+            background: #28a745;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .points-badge.zero {
+            background: #dc3545;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .validation-rules {
+            background: #e7f3ff;
+            border: 1px solid #b8daff;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .validation-rules h4 {
+            color: #004085;
+            margin-bottom: 10px;
+        }
+
+        .validation-rules ul {
+            margin-left: 20px;
+        }
+
+        .validation-rules li {
+            color: #004085;
+            margin: 5px 0;
+            font-size: 0.9rem;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.4rem;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .close:hover {
+            opacity: 0.7;
+        }
+
+        .modal-body {
+            padding: 20px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .loading-message {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>CWAGS Tracker</h1>
+            <p>Track your dog's trialing progress, points, and title eligibility</p>
+            <div class="last-updated" id="lastUpdated">Loading data...</div>
+        </div>
+
+        <div class="search-section">
+            <div class="search-container">
+                <input type="text" id="searchInput" class="search-input" 
+                       placeholder="Enter Registration Number (e.g., 17-1734-06)" 
+                       onkeypress="handleKeyPress(event)">
+                <button class="search-btn" onclick="searchDog()">Search Dog Records</button>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="summary-section">
+                <div class="section-header">Points Summary & Title Progress</div>
+                <div class="section-content" id="summaryContent">
+                    <div class="loading-message">
+                        Loading trialing data...
+                    </div>
+                    <div class="validation-rules">
+                        <h4>Title Requirements</h4>
+                        <ul>
+                            <li>Minimum 4 points required for each level</li>
+                            <li>Points must come from at least 2 different judges</li>
+                            <li>Prerequisites must be met before advancing to higher levels</li>
+                            <li>Special case: "Investigator 3" requires either "Patrol 1" OR "Detective 2"</li>
+                            <li>Games levels require at least 2 different games (BJ, C, P, T, GB)</li>
+                            <li>Ace awards given every 10 points after title is earned</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal for showing detailed records -->
+        <div id="detailsModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modalTitle">Level Details</h2>
+                    <span class="close" onclick="closeModal()">&times;</span>
+                </div>
+                <div class="modal-body" id="modalBody">
+                    <!-- Details will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        let trialingData = [];
+        let currentDogRecords = [];
+        
+        // Level prerequisites mapping
+        const prerequisites = {
+            "Investigator 3": ["Patrol 1", "Detective 2"],  // Special case - either/or
+            "Super Sleuth 4": ["Investigator 3"],
+            "Private Inv": ["Super Sleuth 4"],
+            "Det Diversions": ["Super Sleuth 4"],
+            "Ranger 2": ["Ranger 1"],
+            "Ranger 3": ["Ranger 2"],
+            "Ranger 4": ["Ranger 3"],
+            "Ranger 5": ["Ranger 4"],
+            "Dasher 4": ["Dasher 3"],
+            "Dasher 5": ["Dasher 4"],
+            "Dasher 6": ["Dasher 5"],
+            "Obedience 4": ["Obedience 3"],
+            "Obedience 5": ["Obedience 4"]
+        };
+
+        // Official title abbreviations
+        const titleAbbreviations = {
+            "Patrol 1": "CW-SP",
+            "Detective 2": "CW-SD",
+            "Investigator 3": "CW-SI",
+            "Super Sleuth 4": "CW-SS",
+            "Private Inv": "CW-SPI",
+            "Det Diversions": "CW-SDD",
+            "Ranger 1": "CW-ScR1",
+            "Ranger 2": "CW-ScR2",
+            "Ranger 3": "CW-ScR3",
+            "Ranger 4": "CW-ScR4",
+            "Ranger 5": "CW-ScR5",
+            "Dasher 3": "CW-SD3",
+            "Dasher 4": "CW-SD4",
+            "Dasher 5": "CW-SD5",
+            "Dasher 6": "CW-SD6",
+            "Obedience 1": "CW-Ob1",
+            "Obedience 2": "CW-Ob2",
+            "Obedience 3": "CW-Ob3",
+            "Obedience 4": "CW-Ob4",
+            "Obedience 5": "CW-Ob5",
+            "Starter": "CW-SR",
+            "Advanced": "CW-AR",
+            "Pro": "CW-PR",
+            "ARF": "CW-ARF",
+            "Zoom 1": "CW-ZR1",
+            "Zoom 1.5": "CW-ZR1.5",
+            "Zoom 2": "CW-ZR2",
+            "Games 1": "CW-G1",
+            "Games 2": "CW-G2",
+            "Games 3": "CW-G3",
+            "Games 4": "CW-G4"
+        };
+
+        // Proper level ordering
+        const levelOrder = [
+            "Patrol 1", "Detective 2", "Investigator 3", "Super Sleuth 4", "Private Inv", "Det Diversions",
+            "Ranger 1", "Ranger 2", "Ranger 3", "Ranger 4", "Ranger 5",
+            "Dasher 3", "Dasher 4", "Dasher 5", "Dasher 6",
+            "Obedience 1", "Obedience 2", "Obedience 3", "Obedience 4", "Obedience 5",
+            "Starter", "Advanced", "Pro", "ARF",
+            "Zoom 1", "Zoom 1.5", "Zoom 2",
+            "Games 1", "Games 2", "Games 3", "Games 4"
+        ];
+
+        function getSortedLevels(levelSummary) {
+            const availableLevels = Object.keys(levelSummary);
+            const orderedLevels = levelOrder.filter(level => availableLevels.includes(level));
+            const unorderedLevels = availableLevels.filter(level => !levelOrder.includes(level));
+            return [...orderedLevels, ...unorderedLevels.sort()];
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                searchDog();
+            }
+        }
+
+        function loadDataFromFile() {
+            console.log('Starting data load process...');
+            
+            // Set a timeout to show manual upload option if loading takes too long
+            const timeoutId = setTimeout(() => {
+                console.log('Load timeout - showing manual upload option');
+                showFileUpload();
+            }, 3000);
+
+            // First try to load the expected file
+            fetch('Data for Tracker web.xlsx')
+                .then(response => {
+                    clearTimeout(timeoutId);
+                    console.log('Fetch response status:', response.status);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    console.log('File found, reading data...');
+                    return response.arrayBuffer();
+                })
+                .then(data => {
+                    console.log('Data received, size:', data.byteLength, 'bytes');
+                    processExcelData(new Uint8Array(data));
+                    updateLastUpdatedDate();
+                    document.getElementById('summaryContent').innerHTML = `
+                        <div class="validation-rules">
+                            <h4>Title Requirements</h4>
+                            <ul>
+                                <li>Minimum 4 points required for each level</li>
+                                <li>Points must come from at least 2 different judges</li>
+                                <li>Prerequisites must be met before advancing to higher levels</li>
+                                <li>Special case: "Investigator 3" requires either "Patrol 1" OR "Detective 2"</li>
+                                <li>Games levels require at least 2 different games (BJ, C, P, T, GB)</li>
+                                <li>Ace awards given every 10 points after title is earned</li>
+                            </ul>
+                        </div>
+                    `;
+                    console.log('Data processing complete');
+                })
+                .catch(error => {
+                    clearTimeout(timeoutId);
+                    console.error('Error loading data:', error);
+                    document.getElementById('lastUpdated').textContent = 'File not found';
+                    showFileUpload();
+                });
+        }
+
+        function showFileUpload() {
+            document.getElementById('summaryContent').innerHTML = `
+                <div style="text-align: center; padding: 40px;">
+                    <h3 style="color: #17a2b8; margin-bottom: 20px;">📁 Upload Data File</h3>
+                    <p style="margin-bottom: 20px;">Select your Excel file to load the trialing data:</p>
+                    
+                    <div style="background: #f8f9fa; padding: 30px; border-radius: 12px; border: 2px dashed #dee2e6; margin: 20px 0;">
+                        <input type="file" id="manualDataFile" accept=".xlsx,.xls,.csv" style="margin-bottom: 15px;">
+                        <br>
+                        <button onclick="loadManualFile()" style="background: #28a745; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 1rem;">
+                            📤 Load File
+                        </button>
+                    </div>
+                    
+                    <button onclick="loadDataFromFile()" style="background: #6c757d; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; margin-top: 15px;">
+                        ← Try Auto-Loading Again
+                    </button>
+                </div>
+            `;
+        }
+
+        function loadManualFile() {
+            const fileInput = document.getElementById('manualDataFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Please select a file first');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    processExcelData(data);
+                    updateLastUpdatedDate();
+                    document.getElementById('summaryContent').innerHTML = `
+                        <div class="validation-rules">
+                            <h4>Title Requirements</h4>
+                            <ul>
+                                <li>Minimum 4 points required for each level</li>
+                                <li>Points must come from at least 2 different judges</li>
+                                <li>Prerequisites must be met before advancing to higher levels</li>
+                                <li>Special case: "Investigator 3" requires either "Patrol 1" OR "Detective 2"</li>
+                                <li>Games levels require at least 2 different games (BJ, C, P, T, GB)</li>
+                                <li>Ace awards given every 10 points after title is earned</li>
+                            </ul>
+                        </div>
+                    `;
+                    alert(`Successfully loaded ${trialingData.length} records!`);
+                } catch (error) {
+                    console.error('Error loading manual file:', error);
+                    alert(`Error loading file: ${error.message}`);
+                }
+            };
+            
+            reader.onerror = function() {
+                alert('Error reading file. Please try again.');
+            };
+            
+            reader.readAsArrayBuffer(file);
+        }
+
+        function processExcelData(data) {
+            const workbook = XLSX.read(data, {type: 'array', cellDates: true});
+            
+            // Look for Data sheet
+            const dataSheet = workbook.Sheets['Data'] || workbook.Sheets[workbook.SheetNames[0]];
+            const jsonData = XLSX.utils.sheet_to_json(dataSheet, {header: 1, dateNF: 'yyyy-mm-dd'});
+            
+            // Process the data with proper date handling
+            trialingData = jsonData.slice(1).map(row => {
+                let processedDate = row[2];
+                
+                // Handle different date formats
+                if (typeof processedDate === 'number') {
+                    // Excel date serial number - convert to proper date
+                    processedDate = XLSX.SSF.parse_date_code(processedDate);
+                    processedDate = new Date(processedDate.y, processedDate.m - 1, processedDate.d);
+                } else if (typeof processedDate === 'string') {
+                    // String date - parse it
+                    processedDate = new Date(processedDate);
+                } else if (processedDate instanceof Date) {
+                    // Already a date object
+                    processedDate = processedDate;
+                } else {
+                    // Invalid date
+                    processedDate = null;
+                }
+                
+                return {
+                    registrationNumber: row[0],
+                    callName: row[1],
+                    date: processedDate,
+                    level: row[3],
+                    results: row[4],
+                    judge: row[5],
+                    points: parseFloat(row[6]) || 0
+                };
+            }).filter(record => record.registrationNumber && record.level);
+            
+            console.log('Data processed:', trialingData.length, 'records');
+        }
+
+        function updateLastUpdatedDate() {
+            if (trialingData.length === 0) {
+                document.getElementById('lastUpdated').textContent = 'No data available';
+                return;
+            }
+
+            // Find the most recent date in the data
+            const validDates = trialingData
+                .map(record => record.date)
+                .filter(date => date instanceof Date && !isNaN(date))
+                .sort((a, b) => b - a);
+
+            if (validDates.length > 0) {
+                const mostRecentDate = validDates[0];
+                document.getElementById('lastUpdated').textContent = 
+                    `Last updated: ${mostRecentDate.toLocaleDateString()}`;
+            } else {
+                document.getElementById('lastUpdated').textContent = 'Last updated: Unknown';
+            }
+        }
+
+        function formatRegistrationNumber(input) {
+            if (!input) return '';
+            
+            // Remove any non-digits and dashes
+            let cleaned = input.replace(/[^0-9-]/g, '');
+            
+            // If input has dashes, work with parts
+            if (cleaned.includes('-')) {
+                let parts = cleaned.split('-');
+                if (parts.length === 3) {
+                    // Format as XX-XXXX-XX with leading zeros
+                    let part1 = parts[0].padStart(2, '0').substring(0, 2);
+                    let part2 = parts[1].padStart(4, '0').substring(0, 4);
+                    let part3 = parts[2].padStart(2, '0').substring(0, 2);
+                    return `${part1}-${part2}-${part3}`;
+                }
+            }
+            
+            // If no dashes but enough digits, auto-format
+            const digitsOnly = cleaned.replace(/-/g, '');
+            if (digitsOnly.length >= 6) {
+                const part1 = digitsOnly.substring(0, 2).padStart(2, '0');
+                const part2 = digitsOnly.substring(2, 6).padStart(4, '0');
+                const part3 = digitsOnly.substring(6, 8).padStart(2, '0');
+                return `${part1}-${part2}-${part3}`;
+            }
+            
+            // If partial entry, try to format what we have
+            if (digitsOnly.length === 4) {
+                // Assume this is the middle part (most common entry)
+                return `XX-${digitsOnly}-XX`;
+            }
+            
+            return cleaned; // Return what we have if can't format
+        }
+
+        function searchDog() {
+            const searchInput = document.getElementById('searchInput').value.trim();
+            if (!searchInput) {
+                alert('Please enter a registration number');
+                return;
+            }
+
+            if (trialingData.length === 0) {
+                alert('Please wait for trialing data to load');
+                return;
+            }
+
+            // Format the search input
+            const formattedSearch = formatRegistrationNumber(searchInput);
+            
+            // Find exact matching records only
+            const dogRecords = trialingData.filter(record => 
+                record.registrationNumber && 
+                record.registrationNumber.toLowerCase() === formattedSearch.toLowerCase()
+            );
+
+            if (dogRecords.length === 0) {
+                // If no exact match, show suggestion with partial matches
+                const partialMatches = trialingData.filter(record =>
+                    record.registrationNumber && 
+                    record.registrationNumber.toLowerCase().includes(formattedSearch.toLowerCase())
+                ).slice(0, 5); // Limit to 5 suggestions
+
+                let errorMessage = `No dog found with registration number: <strong>${formattedSearch}</strong>`;
+                
+                if (partialMatches.length > 0) {
+                    errorMessage += '<br><br><strong>Did you mean:</strong><ul style="text-align: left; margin: 10px 0;">';
+                    partialMatches.forEach(match => {
+                        errorMessage += `<li><a href="#" onclick="searchSpecific('${match.registrationNumber}')" style="color: #007bff; text-decoration: underline;">${match.registrationNumber} (${match.callName || 'Unknown'})</a></li>`;
+                    });
+                    errorMessage += '</ul>';
+                }
+
+                document.getElementById('summaryContent').innerHTML = 
+                    `<div class="error-message">${errorMessage}</div>`;
+                return;
+            }
+
+            // Store records globally for modal access
+            currentDogRecords = dogRecords;
+            displaySummary(dogRecords);
+        }
+
+        function searchSpecific(regNumber) {
+            document.getElementById('searchInput').value = regNumber;
+            searchDog();
+        }
+
+        function displaySummary(records) {
+            const dogName = records[0].callName || 'Unknown';
+            const regNumber = records[0].registrationNumber;
+            
+            const levelSummary = {};
+            
+            // Group records by level
+            records.forEach(record => {
+                if (!record.level) return;
+                
+                if (!levelSummary[record.level]) {
+                    levelSummary[record.level] = {
+                        totalPoints: 0,
+                        judges: new Set(),
+                        records: []
+                    };
+                }
+                
+                if (record.points > 0) {
+                    levelSummary[record.level].totalPoints += record.points;
+                    if (record.judge) {
+                        levelSummary[record.level].judges.add(record.judge);
+                    }
+                }
+                levelSummary[record.level].records.push(record);
+            });
+
+            // Apply validation rules
+            const validatedLevels = applyValidationRules(levelSummary);
+
+            let html = `
+                <div class="dog-info">
+                    <h3>${dogName}</h3>
+                    <p><strong>Registration:</strong> ${regNumber}</p>
+                    <p><strong>Total Trialing Records:</strong> ${records.length}</p>
+                </div>
+            `;
+            
+            getSortedLevels(levelSummary).forEach(level => {
+                const summary = levelSummary[level];
+                const isValidated = validatedLevels[level];
+                const judgeCount = summary.judges.size;
+                
+                const hasTitleRequirements = summary.totalPoints >= 4 && judgeCount >= 2 && isValidated;
+                
+                // For Games levels, also check if they have enough different games
+                let gamesInfo = '';
+                if (level.startsWith('Games ')) {
+                    const uniqueGames = getUniqueGames(summary.records);
+                    gamesInfo = `<div><span>Different Games:</span> <strong>${uniqueGames.size}/2</strong> (${Array.from(uniqueGames).join(', ') || 'None'})</div>`;
+                }
+                
+                // Calculate title points and ace points
+                let titlePoints = 0;
+                let acePoints = 0;
+                let titleStatus = '';
+                let titleClass = '';
+                let titleInfo = null;
+                
+                if (hasTitleRequirements) {
+                    // Find the point at which title was earned (when both 4 points and 2 judges were achieved)
+                    titleInfo = calculateTitlePoints(summary.records);
+                    titlePoints = titleInfo.titlePoints;
+                    const titleDate = titleInfo.titleDate;
+                    acePoints = Math.max(0, summary.totalPoints - titlePoints);
+                    
+                    const officialTitle = titleAbbreviations[level] || level;
+                    
+                    if (acePoints >= 10) {
+                        const aceCount = Math.floor(acePoints / 10);
+                        if (aceCount === 1) {
+                            titleStatus = `${officialTitle}A`;
+                        } else {
+                            titleStatus = `${officialTitle}Ax${aceCount}`;
+                        }
+                        titleClass = 'title-earned';
+                    } else {
+                        titleStatus = `${officialTitle} Title Earned`;
+                        titleClass = 'title-earned';
+                    }
+                } else {
+                    titleStatus = 'No Title Yet';
+                    titleClass = 'no-title';
+                }
+                
+                html += `
+                    <div class="level-summary">
+                        <div class="level-info">
+                            <h4>${level}</h4>
+                            <div class="title-status ${titleClass}">${titleStatus}</div>
+                            
+                            <div class="points-breakdown">
+                                <div><span>Total Points:</span> <strong>${summary.totalPoints}</strong></div>
+                                <div><span>Judges:</span> <strong>${judgeCount}/2</strong></div>
+                                ${gamesInfo}
+                                ${hasTitleRequirements ? `
+                                    <div><span>Points Towards Title:</span> <strong>${titlePoints}</strong></div>
+                                    <div><span>Points Towards Ace:</span> <strong class="ace-info">${acePoints}</strong></div>
+                                    ${titleInfo && titleInfo.titleDate ? `<div style="color: #28a745; font-size: 0.85rem;"><span>Title Earned:</span> <strong>${titleInfo.titleDate instanceof Date && !isNaN(titleInfo.titleDate) ? titleInfo.titleDate.toLocaleDateString() : 'N/A'}</strong></div>` : ''}
+                                    ${(() => {
+                                        const aceEarnedDates = findAceEarnedDates(summary.records, titlePoints);
+                                        if (aceEarnedDates.length > 0) {
+                                            const latestAce = aceEarnedDates[aceEarnedDates.length - 1];
+                                            const aceDate = latestAce.date instanceof Date && !isNaN(latestAce.date) ? latestAce.date.toLocaleDateString() : 'N/A';
+                                            return `<div style="color: #6f42c1; font-size: 0.85rem;"><span>Latest Ace Earned:</span> <strong>${aceDate}</strong></div>`;
+                                        }
+                                        return '';
+                                    })()}
+                                    ${acePoints < 10 && acePoints >= 0 ? `<div class="ace-info"><span>Points until next Ace:</span> <strong>${10 - (acePoints % 10)}</strong></div>` : 
+                                    acePoints >= 10 ? `<div class="ace-info"><span>Points until next Ace:</span> <strong>${10 - (acePoints % 10)}</strong></div>` : ''}
+                                ` : `
+                                    <div style="color: #dc3545;">
+                                        <div><span>Need:</span> ${summary.totalPoints < 4 ? `${4 - summary.totalPoints} more points` : ''}
+                                        ${summary.totalPoints < 4 && judgeCount < 2 ? ', ' : ''}
+                                        ${judgeCount < 2 ? `${2 - judgeCount} more judge${judgeCount === 0 ? 's' : ''}` : ''}
+                                        ${level.startsWith('Games ') && getUniqueGames(summary.records).size < 2 ? 
+                                            `${(summary.totalPoints < 4 || judgeCount < 2) ? ', ' : ''}${2 - getUniqueGames(summary.records).size} more different game${getUniqueGames(summary.records).size === 0 ? 's' : ''}` : ''}</div>
+                                        ${!isValidated && !level.startsWith('Games ') ? `<div><span>Prerequisites:</span> ${getPrerequisiteText(level)}</div>` : ''}
+                                    </div>
+                                `}
+                            </div>
+                        </div>
+                        <button class="details-btn" onclick="showLevelDetails('${level}', '${dogName}')">Details</button>
+                    </div>
+                `;
+            });
+
+            document.getElementById('summaryContent').innerHTML = html || '<div class="error-message">No level data to display</div>';
+        }
+
+        function calculateTitlePoints(records) {
+            // Sort records chronologically
+            const sortedRecords = records
+                .filter(r => r.points > 0 && r.date instanceof Date && !isNaN(r.date))
+                .sort((a, b) => a.date - b.date);
+            
+            let cumulativePoints = 0;
+            let judges = new Set();
+            
+            for (const record of sortedRecords) {
+                const prevPoints = cumulativePoints;
+                const prevJudgeCount = judges.size;
+                
+                cumulativePoints += record.points;
+                if (record.judge) judges.add(record.judge);
+                
+                // Check if title requirements are NOW met (but weren't before)
+                const nowHasTitle = cumulativePoints >= 4 && judges.size >= 2;
+                const previouslyHadTitle = prevPoints >= 4 && prevJudgeCount >= 2;
+                
+                if (nowHasTitle && !previouslyHadTitle) {
+                    // Title was just earned with this record
+                    // Calculate how many points from this record went to earning the title
+                    let pointsTowardTitle = record.points;
+                    
+                    // If we already had 4+ points but needed another judge
+                    if (prevPoints >= 4 && prevJudgeCount < 2) {
+                        // Only 1 point goes to title (to satisfy the minimum), rest goes to ace
+                        pointsTowardTitle = 1;
+                    }
+                    // If we had 2+ judges but needed more points
+                    else if (prevJudgeCount >= 2 && prevPoints < 4) {
+                        // Only enough points to reach 4 go to title
+                        pointsTowardTitle = 4 - prevPoints;
+                    }
+                    // If we needed both conditions
+                    else if (prevPoints < 4 && prevJudgeCount < 2) {
+                        // Enough points to reach 4, or all the points if less than needed
+                        pointsTowardTitle = Math.min(record.points, 4 - prevPoints);
+                    }
+                    
+                    return {
+                        titlePoints: prevPoints + pointsTowardTitle,
+                        titleDate: record.date
+                    };
+                }
+            }
+            
+            // If we get here, either no title was earned, or all points go to title
+            return {
+                titlePoints: cumulativePoints,
+                titleDate: sortedRecords[sortedRecords.length - 1]?.date
+            };
+        }
+
+        function findAceEarnedDates(records, titlePoints) {
+            const sortedRecords = records
+                .filter(r => r.points > 0 && r.date instanceof Date && !isNaN(r.date))
+                .sort((a, b) => a.date - b.date);
+            
+            let cumulativePoints = 0;
+            const aceEarnedDates = [];
+            
+            for (const record of sortedRecords) {
+                const prevPoints = cumulativePoints;
+                cumulativePoints += record.points;
+                
+                // Check for ace milestones after title was earned
+                if (prevPoints >= titlePoints && cumulativePoints > titlePoints) {
+                    const prevAcePoints = prevPoints - titlePoints;
+                    const newAcePoints = cumulativePoints - titlePoints;
+                    
+                    const prevAceCount = Math.floor(prevAcePoints / 10);
+                    const newAceCount = Math.floor(newAcePoints / 10);
+                    
+                    // If ace count increased, record when each ace was earned
+                    for (let i = prevAceCount + 1; i <= newAceCount; i++) {
+                        aceEarnedDates.push({
+                            aceNumber: i,
+                            date: record.date
+                        });
+                    }
+                }
+            }
+            
+            return aceEarnedDates;
+        }
+
+        function applyValidationRules(levelSummary) {
+            const validatedLevels = {};
+            
+            // First, mark all levels without prerequisites as valid (but check Games separately)
+            Object.keys(levelSummary).forEach(level => {
+                if (!prerequisites[level] && !level.startsWith('Games ')) {
+                    validatedLevels[level] = true;
+                }
+            });
+
+            // Handle Games levels specially - they need 2+ different games
+            Object.keys(levelSummary).forEach(level => {
+                if (level.startsWith('Games ')) {
+                    const summary = levelSummary[level];
+                    const uniqueGames = getUniqueGames(summary.records);
+                    const hasEnoughGames = uniqueGames.size >= 2;
+                    const hasBasicRequirements = summary.totalPoints >= 4 && summary.judges.size >= 2;
+                    validatedLevels[level] = hasEnoughGames && hasBasicRequirements;
+                }
+            });
+
+            // Then validate levels with prerequisites
+            Object.keys(prerequisites).forEach(level => {
+                if (!levelSummary[level]) {
+                    validatedLevels[level] = false;
+                    return;
+                }
+
+                let meetsPrereqCriteria = false;
+
+                if (level === "Investigator 3") {
+                    // Special case: requires either Patrol 1 OR Detective 2
+                    const patrol1Valid = checkLevelRequirements(levelSummary["Patrol 1"]);
+                    const detective2Valid = checkLevelRequirements(levelSummary["Detective 2"]);
+                    meetsPrereqCriteria = patrol1Valid || detective2Valid;
+                } else {
+                    // Standard case: check direct prerequisite
+                    const prereqLevel = prerequisites[level][0];
+                    meetsPrereqCriteria = checkLevelRequirements(levelSummary[prereqLevel]);
+                }
+
+                validatedLevels[level] = meetsPrereqCriteria;
+            });
+
+            return validatedLevels;
+        }
+
+        function getUniqueGames(records) {
+            const games = new Set();
+            const gamesList = ['BJ', 'C', 'P', 'T', 'GB'];
+            
+            records.forEach(record => {
+                if (record.results) {
+                    const results = record.results.toString().toUpperCase();
+                    gamesList.forEach(game => {
+                        if (results.includes(game)) {
+                            games.add(game);
+                        }
+                    });
+                }
+            });
+            
+            return games;
+        }
+
+        function checkLevelRequirements(levelData) {
+            if (!levelData) return false;
+            return levelData.totalPoints >= 4 && levelData.judges.size >= 2;
+        }
+
+        function getPrerequisiteText(level) {
+            if (!prerequisites[level]) return 'None';
+            
+            if (level === "Investigator 3") {
+                return 'Either "Patrol 1" OR "Detective 2" (4+ points, 2+ judges each)';
+            }
+            
+            return `"${prerequisites[level][0]}" (4+ points, 2+ judges)`;
+        }
+
+        function showLevelDetails(level, dogName) {
+            const records = currentDogRecords.filter(r => r.level === level);
+            
+            document.getElementById('modalTitle').textContent = `${dogName} - ${level} Details`;
+            
+            let html = `
+                <table class="records-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Judge</th>
+                            <th>Results</th>
+                            <th>Points</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            records.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            records.forEach(record => {
+                const date = record.date && record.date instanceof Date && !isNaN(record.date) 
+                    ? record.date.toLocaleDateString() 
+                    : 'N/A';
+                const pointsClass = record.points > 0 ? 'points-badge' : 'points-badge zero';
+                
+                html += `
+                    <tr>
+                        <td>${date}</td>
+                        <td>${record.judge || 'N/A'}</td>
+                        <td>${record.results || 'N/A'}</td>
+                        <td><span class="${pointsClass}">${record.points}</span></td>
+                    </tr>
+                `;
+            });
+
+            html += '</tbody></table>';
+            
+            document.getElementById('modalBody').innerHTML = html;
+            document.getElementById('detailsModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('detailsModal').style.display = 'none';
+        }
+
+        // Initialize - but make it more immediate
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, starting data load...');
+            // Show we're ready immediately
+            document.getElementById('lastUpdated').textContent = 'Loading data...';
+            
+            // Load data with a small delay to ensure DOM is ready
+            setTimeout(() => {
+                loadDataFromFile();
+            }, 100);
+        });
+
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            const modal = document.getElementById('detailsModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        };
+    </script>
+</body>
+</html>
