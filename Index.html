@@ -610,46 +610,112 @@
 
         // Function to load and display the C-WAGS logo
         async function loadLogos() {
-            try {
-                const response = await window.fs.readFile('C-WAGS-NEW.png');
-                const blob = new Blob([response], { type: 'image/png' });
-                const url = URL.createObjectURL(blob);
+            console.log('Loading logos...');
+            
+            // Check if window.fs is available (Claude.ai environment)
+            if (typeof window.fs !== 'undefined' && window.fs.readFile) {
+                try {
+                    console.log('Attempting to read C-WAGS-NEW.png...');
+                    const response = await window.fs.readFile('C-WAGS-NEW.png');
+                    console.log('PNG file read successfully, size:', response.length);
+                    
+                    const blob = new Blob([response], { type: 'image/png' });
+                    const url = URL.createObjectURL(blob);
+                    
+                    const img = new Image();
+                    img.onload = function() {
+                        console.log('Image loaded successfully');
+                        
+                        // Draw to left canvas
+                        const leftCanvas = document.getElementById('leftLogo');
+                        if (leftCanvas) {
+                            console.log('Drawing to left canvas');
+                            const leftCtx = leftCanvas.getContext('2d');
+                            leftCtx.clearRect(0, 0, 80, 80);
+                            leftCtx.drawImage(img, 0, 0, 80, 80);
+                            
+                            // Apply white overlay for dark background
+                            leftCtx.globalCompositeOperation = 'source-in';
+                            leftCtx.fillStyle = 'white';
+                            leftCtx.fillRect(0, 0, 80, 80);
+                            leftCtx.globalCompositeOperation = 'source-over';
+                        }
+                        
+                        // Draw to right canvas
+                        const rightCanvas = document.getElementById('rightLogo');
+                        if (rightCanvas) {
+                            console.log('Drawing to right canvas');
+                            const rightCtx = rightCanvas.getContext('2d');
+                            rightCtx.clearRect(0, 0, 80, 80);
+                            rightCtx.drawImage(img, 0, 0, 80, 80);
+                            
+                            // Apply white overlay for dark background
+                            rightCtx.globalCompositeOperation = 'source-in';
+                            rightCtx.fillStyle = 'white';
+                            rightCtx.fillRect(0, 0, 80, 80);
+                            rightCtx.globalCompositeOperation = 'source-over';
+                        }
+                        
+                        URL.revokeObjectURL(url);
+                    };
+                    img.onerror = function() {
+                        console.log('Error loading logo image, using fallback');
+                        drawFallbackLogos();
+                    };
+                    img.src = url;
+                } catch (error) {
+                    console.log('Logo file not found:', error.message);
+                    drawFallbackLogos();
+                }
+            } else {
+                console.log('window.fs not available, trying alternative logo loading...');
                 
+                // Try to load logo via URL (for local files with web server)
                 const img = new Image();
                 img.onload = function() {
-                    // Draw to left canvas
-                    const leftCanvas = document.getElementById('leftLogo');
-                    const leftCtx = leftCanvas.getContext('2d');
-                    leftCtx.clearRect(0, 0, 80, 80);
-                    leftCtx.filter = 'brightness(0) invert(1)';
-                    leftCtx.drawImage(img, 0, 0, 80, 80);
+                    console.log('Logo loaded via URL');
                     
-                    // Draw to right canvas
-                    const rightCanvas = document.getElementById('rightLogo');
-                    const rightCtx = rightCanvas.getContext('2d');
-                    rightCtx.clearRect(0, 0, 80, 80);
-                    rightCtx.filter = 'brightness(0) invert(1)';
-                    rightCtx.drawImage(img, 0, 0, 80, 80);
-                    
-                    URL.revokeObjectURL(url);
+                    // Draw to both canvases
+                    ['leftLogo', 'rightLogo'].forEach(canvasId => {
+                        const canvas = document.getElementById(canvasId);
+                        if (canvas) {
+                            const ctx = canvas.getContext('2d');
+                            ctx.clearRect(0, 0, 80, 80);
+                            ctx.drawImage(img, 0, 0, 80, 80);
+                            
+                            // Apply white overlay
+                            ctx.globalCompositeOperation = 'source-in';
+                            ctx.fillStyle = 'white';
+                            ctx.fillRect(0, 0, 80, 80);
+                            ctx.globalCompositeOperation = 'source-over';
+                        }
+                    });
                 };
-                img.src = url;
-            } catch (error) {
-                console.log('Logo file not found, using fallback');
-                drawFallbackLogos();
+                img.onerror = function() {
+                    console.log('Could not load logo via URL, using fallback');
+                    drawFallbackLogos();
+                };
+                img.src = 'C-WAGS-NEW.png';
             }
         }
 
         function drawFallbackLogos() {
+            console.log('Drawing fallback logos');
             const canvases = ['leftLogo', 'rightLogo'];
             canvases.forEach(canvasId => {
                 const canvas = document.getElementById(canvasId);
-                const ctx = canvas.getContext('2d');
-                ctx.clearRect(0, 0, 80, 80);
-                ctx.fillStyle = 'white';
-                ctx.font = 'bold 12px Arial';
-                ctx.textAlign = 'center';
-                ctx.fillText('C-WAGS', 40, 45);
+                if (canvas) {
+                    console.log('Drawing fallback to', canvasId);
+                    const ctx = canvas.getContext('2d');
+                    ctx.clearRect(0, 0, 80, 80);
+                    ctx.fillStyle = 'white';
+                    ctx.font = 'bold 12px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('C-WAGS', 40, 40);
+                } else {
+                    console.log('Canvas not found:', canvasId);
+                }
             });
         }
 
@@ -658,6 +724,225 @@
             const orderedLevels = levelOrder.filter(level => availableLevels.includes(level));
             const unorderedLevels = availableLevels.filter(level => !levelOrder.includes(level));
             return [...orderedLevels, ...unorderedLevels.sort()];
+        }
+
+        function showOwnerView() {
+            console.log('Owner view clicked');
+            console.log('Trialing data length:', trialingData.length);
+            
+            if (trialingData.length === 0) {
+                alert('Please wait for trialing data to load');
+                return;
+            }
+
+            // Group all records by registration number (middle 4 digits)
+            const dogGroups = {};
+            
+            trialingData.forEach(record => {
+                if (!record.registrationNumber) return;
+                
+                // Extract middle 4 digits
+                const parts = record.registrationNumber.split('-');
+                if (parts.length >= 2) {
+                    const middleDigits = parts[1];
+                    const callName = record.callName || 'Unknown';
+                    
+                    if (!dogGroups[middleDigits]) {
+                        dogGroups[middleDigits] = {
+                            callName: callName,
+                            records: []
+                        };
+                    }
+                    dogGroups[middleDigits].records.push(record);
+                }
+            });
+
+            console.log('Dog groups:', dogGroups);
+            console.log('Number of dogs found:', Object.keys(dogGroups).length);
+
+            // Create the owner view table
+            displayOwnerView(dogGroups);
+        }
+
+        function displayOwnerView(dogGroups) {
+            console.log('Displaying owner view with dog groups:', dogGroups);
+            
+            if (Object.keys(dogGroups).length === 0) {
+                document.getElementById('summaryContent').innerHTML = `
+                    <button class="back-to-search" onclick="backToSearch()">← Back to Search</button>
+                    <div class="error-message">No dogs found in the data. Make sure your data file is loaded and contains valid registration numbers.</div>
+                `;
+                return;
+            }
+            
+            let html = `
+                <button class="back-to-search" onclick="backToSearch()">← Back to Search</button>
+                <div class="owner-view-container">
+                    <table class="owner-grid">
+                        <thead>
+                            <tr>
+                                <th class="level-cell">Level</th>
+            `;
+
+            // Sort dogs by call name for consistent display - with null checking
+            const sortedDogs = Object.keys(dogGroups).sort((a, b) => {
+                const nameA = dogGroups[a].callName || 'Unknown';
+                const nameB = dogGroups[b].callName || 'Unknown';
+                return nameA.localeCompare(nameB);
+            });
+
+            console.log('Sorted dogs:', sortedDogs);
+
+            // Add dog headers (call names)
+            sortedDogs.forEach(middleDigits => {
+                const callName = dogGroups[middleDigits].callName || 'Unknown';
+                html += `<th class="dog-header">${callName}<br>(${middleDigits})</th>`;
+            });
+
+            html += `</tr></thead><tbody>`;
+
+            // For each level, show the Q's needed for each dog
+            levelOrder.forEach(level => {
+                html += `<tr><td class="level-cell">${level}</td>`;
+                
+                sortedDogs.forEach(middleDigits => {
+                    const dogRecords = dogGroups[middleDigits].records.filter(r => r.level === level);
+                    const qsNeeded = calculateQsNeeded(dogRecords, level, dogGroups[middleDigits].records);
+                    
+                    let cellClass = 'no-data';
+                    let cellContent = '-';
+                    
+                    if (dogRecords.length > 0) {
+                        if (qsNeeded.status === 'title-ready') {
+                            cellClass = 'title-ready';
+                            cellContent = 'Title Ready!';
+                        } else if (qsNeeded.status === 'ace-progress') {
+                            cellClass = 'ace-progress';
+                            cellContent = `${qsNeeded.value}Q to Ace`;
+                        } else {
+                            cellClass = 'q-needed';
+                            cellContent = `${qsNeeded.value}Q`;
+                        }
+                    }
+                    
+                    html += `<td class="${cellClass}">${cellContent}</td>`;
+                });
+                
+                html += `</tr>`;
+            });
+
+            html += `</tbody></table></div>`;
+            
+            console.log('Setting owner view HTML');
+            document.getElementById('summaryContent').innerHTML = html;
+        }
+
+        function calculateQsNeeded(levelRecords, level, allDogRecords) {
+            if (levelRecords.length === 0) {
+                return { status: 'no-data', value: 0 };
+            }
+
+            // Calculate current totals for this level
+            const levelSummary = {
+                totalPoints: 0,
+                judges: new Set(),
+                records: levelRecords
+            };
+            
+            levelRecords.forEach(record => {
+                if (record.points > 0) {
+                    levelSummary.totalPoints += record.points;
+                    if (record.judge) {
+                        levelSummary.judges.add(record.judge);
+                    }
+                }
+            });
+
+            // Check prerequisites
+            const isValidated = checkPrerequisites(level, allDogRecords);
+            
+            // Check if title requirements are met
+            const hasEnoughQs = levelSummary.totalPoints >= 4;
+            const hasEnoughJudges = levelSummary.judges.size >= 2;
+            let hasEnoughGames = true;
+            
+            if (level.startsWith('Games ')) {
+                const uniqueGames = getUniqueGames(levelRecords);
+                hasEnoughGames = uniqueGames.size >= 2;
+            }
+            
+            const hasTitleRequirements = hasEnoughQs && hasEnoughJudges && hasEnoughGames && isValidated;
+            
+            if (hasTitleRequirements) {
+                // Title is earned, calculate ace progress
+                const titleInfo = calculateTitlePoints(levelRecords);
+                const acePoints = Math.max(0, levelSummary.totalPoints - titleInfo.titlePoints);
+                const qsUntilNextAce = 10 - (acePoints % 10);
+                
+                return { 
+                    status: 'ace-progress', 
+                    value: qsUntilNextAce === 10 ? 10 : qsUntilNextAce 
+                };
+            } else {
+                // Calculate what's needed for title
+                let qsNeeded = 0;
+                
+                if (!hasEnoughQs) {
+                    qsNeeded = Math.max(qsNeeded, 4 - levelSummary.totalPoints);
+                }
+                
+                if (!hasEnoughJudges && hasEnoughQs) {
+                    qsNeeded = Math.max(qsNeeded, 1); // Need at least 1 more Q from different judge
+                }
+                
+                if (!hasEnoughJudges && !hasEnoughQs) {
+                    qsNeeded = Math.max(qsNeeded, 4 - levelSummary.totalPoints);
+                }
+                
+                return { status: 'needs-title', value: qsNeeded };
+            }
+        }
+
+        function checkPrerequisites(level, allDogRecords) {
+            if (!prerequisites[level] && !level.startsWith('Games ')) {
+                return true;
+            }
+            
+            if (level.startsWith('Games ')) {
+                return true; // Games validation handled separately
+            }
+            
+            if (level === "Investigator 3") {
+                // Special case: requires either Patrol 1 OR Detective 2
+                const patrol1Records = allDogRecords.filter(r => r.level === "Patrol 1");
+                const detective2Records = allDogRecords.filter(r => r.level === "Detective 2");
+                
+                const patrol1Valid = checkLevelTitleRequirements(patrol1Records);
+                const detective2Valid = checkLevelTitleRequirements(detective2Records);
+                
+                return patrol1Valid || detective2Valid;
+            } else {
+                // Standard case
+                const prereqLevel = prerequisites[level][0];
+                const prereqRecords = allDogRecords.filter(r => r.level === prereqLevel);
+                return checkLevelTitleRequirements(prereqRecords);
+            }
+        }
+
+        function checkLevelTitleRequirements(records) {
+            if (records.length === 0) return false;
+            
+            let totalPoints = 0;
+            const judges = new Set();
+            
+            records.forEach(record => {
+                if (record.points > 0) {
+                    totalPoints += record.points;
+                    if (record.judge) judges.add(record.judge);
+                }
+            });
+            
+            return totalPoints >= 4 && judges.size >= 2;
         }
 
         function showOwnerView() {
@@ -916,15 +1201,18 @@
                             </ul>
                         </div>
                     `;
-                    console.log('Data processing complete');
-                    loadLogos(); // Load the logos after data is loaded
+                    console.log('Data processing complete. Total records:', trialingData.length);
+                    
+                    // Show first few records for debugging
+                    if (trialingData.length > 0) {
+                        console.log('Sample records:', trialingData.slice(0, 3));
+                    }
                 })
                 .catch(error => {
                     clearTimeout(timeoutId);
                     console.error('Error loading data:', error);
                     document.getElementById('lastUpdated').textContent = 'File not found';
                     showFileUpload();
-                    loadLogos(); // Load logos even if data fails
                 });
         }
 
@@ -1491,6 +1779,9 @@
             console.log('DOM loaded, starting data load...');
             // Show we're ready immediately
             document.getElementById('lastUpdated').textContent = 'Loading data...';
+            
+            // Load logos immediately
+            loadLogos();
             
             // Load data with a small delay to ensure DOM is ready
             setTimeout(() => {
