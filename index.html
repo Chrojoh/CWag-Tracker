@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dog Training Records Tracker</title>
+    <title>Dog Trialing Records Tracker</title>
     <style>
         * {
             margin: 0;
@@ -29,89 +29,6 @@
             position: relative;
         }
 
-        /* Loading Screen Styles */
-        .loading-screen {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            color: white;
-        }
-
-        .loading-content {
-            text-align: center;
-            padding: 40px;
-        }
-
-        .loading-spinner {
-            width: 60px;
-            height: 60px;
-            border: 4px solid rgba(255,255,255,0.3);
-            border-top: 4px solid white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 30px auto;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .loading-content h2 {
-            font-size: 2rem;
-            margin-bottom: 15px;
-            font-weight: 600;
-        }
-
-        .loading-content p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            margin-bottom: 20px;
-        }
-
-        .loading-progress {
-            background: rgba(255,255,255,0.2);
-            height: 4px;
-            border-radius: 2px;
-            overflow: hidden;
-            max-width: 300px;
-            margin: 0 auto;
-        }
-
-        .loading-progress::before {
-            content: '';
-            display: block;
-            height: 100%;
-            background: white;
-            border-radius: 2px;
-            animation: progress 2s ease-in-out infinite;
-        }
-
-        @keyframes progress {
-            0% { width: 0%; transform: translateX(-100%); }
-            50% { width: 100%; transform: translateX(0%); }
-            100% { width: 100%; transform: translateX(100%); }
-        }
-
-        /* Main App Styles */
-        .main-app {
-            min-height: 100vh;
-        }
-
-        .data-status {
-            text-align: center;
-            margin-top: 10px;
-            font-size: 0.9rem;
-            color: #6c757d;
-        }
-
         .header {
             background: linear-gradient(90deg, #2c3e50, #34495e);
             color: white;
@@ -127,92 +44,13 @@
         .header p {
             opacity: 0.9;
             font-size: 1.1rem;
+            margin-bottom: 5px;
         }
 
-        .upload-section {
-            padding: 20px 30px;
-            background: #fff3cd;
-            border-bottom: 1px solid #ffeaa7;
-            display: none; /* Hidden since we're auto-loading */
-        }
-
-        .upload-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .data-source-options {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .source-option {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .source-divider {
-            font-weight: bold;
-            color: #6c757d;
-            padding: 0 20px;
-        }
-
-        .url-input {
-            padding: 10px;
-            border: 2px dashed #17a2b8;
-            border-radius: 8px;
-            background: white;
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .url-input input {
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 8px 12px;
+        .last-updated {
+            opacity: 0.8;
             font-size: 0.95rem;
-            min-width: 300px;
-        }
-
-        @media (max-width: 768px) {
-            .data-source-options {
-                width: 100%;
-            }
-            
-            .source-option {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .url-input input {
-                min-width: 250px;
-                margin-top: 10px;
-                margin-left: 0 !important;
-            }
-        }
-
-        .file-input {
-            padding: 10px;
-            border: 2px dashed #f39c12;
-            border-radius: 8px;
-            background: white;
-        }
-
-        .upload-btn {
-            padding: 10px 20px;
-            background: #f39c12;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
+            font-style: italic;
         }
 
         .search-section {
@@ -503,99 +341,71 @@
             max-height: 60vh;
             overflow-y: auto;
         }
+
+        .loading-message {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+            font-size: 1.1rem;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Loading Screen -->
-        <div id="loadingScreen" class="loading-screen">
-            <div class="loading-content">
-                <div class="loading-spinner"></div>
-                <h2>🐕 Loading Training Data</h2>
-                <p>Connecting to database and processing records...</p>
-                <div class="loading-progress"></div>
-                <div id="loadingProgress"></div>
+        <div class="header">
+            <h1>CWAGS Tracker</h1>
+            <p>Track your dog's trialing progress, points, and title eligibility</p>
+            <div class="last-updated" id="lastUpdated">Loading data...</div>
+        </div>
+
+        <div class="search-section">
+            <div class="search-container">
+                <input type="text" id="searchInput" class="search-input" 
+                       placeholder="Enter Registration Number (e.g., 17-1734-06)" 
+                       onkeypress="handleKeyPress(event)">
+                <button class="search-btn" onclick="searchDog()">Search Dog Records</button>
             </div>
         </div>
 
-        <!-- Main Application -->
-        <div id="mainContent" class="main-app" style="display: none;">
-            <div class="header">
-                <h1>CWAGS  Tracker</h1>
-                <p>Track your dog's training progress, points, and title eligibility</p>
-            </div>
-
-            <div class="upload-section">
-                <div class="upload-container">
-                    <div class="data-source-options">
-                        <div class="source-option">
-                            <label for="dataUrl" class="url-input">
-                                <strong>Load from URL:</strong>
-                                <input type="url" id="dataUrl" placeholder="https://example.com/training-data.xlsx" style="margin-left: 10px; width: 400px;">
-                            </label>
-                            <button class="upload-btn" onclick="loadDataFromUrl()">Load from URL</button>
-                        </div>
-                        <div class="source-divider">OR</div>
-                        <div class="source-option">
-                            <label for="dataFile" class="file-input">
-                                <strong>Upload File:</strong>
-                                <input type="file" id="dataFile" accept=".xlsx,.xls,.csv" style="margin-left: 10px;">
-                            </label>
-                            <button class="upload-btn" onclick="loadDataFromFile()">Load File</button>
-                        </div>
+        <div class="main-content">
+            <div class="summary-section">
+                <div class="section-header">Points Summary & Title Progress</div>
+                <div class="section-content" id="summaryContent">
+                    <div class="loading-message">
+                        Loading trialing data...
                     </div>
-                    <span id="uploadStatus"></span>
-                </div>
-            </div>
-
-            <div class="search-section">
-                <div class="search-container">
-                    <input type="text" id="searchInput" class="search-input" 
-                           placeholder="Enter Registration Number (e.g., 17-1734-06)" 
-                           onkeypress="handleKeyPress(event)">
-                    <button class="search-btn" onclick="searchDog()">Search Dog Records</button>
-                </div>
-            </div>
-
-            <div class="main-content">
-                <div class="summary-section">
-                    <div class="section-header">Points Summary & Title Progress</div>
-                    <div class="section-content" id="summaryContent">
-                        <div class="validation-rules">
-                            <h4>Title Requirements</h4>
-                            <ul>
-                                <li>Minimum 4 points required for each level</li>
-                                <li>Points must come from at least 2 different judges</li>
-                                <li>Prerequisites must be met before advancing to higher levels</li>
-                                <li>Special case: "Investigator 3" requires either "Patrol 1" OR "Detective 2"</li>
-                                <li>Games levels require at least 2 different games (BJ, C, P, T, GB)</li>
-                                <li>Ace awards given every 10 points after title is earned</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Modal for showing detailed records -->
-            <div id="detailsModal" class="modal">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h2 id="modalTitle">Level Details</h2>
-                        <span class="close" onclick="closeModal()">&times;</span>
-                    </div>
-                    <div class="modal-body" id="modalBody">
-                        <!-- Details will be populated here -->
+                    <div class="validation-rules">
+                        <h4>Title Requirements</h4>
+                        <ul>
+                            <li>Minimum 4 points required for each level</li>
+                            <li>Points must come from at least 2 different judges</li>
+                            <li>Prerequisites must be met before advancing to higher levels</li>
+                            <li>Special case: "Investigator 3" requires either "Patrol 1" OR "Detective 2"</li>
+                            <li>Games levels require at least 2 different games (BJ, C, P, T, GB)</li>
+                            <li>Ace awards given every 10 points after title is earned</li>
+                        </ul>
                     </div>
                 </div>
             </div>
         </div>
-        
-        <div class="data-status" id="dataStatus"></div>
+
+        <!-- Modal for showing detailed records -->
+        <div id="detailsModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modalTitle">Level Details</h2>
+                    <span class="close" onclick="closeModal()">&times;</span>
+                </div>
+                <div class="modal-body" id="modalBody">
+                    <!-- Details will be populated here -->
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
-        let trainingData = [];
+        let trialingData = [];
         let currentDogRecords = [];
         
         // Level prerequisites mapping
@@ -674,44 +484,76 @@
             }
         }
 
-        function loadDataFromUrl() {
-            const urlInput = document.getElementById('dataUrl');
-            const url = urlInput.value.trim();
+        function loadDataFromFile() {
+            console.log('Starting data load process...');
             
-            if (!url) {
-                alert('Please enter a URL');
-                return;
-            }
+            // Set a timeout to show manual upload option if loading takes too long
+            const timeoutId = setTimeout(() => {
+                console.log('Load timeout - showing manual upload option');
+                showFileUpload();
+            }, 3000);
 
-            if (!isValidUrl(url)) {
-                alert('Please enter a valid URL');
-                return;
-            }
-
-            document.getElementById('uploadStatus').innerHTML = 
-                '<span style="color: #17a2b8;">⏳ Loading data from URL...</span>';
-
-            fetch(url)
+            // First try to load the expected file
+            fetch('Data for Tracker web.xlsx')
                 .then(response => {
+                    clearTimeout(timeoutId);
+                    console.log('Fetch response status:', response.status);
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
+                    console.log('File found, reading data...');
                     return response.arrayBuffer();
                 })
                 .then(data => {
+                    console.log('Data received, size:', data.byteLength, 'bytes');
                     processExcelData(new Uint8Array(data));
-                    document.getElementById('uploadStatus').innerHTML = 
-                        `<span style="color: green;">✓ Loaded ${trainingData.length} records from URL</span>`;
+                    updateLastUpdatedDate();
+                    document.getElementById('summaryContent').innerHTML = `
+                        <div class="validation-rules">
+                            <h4>Title Requirements</h4>
+                            <ul>
+                                <li>Minimum 4 points required for each level</li>
+                                <li>Points must come from at least 2 different judges</li>
+                                <li>Prerequisites must be met before advancing to higher levels</li>
+                                <li>Special case: "Investigator 3" requires either "Patrol 1" OR "Detective 2"</li>
+                                <li>Games levels require at least 2 different games (BJ, C, P, T, GB)</li>
+                                <li>Ace awards given every 10 points after title is earned</li>
+                            </ul>
+                        </div>
+                    `;
+                    console.log('Data processing complete');
                 })
                 .catch(error => {
-                    console.error('Error loading from URL:', error);
-                    document.getElementById('uploadStatus').innerHTML = 
-                        `<span style="color: red;">Error loading from URL: ${error.message}</span>`;
+                    clearTimeout(timeoutId);
+                    console.error('Error loading data:', error);
+                    document.getElementById('lastUpdated').textContent = 'File not found';
+                    showFileUpload();
                 });
         }
 
-        function loadDataFromFile() {
-            const fileInput = document.getElementById('dataFile');
+        function showFileUpload() {
+            document.getElementById('summaryContent').innerHTML = `
+                <div style="text-align: center; padding: 40px;">
+                    <h3 style="color: #17a2b8; margin-bottom: 20px;">📁 Upload Data File</h3>
+                    <p style="margin-bottom: 20px;">Select your Excel file to load the trialing data:</p>
+                    
+                    <div style="background: #f8f9fa; padding: 30px; border-radius: 12px; border: 2px dashed #dee2e6; margin: 20px 0;">
+                        <input type="file" id="manualDataFile" accept=".xlsx,.xls,.csv" style="margin-bottom: 15px;">
+                        <br>
+                        <button onclick="loadManualFile()" style="background: #28a745; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 1rem;">
+                            📤 Load File
+                        </button>
+                    </div>
+                    
+                    <button onclick="loadDataFromFile()" style="background: #6c757d; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; margin-top: 15px;">
+                        ← Try Auto-Loading Again
+                    </button>
+                </div>
+            `;
+        }
+
+        function loadManualFile() {
+            const fileInput = document.getElementById('manualDataFile');
             const file = fileInput.files[0];
             
             if (!file) {
@@ -719,22 +561,36 @@
                 return;
             }
 
-            document.getElementById('uploadStatus').innerHTML = 
-                '<span style="color: #17a2b8;">⏳ Loading file...</span>';
-
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
                     const data = new Uint8Array(e.target.result);
                     processExcelData(data);
-                    document.getElementById('uploadStatus').innerHTML = 
-                        `<span style="color: green;">✓ Loaded ${trainingData.length} records from file</span>`;
+                    updateLastUpdatedDate();
+                    document.getElementById('summaryContent').innerHTML = `
+                        <div class="validation-rules">
+                            <h4>Title Requirements</h4>
+                            <ul>
+                                <li>Minimum 4 points required for each level</li>
+                                <li>Points must come from at least 2 different judges</li>
+                                <li>Prerequisites must be met before advancing to higher levels</li>
+                                <li>Special case: "Investigator 3" requires either "Patrol 1" OR "Detective 2"</li>
+                                <li>Games levels require at least 2 different games (BJ, C, P, T, GB)</li>
+                                <li>Ace awards given every 10 points after title is earned</li>
+                            </ul>
+                        </div>
+                    `;
+                    alert(`Successfully loaded ${trialingData.length} records!`);
                 } catch (error) {
-                    console.error('Error loading file:', error);
-                    document.getElementById('uploadStatus').innerHTML = 
-                        `<span style="color: red;">Error loading file: ${error.message}</span>`;
+                    console.error('Error loading manual file:', error);
+                    alert(`Error loading file: ${error.message}`);
                 }
             };
+            
+            reader.onerror = function() {
+                alert('Error reading file. Please try again.');
+            };
+            
             reader.readAsArrayBuffer(file);
         }
 
@@ -746,7 +602,7 @@
             const jsonData = XLSX.utils.sheet_to_json(dataSheet, {header: 1, dateNF: 'yyyy-mm-dd'});
             
             // Process the data with proper date handling
-            trainingData = jsonData.slice(1).map(row => {
+            trialingData = jsonData.slice(1).map(row => {
                 let processedDate = row[2];
                 
                 // Handle different date formats
@@ -776,15 +632,27 @@
                 };
             }).filter(record => record.registrationNumber && record.level);
             
-            console.log('Data processed:', trainingData.length, 'records');
+            console.log('Data processed:', trialingData.length, 'records');
         }
 
-        function isValidUrl(string) {
-            try {
-                new URL(string);
-                return true;
-            } catch (_) {
-                return false;
+        function updateLastUpdatedDate() {
+            if (trialingData.length === 0) {
+                document.getElementById('lastUpdated').textContent = 'No data available';
+                return;
+            }
+
+            // Find the most recent date in the data
+            const validDates = trialingData
+                .map(record => record.date)
+                .filter(date => date instanceof Date && !isNaN(date))
+                .sort((a, b) => b - a);
+
+            if (validDates.length > 0) {
+                const mostRecentDate = validDates[0];
+                document.getElementById('lastUpdated').textContent = 
+                    `Last updated: ${mostRecentDate.toLocaleDateString()}`;
+            } else {
+                document.getElementById('lastUpdated').textContent = 'Last updated: Unknown';
             }
         }
 
@@ -831,8 +699,8 @@
                 return;
             }
 
-            if (trainingData.length === 0) {
-                alert('Please load training data first');
+            if (trialingData.length === 0) {
+                alert('Please wait for trialing data to load');
                 return;
             }
 
@@ -840,14 +708,14 @@
             const formattedSearch = formatRegistrationNumber(searchInput);
             
             // Find exact matching records only
-            const dogRecords = trainingData.filter(record => 
+            const dogRecords = trialingData.filter(record => 
                 record.registrationNumber && 
                 record.registrationNumber.toLowerCase() === formattedSearch.toLowerCase()
             );
 
             if (dogRecords.length === 0) {
                 // If no exact match, show suggestion with partial matches
-                const partialMatches = trainingData.filter(record =>
+                const partialMatches = trialingData.filter(record =>
                     record.registrationNumber && 
                     record.registrationNumber.toLowerCase().includes(formattedSearch.toLowerCase())
                 ).slice(0, 5); // Limit to 5 suggestions
@@ -911,7 +779,7 @@
                 <div class="dog-info">
                     <h3>${dogName}</h3>
                     <p><strong>Registration:</strong> ${regNumber}</p>
-                    <p><strong>Total Training Records:</strong> ${records.length}</p>
+                    <p><strong>Total Trialing Records:</strong> ${records.length}</p>
                 </div>
             `;
             
@@ -1221,198 +1089,17 @@
             document.getElementById('detailsModal').style.display = 'none';
         }
 
-        function retryLoading() {
-            // Show loading screen again
-            const loadingScreen = document.getElementById('loadingScreen');
-            const mainContent = document.getElementById('mainContent');
-            
-            if (loadingScreen) loadingScreen.style.display = 'flex';
-            if (mainContent) mainContent.style.display = 'none';
-            
-            // Clear any previous data
-            trainingData = [];
-            
-            // Retry the data loading
-            loadDataAutomatically();
-        }
-
-        // Google Sheets URL for automatic loading
-        const DATA_URL = 'https://docs.google.com/spreadsheets/d/1uMRRSdKe6hMM4fD0u8lf5VImCFfSQUEH/export?format=xlsx';
-
-        // Initialize
-        window.onload = function() {
-            console.log('Dog Training Tracker loaded - starting automatic data load');
-            // Small delay to ensure DOM is fully ready
-            setTimeout(() => {
-                loadDataAutomatically();
-            }, 100);
-        };
-
-        // Also try DOMContentLoaded as backup
+        // Initialize - but make it more immediate
         document.addEventListener('DOMContentLoaded', function() {
-            // Only run if window.onload hasn't fired yet
-            if (trainingData.length === 0) {
-                setTimeout(() => {
-                    loadDataAutomatically();
-                }, 200);
-            }
+            console.log('DOM loaded, starting data load...');
+            // Show we're ready immediately
+            document.getElementById('lastUpdated').textContent = 'Loading data...';
+            
+            // Load data with a small delay to ensure DOM is ready
+            setTimeout(() => {
+                loadDataFromFile();
+            }, 100);
         });
-
-        function loadDataAutomatically() {
-            updateLoadingProgress('Connecting to Google Sheets...');
-            
-            fetch(DATA_URL)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    updateLoadingProgress('Downloading training data...');
-                    return response.arrayBuffer();
-                })
-                .then(data => {
-                    updateLoadingProgress('Processing records...');
-                    processExcelData(new Uint8Array(data));
-                    
-                    setTimeout(() => {
-                        updateLoadingProgress('Ready!');
-                        showMainContent();
-                    }, 500);
-                })
-                .catch(error => {
-                    console.error('Error loading data automatically:', error);
-                    showErrorAndFallback(error);
-                });
-        }
-
-        function updateLoadingProgress(message) {
-            const progressElement = document.getElementById('loadingProgress');
-            if (progressElement) {
-                progressElement.innerHTML = 
-                    `<div style="text-align: center; margin-top: 10px; font-size: 0.9rem;">${message}</div>`;
-            }
-        }
-
-        function showMainContent() {
-            const loadingScreen = document.getElementById('loadingScreen');
-            const mainContent = document.getElementById('mainContent');
-            const dataStatus = document.getElementById('dataStatus');
-            
-            if (loadingScreen) loadingScreen.style.display = 'none';
-            if (mainContent) mainContent.style.display = 'block';
-            
-            if (dataStatus) {
-                dataStatus.innerHTML = 
-                    `<span style="color: green;">✓ ${trainingData.length} training records loaded automatically</span>`;
-            }
-        }
-
-        function showErrorAndFallback(error) {
-            const loadingScreen = document.getElementById('loadingScreen');
-            const mainContent = document.getElementById('mainContent');
-            const dataStatus = document.getElementById('dataStatus');
-            const summaryContent = document.getElementById('summaryContent');
-            
-            if (loadingScreen) loadingScreen.style.display = 'none';
-            if (mainContent) mainContent.style.display = 'block';
-            
-            if (dataStatus) {
-                dataStatus.innerHTML = 
-                    `<span style="color: red;">⚠ Could not load data automatically: ${error.message}</span>`;
-            }
-                
-            // Show a simple retry button in the summary content
-            if (summaryContent) {
-                summaryContent.innerHTML = `
-                    <div style="text-align: center; padding: 40px;">
-                        <h3 style="color: #dc3545; margin-bottom: 20px;">Unable to Load Training Data</h3>
-                        <p style="margin-bottom: 20px;">There was an issue connecting to the Google Sheets data source.</p>
-                        <button onclick="retryLoading()" style="background: #28a745; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 1rem;">
-                            Retry Loading Data
-                        </button>
-                        <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; text-align: left;">
-                            <h4>Troubleshooting CORS/Access Issues:</h4>
-                            <ol style="margin-left: 20px; color: #6c757d;">
-                                <li><strong>Make Google Sheet Public:</strong> Share → "Anyone on the internet with this link can view"</li>
-                                <li><strong>Publish to Web:</strong> File → Share → Publish to web → Publish (makes it fully accessible)</li>
-                                <li><strong>Try Manual Upload:</strong> <button onclick="showManualUpload()" style="background: #17a2b8; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;">Enable File Upload</button></li>
-                                <li><strong>Check Internet Connection</strong></li>
-                            </ol>
-                            <div style="margin-top: 15px; padding: 15px; background: #fff3cd; border-radius: 6px; border-left: 4px solid #ffc107;">
-                                <strong>Note:</strong> Some browsers block cross-origin requests for security. The manual upload option always works as a backup.
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-        }
-
-        function showManualUpload() {
-            // Create a manual upload interface as fallback
-            const summaryContent = document.getElementById('summaryContent');
-            if (summaryContent) {
-                summaryContent.innerHTML = `
-                    <div style="text-align: center; padding: 40px;">
-                        <h3 style="color: #17a2b8; margin-bottom: 20px;">📁 Manual File Upload</h3>
-                        <p style="margin-bottom: 20px;">Upload your Excel file directly as a backup method:</p>
-                        
-                        <div style="background: #f8f9fa; padding: 30px; border-radius: 12px; border: 2px dashed #dee2e6; margin: 20px 0;">
-                            <input type="file" id="manualDataFile" accept=".xlsx,.xls,.csv" style="margin-bottom: 15px;">
-                            <br>
-                            <button onclick="loadManualFile()" style="background: #28a745; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 1rem;">
-                                📤 Load File
-                            </button>
-                        </div>
-                        
-                        <button onclick="retryLoading()" style="background: #6c757d; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; margin-top: 15px;">
-                            ← Try Automatic Loading Again
-                        </button>
-                        
-                        <div style="margin-top: 20px; padding: 15px; background: #e7f3ff; border-radius: 6px; text-align: left;">
-                            <h4>How to Download from Google Sheets:</h4>
-                            <ol style="margin-left: 20px; color: #495057;">
-                                <li>Open your Google Sheet</li>
-                                <li>File → Download → Microsoft Excel (.xlsx)</li>
-                                <li>Upload the downloaded file here</li>
-                            </ol>
-                        </div>
-                    </div>
-                `;
-            }
-        }
-
-        function loadManualFile() {
-            const fileInput = document.getElementById('manualDataFile');
-            const file = fileInput.files[0];
-            
-            if (!file) {
-                alert('Please select a file first');
-                return;
-            }
-
-            updateLoadingProgress('Loading uploaded file...');
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    processExcelData(data);
-                    
-                    setTimeout(() => {
-                        updateLoadingProgress('File loaded successfully!');
-                        showMainContent();
-                    }, 500);
-                } catch (error) {
-                    console.error('Error loading manual file:', error);
-                    alert(`Error loading file: ${error.message}`);
-                }
-            };
-            
-            reader.onerror = function() {
-                alert('Error reading file. Please try again.');
-            };
-            
-            reader.readAsArrayBuffer(file);
-        }
 
         // Close modal when clicking outside of it
         window.onclick = function(event) {
