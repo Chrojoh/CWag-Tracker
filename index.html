@@ -1828,52 +1828,8 @@
             `;
         }
 
-        function loadDataFromFile() {
-            console.log('Starting data load process...');
-            
-            // Set a shorter timeout and better error handling
-            const timeoutId = setTimeout(() => {
-                console.log('Load timeout - showing manual upload option');
-                showFileUpload();
-            }, 5000); // Increased to 5 seconds
-
-            // First try to load the expected file
-            fetch('Data for Tracker web.xlsx')
-                .then(response => {
-                    clearTimeout(timeoutId);
-                    console.log('Fetch response status:', response.status);
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    console.log('File found, reading data...');
-                    return response.arrayBuffer();
-                })
-                .then(data => {
-                    console.log('Data received, size:', data.byteLength, 'bytes');
-                    processExcelData(new Uint8Array(data));
-                    updateLastUpdatedDate();
-                    document.getElementById('summaryContent').innerHTML = `
-                        <div class="validation-rules">
-                            <h4>Title Requirements</h4>
-                            <ul>
-                                <li>Minimum 4 points required for each level</li>
-                                <li>Points must come from at least 2 different judges</li>
-                                <li>Prerequisites must be met before advancing to higher levels</li>
-                                <li>Special case: "Investigator 3" requires either "Patrol 1" OR "Detective 2"</li>
-                                <li>Games levels require at least 2 different games (BJ, C, P, T, GB)</li>
-                                <li>Ace awards given every 10 points after title is earned</li>
-                            </ul>
-                        </div>
-                    `;
-                    console.log('Data processing complete');
-                })
-                .catch(error => {
-                    clearTimeout(timeoutId);
-                    console.error('Error loading data:', error);
-                    document.getElementById('lastUpdated').textContent = 'File not found - please upload manually';
-                    showFileUpload();
-                });
-        }
+        // Remove the problematic loadDataFromFile function that was causing loops
+        // Replace with a simpler approach that doesn't auto-retry
 
         function showFileUpload() {
             document.getElementById('summaryContent').innerHTML = `
@@ -2466,51 +2422,101 @@
             document.getElementById('detailsModal').style.display = 'none';
         }
 
-        // Initialize - simplified and more robust
+        // Initialize - much simpler approach to prevent loops
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 CWAGS Tracker initializing...');
-            document.getElementById('lastUpdated').textContent = 'Loading data...';
             
-            // Check fontkit after a delay
+            // Show the interface immediately
+            document.getElementById('summaryContent').innerHTML = `
+                <div class="validation-rules">
+                    <h4>Title Requirements</h4>
+                    <ul>
+                        <li>Minimum 4 points required for each level</li>
+                        <li>Points must come from at least 2 different judges</li>
+                        <li>Prerequisites must be met before advancing to higher levels</li>
+                        <li>Special case: "Investigator 3" requires either "Patrol 1" OR "Detective 2"</li>
+                        <li>Games levels require at least 2 different games (BJ, C, P, T, GB)</li>
+                        <li>Ace awards given every 10 points after title is earned</li>
+                    </ul>
+                </div>
+                <div style="text-align: center; margin-top: 20px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+                    <h4>📁 Load Your Data</h4>
+                    <p>Upload your Excel file to get started:</p>
+                    <input type="file" id="startupFileInput" accept=".xlsx,.xls,.csv" style="margin: 10px;">
+                    <br>
+                    <button onclick="loadStartupFile()" style="background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; margin: 10px;">
+                        📤 Load File
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('lastUpdated').textContent = 'Ready - Please upload your data file';
+            
+            // Try to load DogInfo and Title Placement in background (optional)
             setTimeout(() => {
-                if (typeof fontkit !== 'undefined') {
-                    console.log('✅ Fontkit library loaded successfully');
-                } else {
-                    console.warn('⚠️ Fontkit library failed to load - custom fonts will not work');
-                }
+                loadOptionalFiles();
             }, 1000);
-            
-            // Load files with proper sequencing and error handling
-            setTimeout(async () => {
-                try {
-                    console.log('📊 Step 1: Loading DogInfo data...');
-                    const dogInfoLoaded = await loadDogInfoData();
-                    
-                    if (dogInfoLoaded) {
-                        console.log('✅ Step 1 complete: DogInfo data ready');
-                    } else {
-                        console.log('⚠️ Step 1 skipped: DogInfo not available');
-                    }
-
-                    console.log('📊 Step 2: Loading Title Placement data...');
-                    const titlePlacementLoaded = await loadTitlePlacementData();
-                    
-                    if (titlePlacementLoaded) {
-                        console.log('✅ Step 2 complete: Title Placement data ready');
-                    } else {
-                        console.log('⚠️ Step 2 skipped: Title Placement not available');
-                    }
-                    
-                    console.log('📁 Step 3: Loading main trialing data...');
-                    loadDataFromFile();
-                    
-                } catch (error) {
-                    console.error('❌ Initialization error:', error);
-                    document.getElementById('lastUpdated').textContent = 'Initialization failed';
-                    showFileUpload();
-                }
-            }, 500); // Increased delay to prevent loading loop
         });
+
+        // Load optional files without blocking the interface
+        async function loadOptionalFiles() {
+            try {
+                console.log('Loading optional files...');
+                await loadDogInfoData();
+                await loadTitlePlacementData();
+                console.log('Optional files loaded');
+            } catch (error) {
+                console.log('Optional files not available:', error.message);
+            }
+        }
+
+        // Simple startup file loader
+        function loadStartupFile() {
+            const fileInput = document.getElementById('startupFileInput');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Please select a file first');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    processExcelData(data);
+                    updateLastUpdatedDate();
+                    
+                    // Show success and normal interface
+                    document.getElementById('summaryContent').innerHTML = `
+                        <div style="text-align: center; padding: 20px; background: #d4edda; color: #155724; border-radius: 8px; margin-bottom: 20px;">
+                            <h4>✅ Data Loaded Successfully!</h4>
+                            <p>Loaded ${trialingData.length} records. You can now search for dogs or view owner data.</p>
+                        </div>
+                        <div class="validation-rules">
+                            <h4>Title Requirements</h4>
+                            <ul>
+                                <li>Minimum 4 points required for each level</li>
+                                <li>Points must come from at least 2 different judges</li>
+                                <li>Prerequisites must be met before advancing to higher levels</li>
+                                <li>Special case: "Investigator 3" requires either "Patrol 1" OR "Detective 2"</li>
+                                <li>Games levels require at least 2 different games (BJ, C, P, T, GB)</li>
+                                <li>Ace awards given every 10 points after title is earned</li>
+                            </ul>
+                        </div>
+                    `;
+                } catch (error) {
+                    console.error('Error loading file:', error);
+                    alert(`Error loading file: ${error.message}`);
+                }
+            };
+            
+            reader.onerror = function() {
+                alert('Error reading file. Please try again.');
+            };
+            
+            reader.readAsArrayBuffer(file);
+        }
 
         // Close modal when clicking outside of it
         window.onclick = function(event) {
