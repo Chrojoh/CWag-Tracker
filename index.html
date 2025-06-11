@@ -1433,83 +1433,226 @@
                 return;
             }
 
-            const ownerDogs = {};
-            let matchCount = 0;
-            
-            trialingData.forEach(record => {
-                if (!record.registrationNumber) return;
-                
-                const parts = record.registrationNumber.split('-');
-                if (parts.length >= 2) {
-                    if (parts[1] === ownerId) {
-                        matchCount++;
-                        const regNumber = record.registrationNumber;
-                        const callName = getCallNameFromDogInfo(regNumber, record.callName) || 'Unknown';
-                        const handlerName = getHandlerNameFromDogInfo(regNumber);
-                        
-                        if (!ownerDogs[regNumber]) {
-                            ownerDogs[regNumber] = {
-                                callName: callName,
-                                handlerName: handlerName,
-                                regNumber: regNumber,
-                                records: []
-                            };
-                        }
-                        ownerDogs[regNumber].records.push(record);
-                    }
-                }
+            // Find all dogs with matching middle 4 digits
+            const matchingDogs = trialingData.filter(record => {
+                if (!record.registrationNumber) return false;
+                const regParts = record.registrationNumber.split('-');
+                return regParts.length >= 2 && regParts[1] === ownerId;
             });
 
-            if (Object.keys(ownerDogs).length === 0) {
-                alert(`No dogs found for owner ID: ${ownerId}`);
+            if (matchingDogs.length === 0) {
+                document.getElementById('summaryContent').innerHTML = `
+                    <div class="error-message">No dogs found with owner ID: <strong>${ownerId}</strong></div>
+                    <div style="text-align: center; margin-top: 20px;">
+                        <button onclick="showOwnerView()" style="background: #17a2b8; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer;">
+                            ← Try Again
+                        </button>
+                    </div>
+                `;
                 return;
             }
 
-            displayOwnerGrid(ownerDogs, ownerId);
-        }
-
-        function displayOwnerGrid(ownerDogs, ownerId) {
-            const sortedDogs = Object.keys(ownerDogs).sort((a, b) => {
-                const nameA = ownerDogs[a].callName || 'Unknown';
-                const nameB = ownerDogs[b].callName || 'Unknown';
-                return nameA.localeCompare(nameB);
+            // Group by unique registration numbers
+            const dogsByReg = {};
+            matchingDogs.forEach(record => {
+                if (!dogsByReg[record.registrationNumber]) {
+                    dogsByReg[record.registrationNumber] = [];
+                }
+                dogsByReg[record.registrationNumber].push(record);
             });
 
-            let html = `
-                <div class="owner-header" style="text-align: center; padding: 20px; background: linear-gradient(45deg, #667eea, #764ba2); color: white; margin-bottom: 20px; border-radius: 12px;">
-                    <h2>Owner View - ID: ${ownerId}</h2>
-                    <p>${Object.keys(ownerDogs).length} dog(s) found</p>
-                </div>
+            const dogRegistrations = Object.keys(dogsByReg);
+            const dogCount = dogRegistrations.length;
+
+            displayOwnerGrid(dogsByReg, ownerId, dogCount);
+        }
+
+        function displayOwnerGrid(dogsByReg, ownerId, dogCount) {
+            // Calculate data for each dog
+            const dogsData = Object.keys(dogsByReg).map(regNumber => {
+                const dogRecords = dogsByReg[regNumber];
                 
-                <div style="margin-bottom: 20px; text-align: center;">
-                    <button class="back-to-search" onclick="showOwnerView()" style="margin-right: 10px;">← Change Owner ID</button>
-                    <button onclick="printOwnerView()" style="background: #6f42c1; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 1rem;">
+                // Get names - prioritize DogInfo.xlsx, fallback to trialing data
+                const callName = getCallNameFromDogInfo(regNumber, dogRecords[0].callName) || 'Unknown';
+                const handlerName = getHandlerNameFromDogInfo(regNumber);
+
+                // Calculate level summaries
+                const levelSummary = {};
+                dogRecords.forEach(record => {
+                    if (!record.level) return;
+                    
+                    if (!levelSummary[record.level]) {
+                        levelSummary[record.level] = {
+                            totalPoints: 0,
+                            judges: new Set(),
+                            records: []
+                        };
+                    }
+                    
+                    if (record.points > 0) {
+                        levelSummary[record.level].totalPoints += record.points;
+                        if (record.judge) {
+                            levelSummary[record.level].judges.add(record.judge);
+                        }
+                    }
+                    levelSummary[record.level].records.push(record);
+                });
+
+                return {
+                    regNumber,
+                    callName,
+                    handlerName,
+                    levelSummary
+                };
+            });
+
+            // Create header with owner info and navigation
+            let html = `
+                <div style="background: linear-gradient(45deg, #667eea, #764ba2); color: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; text-align: center;">
+                    <h3 style="margin: 0; font-size: 1.4rem;">${dogCount} dog(s) found</h3>
+                </div>
+
+                <div style="text-align: center; margin-bottom: 15px;">
+                    <button onclick="showOwnerView()" style="background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; margin-right: 10px;">
+                        ← Change Owner ID
+                    </button>
+                    <button onclick="printOwnerView()" style="background: #6f42c1; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 0.9rem;">
                         🖨️ Print View
                     </button>
                 </div>
-                
-                <div class="owner-view-container" id="printableArea">
-                    <div class="print-header" style="display: none;">
-                        <h2 style="text-align: center; margin-bottom: 5px;">C-WAGS Owner Progress Report</h2>
-                        <p style="text-align: center; margin-bottom: 20px;">Owner ID: ${ownerId} | ${Object.keys(ownerDogs).length} Dogs | Generated: ${new Date().toLocaleDateString()}</p>
+
+                <div class="legend-print" style="margin-bottom: 15px; padding: 15px; background: #e7f3ff; border: 1px solid #b8daff; border-radius: 8px;">
+                    <h4 style="color: #004085; margin-bottom: 10px;">Legend:</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px; font-size: 0.9rem; color: #004085;">
+                        <div><span style="background: #d4edda; padding: 2px 6px; border-radius: 3px; margin-right: 8px;"><strong>Title!</strong></span> - Title earned</div>
+                        <div><span style="background: #d4edda; padding: 2px 6px; border-radius: 3px; margin-right: 8px;"><strong>Ace2</strong></span> - Has earned Ace2</div>
+                        <div><span style="background: linear-gradient(135deg, #e8f5e8, #d4edda); padding: 2px 6px; border-radius: 3px; margin-right: 8px;"><strong>3 → Ace</strong></span> - Needs 3 Q's for first Ace</div>
+                        <div><span style="background: linear-gradient(135deg, #e8f5e8, #d4edda); padding: 2px 6px; border-radius: 3px; margin-right: 8px;"><strong>7 → Ace3</strong></span> - Needs 7 Q's for next Ace level</div>
+                        <div><span style="background: #fff3cd; padding: 2px 6px; border-radius: 3px; margin-right: 8px;"><strong>3 Q's, 1 judge needed for title</strong></span> - Requirements to achieve Title</div>
+                        <div><span style="color: #666; margin-right: 8px;"><strong>-</strong></span> - No entries at this level</div>
                     </div>
-                    
-                    <table class="owner-grid">
-                        <thead>
-                            <tr>
-                                <th class="level-cell">Level</th>
+                </div>
             `;
 
-            sortedDogs.forEach(regNumber => {
-                const dog = ownerDogs[regNumber];
+            // Create the table
+            html += `
+                <div style="overflow-x: auto; border: 1px solid #dee2e6; border-radius: 8px;">
+                    <table class="owner-view-table" style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                        <thead>
+                            <tr style="background: #f8f9fa;">
+                                <th style="padding: 12px 8px; text-align: left; border-bottom: 2px solid #dee2e6; font-weight: 600; position: sticky; left: 0; background: #f8f9fa; z-index: 10;">Level</th>
+            `;
+
+            // Add dog name headers (clickable) with handler info
+            dogsData.forEach(dog => {
                 const displayName = dog.callName.length > 6 ? dog.callName.substring(0, 6) : dog.callName;
+                const escapedRegNumber = escapeJs(dog.regNumber);
                 const handlerInfo = dog.handlerName ? `<br><small style="color: #6c757d; font-weight: normal; font-size: 0.6rem;">${escapeHtml(dog.handlerName)}</small>` : '';
-                html += `<th class="dog-header" onclick="searchSpecificDog('${dog.regNumber}')" title="Click to view ${dog.callName}'s detailed records">${escapeHtml(displayName)}${handlerInfo}<br><small style="color: #6c757d; font-weight: normal; font-size: 0.7rem;">${escapeHtml(dog.regNumber)}</small></th>`;
+                html += `
+                    <th style="padding: 8px 4px; text-align: center; border-bottom: 2px solid #dee2e6; font-weight: 600; width: ${75/dogsData.length}%;">
+                        <a href="javascript:void(0)" onclick="searchSpecificDog('${escapedRegNumber}')" 
+                           style="color: #667eea; text-decoration: none; font-weight: bold; cursor: pointer; font-size: 0.8rem;"
+                           onmouseover="this.style.textDecoration='underline'" 
+                           onmouseout="this.style.textDecoration='none'">
+                            ${escapeHtml(displayName)}
+                        </a>
+                        ${handlerInfo}
+                        <br>
+                        <small style="color: #6c757d; font-weight: normal; font-size: 0.7rem;">${escapeHtml(dog.regNumber)}</small>
+                    </th>
+                `;
             });
 
-            html += `</tr></thead><tbody>`;
+            html += `
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
 
+            // Add rows for each level
             levelOrder.forEach(level => {
+                html += `
+                    <tr style="border-bottom: 1px solid #f0f0f0;">
+                        <td style="padding: 8px 4px; border-right: 1px solid #dee2e6; font-weight: 600; background: #f8f9fa; font-size: 0.8rem;">${level}</td>
+                `;
+
+                dogsData.forEach(dog => {
+                    const levelData = dog.levelSummary[level];
+                    let cellContent = '-';
+                    let cellStyle = 'padding: 10px 8px; text-align: center; border-right: 1px solid #f0f0f0;';
+
+                    if (levelData) {
+                        const totalPoints = levelData.totalPoints;
+                        const judgeCount = levelData.judges.size;
+                        const hasTitle = totalPoints >= 4 && judgeCount >= 2;
+
+                        if (hasTitle) {
+                            const titleInfo = calculateTitlePoints(levelData.records);
+                            const titlePoints = titleInfo.titlePoints;
+                            const acePoints = Math.max(0, totalPoints - titlePoints);
+                            
+                            if (acePoints >= 10) {
+                                const aceCount = Math.floor(acePoints / 10);
+                                const pointsToNextAce = 10 - (acePoints % 10);
+                                const nextAceNumber = aceCount + 1;
+                                
+                                if (pointsToNextAce === 10) {
+                                    // Exactly on an ACE milestone
+                                    cellContent = `<strong style="color: #6f42c1;">Ace${aceCount}</strong>`;
+                                } else {
+                                    // Show Q's needed to next ACE
+                                    cellContent = `<strong style="color: #6f42c1;">${pointsToNextAce} → Ace${nextAceNumber}</strong>`;
+                                }
+                                cellStyle += ' background: linear-gradient(135deg, #e8f5e8, #d4edda);';
+                            } else {
+                                // Has title but less than 10 ace points
+                                const pointsToFirstAce = 10 - acePoints;
+                                if (acePoints === 0) {
+                                    cellContent = `<strong style="color: #155724;">Title!</strong>`;
+                                } else {
+                                    cellContent = `<strong style="color: #155724;">${pointsToFirstAce} → Ace</strong>`;
+                                }
+                                cellStyle += ' background: #d4edda;';
+                            }
+                        } else if (totalPoints > 0) {
+                            const needMore = [];
+                            if (totalPoints < 4) needMore.push(`${4 - totalPoints} Q's`);
+                            if (judgeCount < 2) needMore.push(`${2 - judgeCount} judge${judgeCount === 0 ? 's' : ''} needed for title`);
+                            
+                            cellContent = `<span style="color: #856404;">${needMore.join(', ')}</span>`;
+                            cellStyle += ' background: #fff3cd;';
+                        }
+                    }
+
+                    html += `<td style="${cellStyle} font-size: 0.75rem;">${cellContent}</td>`;
+                });
+
+                html += '</tr>';
+            });
+
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+
+                <div style="text-align: center; margin-top: 30px;">
+                    <button onclick="backToSearch()" style="background: #17a2b8; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 1rem;">
+                        Back to Dog Search
+                    </button>
+                </div>
+            `;
+
+            document.getElementById('summaryContent').innerHTML = html;
+        }
+
+        function printOwnerView() {
+            window.print();
+        }
+
+        function searchSpecificDog(regNumber) {
+            document.getElementById('searchInput').value = regNumber;
+            searchDog();
+        }level => {
                 html += `<tr><td class="level-cell">${level}</td>`;
                 
                 sortedDogs.forEach(regNumber => {
