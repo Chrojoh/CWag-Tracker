@@ -24,7 +24,6 @@
             margin: 0 auto;
             background: white;
             border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             overflow: hidden;
             position: relative;
         }
@@ -33,7 +32,19 @@
             background: linear-gradient(90deg, #2c3e50, #34495e);
             color: white;
             padding: 30px;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header-text {
             text-align: center;
+            flex: 1;
         }
 
         .header h1 {
@@ -51,6 +62,15 @@
             opacity: 0.8;
             font-size: 0.95rem;
             font-style: italic;
+        }
+
+        .logo {
+            width: 160px;
+            height: 160px;
+            background-image: url('https://raw.githubusercontent.com/cwagtracker/Tracker/main/cwags-logo.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
         }
 
         .search-section {
@@ -99,6 +119,22 @@
             box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
         }
 
+        .owner-view-btn {
+            padding: 15px 30px;
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .owner-view-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(40, 167, 69, 0.3);
+        }
+
         .main-content {
             padding: 30px;
         }
@@ -106,7 +142,6 @@
         .summary-section {
             background: white;
             border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
             overflow: hidden;
             width: 100%;
         }
@@ -139,6 +174,13 @@
         .dog-info p {
             color: #7f8c8d;
             margin: 5px 0;
+        }
+
+        .handler-name {
+            font-size: 1.1rem;
+            color: #6c757d;
+            margin-bottom: 5px;
+            font-weight: bold;
         }
 
         .level-summary {
@@ -217,6 +259,38 @@
             box-shadow: 0 4px 8px rgba(23, 162, 184, 0.3);
         }
 
+        .certificate-btn {
+            background: linear-gradient(45deg, #6f42c1, #8e44ad);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            align-self: start;
+            margin-top: 8px;
+        }
+
+        .certificate-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(111, 66, 193, 0.3);
+        }
+
+        .certificate-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .certificate-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-end;
+        }
+
         .records-table {
             width: 100%;
             border-collapse: collapse;
@@ -286,6 +360,149 @@
             font-size: 0.9rem;
         }
 
+        /* Owner View Styles */
+        .owner-view-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        .owner-grid {
+            min-width: 800px;
+            border-collapse: collapse;
+            width: 100%;
+            font-size: 0.9rem;
+        }
+
+        .owner-grid th,
+        .owner-grid td {
+            border: 1px solid #dee2e6;
+            padding: 8px 6px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .owner-grid th {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .owner-grid th.dog-header {
+            background: #f8f9fa;
+            color: #2c3e50;
+            min-width: 80px;
+            max-width: 120px;
+            font-size: 0.8rem;
+            padding: 8px 4px;
+            line-height: 1.2;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .owner-grid th.dog-header:hover {
+            background: #e9ecef;
+            color: #007bff;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .owner-grid tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .owner-grid tr:hover {
+            background: #e3f2fd;
+        }
+
+        .owner-grid .level-cell {
+            background: #e9ecef;
+            font-weight: 600;
+            color: #495057;
+            text-align: left;
+            padding-left: 12px;
+        }
+
+        .q-needed {
+            background: #fff3cd;
+            color: #856404;
+            font-weight: 600;
+        }
+
+        .title-ready {
+            background: #d4edda;
+            color: #155724;
+            font-weight: 600;
+        }
+
+        .ace-progress {
+            background: #e7e3ff;
+            color: #6f42c1;
+            font-weight: 600;
+        }
+
+        .no-data {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .back-to-search {
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .back-to-search:hover {
+            background: #5a6268;
+            transform: translateY(-1px);
+        }
+
+        .legend-container {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .legend-container h4 {
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .legend-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .legend-box {
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+
+        .requirements-text {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-top: 10px;
+        }
+
         /* Modal Styles */
         .modal {
             display: none;
@@ -348,14 +565,217 @@
             color: #6c757d;
             font-size: 1.1rem;
         }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white !important;
+                padding: 5px !important;
+                margin: 0 !important;
+                font-size: 10px !important;
+            }
+            
+            .container {
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                max-width: none !important;
+                width: 100% !important;
+                margin: 0 !important;
+            }
+            
+            .header {
+                background: #2c3e50 !important;
+                color: white !important;
+                padding: 10px !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            
+            .logo {
+                width: 50px !important;
+                height: 50px !important;
+            }
+            
+            .header h1 {
+                font-size: 1.2rem !important;
+                margin-bottom: 3px !important;
+            }
+            
+            .header p {
+                font-size: 0.7rem !important;
+                margin-bottom: 2px !important;
+            }
+            
+            .last-updated {
+                font-size: 0.6rem !important;
+            }
+            
+            /* Hide buttons and non-essential elements */
+            button, .search-section {
+                display: none !important;
+            }
+            
+            /* Print styles for owner view */
+            .print-header { 
+                display: block !important; 
+            }
+            
+            .owner-grid { 
+                width: 100% !important; 
+                border-collapse: collapse !important; 
+                font-size: 12px !important; 
+                line-height: 1.1 !important; 
+                table-layout: fixed !important; 
+            }
+            
+            .owner-grid th, .owner-grid td { 
+                border: 1px solid #333 !important; 
+                padding: 4px 3px !important; 
+                text-align: center !important; 
+                vertical-align: middle !important; 
+                line-height: 1.1 !important; 
+            }
+            
+            .owner-grid th { 
+                background: #2c3e50 !important; 
+                color: white !important; 
+                font-weight: 600 !important; 
+                -webkit-print-color-adjust: exact !important; 
+                print-color-adjust: exact !important; 
+                font-size: 12px !important; 
+            }
+            
+            .owner-grid .level-cell { 
+                background: #bdc3c7 !important; 
+                color: #2c3e50 !important; 
+                font-weight: 600 !important; 
+                text-align: left !important; 
+                padding-left: 8px !important; 
+                font-size: 11px !important; 
+                -webkit-print-color-adjust: exact !important; 
+                print-color-adjust: exact !important; 
+                line-height: 1.1 !important; 
+                width: 100px !important; 
+            }
+            
+            .dog-header { 
+                background: #ecf0f1 !important; 
+                color: #2c3e50 !important; 
+                font-size: 10px !important; 
+                padding: 4px 3px !important; 
+                text-align: center !important;
+                writing-mode: horizontal-tb !important;
+                -webkit-print-color-adjust: exact !important; 
+                print-color-adjust: exact !important;
+                white-space: nowrap !important;
+                line-height: 1.2 !important;
+                font-weight: 600 !important;
+                overflow: hidden !important;
+            }
+            
+            .q-needed { 
+                background: #fff3cd !important; 
+                color: #856404 !important; 
+                font-weight: 600 !important; 
+                -webkit-print-color-adjust: exact !important; 
+                print-color-adjust: exact !important; 
+                font-size: 11px !important; 
+                line-height: 1.1 !important; 
+            }
+            
+            .title-ready { 
+                background: #d4edda !important; 
+                color: #155724 !important; 
+                font-weight: 600 !important; 
+                -webkit-print-color-adjust: exact !important; 
+                print-color-adjust: exact !important; 
+                font-size: 11px !important; 
+                line-height: 1.1 !important; 
+            }
+            
+            .ace-progress { 
+                background: #e7e3ff !important; 
+                color: #6f42c1 !important; 
+                font-weight: 600 !important; 
+                -webkit-print-color-adjust: exact !important; 
+                print-color-adjust: exact !important; 
+                font-size: 11px !important; 
+                line-height: 1.1 !important; 
+            }
+            
+            .no-data { 
+                background: #f8f9fa !important; 
+                color: #6c757d !important; 
+                -webkit-print-color-adjust: exact !important; 
+                print-color-adjust: exact !important; 
+                font-size: 11px !important; 
+                line-height: 1.1 !important; 
+            }
+            
+            .legend-container { 
+                margin-top: 12px !important; 
+                page-break-inside: avoid !important; 
+                font-size: 11px !important; 
+                border-top: 1px solid #333 !important; 
+                padding-top: 8px !important; 
+                line-height: 1.2 !important; 
+            }
+            
+            .legend-container h4 { 
+                font-size: 13px !important; 
+                margin-bottom: 4px !important; 
+                color: #2c3e50 !important; 
+                line-height: 1.2 !important; 
+            }
+            
+            .legend-grid { 
+                display: flex !important; 
+                flex-wrap: wrap !important; 
+                gap: 15px !important; 
+                margin-bottom: 4px !important; 
+            }
+            
+            .legend-item { 
+                display: flex !important; 
+                align-items: center !important; 
+                gap: 4px !important; 
+            }
+            
+            .legend-box { 
+                display: inline-block !important; 
+                padding: 3px 6px !important; 
+                border-radius: 3px !important; 
+                font-weight: 600 !important; 
+                font-size: 10px !important; 
+            }
+            
+            .requirements-text { 
+                font-size: 10px !important; 
+                color: #666 !important; 
+                margin-top: 4px !important; 
+                line-height: 1.3 !important; 
+            }
+            
+            /* Adjust margins for print */
+            @page {
+                margin: 0.3in !important;
+                size: portrait !important;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>CWAGS Tracker</h1>
-            <p>Track your dog's trialing progress, points, and title eligibility</p>
-            <div class="last-updated" id="lastUpdated">Loading data...</div>
+            <div class="header-content">
+                <div id="leftLogo" class="logo"></div>
+                <div class="header-text">
+                    <h1>CWAGS Tracker</h1>
+                    <p>Track your dog's trialing progress, points, and title eligibility</p>
+                    <div class="last-updated" id="lastUpdated">Loading data...</div>
+                </div>
+                <div id="rightLogo" class="logo"></div>
+            </div>
         </div>
 
         <div class="search-section">
@@ -364,6 +784,7 @@
                        placeholder="Enter Registration Number (e.g., 17-1734-06)" 
                        onkeypress="handleKeyPress(event)">
                 <button class="search-btn" onclick="searchDog()">Search Dog Records</button>
+                <button class="owner-view-btn" onclick="showOwnerView()">Owner View by ID</button>
             </div>
         </div>
 
@@ -404,9 +825,23 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <script src="https://unpkg.com/@pdf-lib/fontkit@1.1.1/dist/fontkit.umd.min.js" onerror="console.error('Fontkit failed to load from unpkg')"></script>
+    <script>
+        // Backup fontkit loading
+        if (typeof fontkit === 'undefined') {
+            console.log('Loading fontkit from backup CDN...');
+            const script = document.createElement('script');
+            script.src = 'https://cdn.skypack.dev/@pdf-lib/fontkit@1.1.1';
+            script.onerror = () => console.error('Backup fontkit also failed');
+            document.head.appendChild(script);
+        }
+    </script>
     <script>
         let trialingData = [];
         let currentDogRecords = [];
+        let dogInfoData = {}; // Store DogInfo.xlsx data for lookup
+        let titlePlacementData = {}; // Store Title Placement mapping data
         
         // Level prerequisites mapping
         const prerequisites = {
@@ -460,6 +895,59 @@
             "Games 4": "CW-G4"
         };
 
+        // Certificate template mapping
+        const certificateTemplateMapping = {
+            'Patrol 1': { template: 'Scent.pdf', category: 'scent' },
+            'Detective 2': { template: 'Scent.pdf', category: 'scent' },
+            'Investigator 3': { template: 'Scent.pdf', category: 'scent' },
+            'Super Sleuth 4': { template: 'Scent.pdf', category: 'scent' },
+            'Private Inv': { template: 'Scent.pdf', category: 'scent' },
+            'Det Diversions': { template: 'Scent.pdf', category: 'scent' },
+            'Ranger 1': { template: 'Scent.pdf', category: 'scent' },
+            'Ranger 2': { template: 'Scent.pdf', category: 'scent' },
+            'Ranger 3': { template: 'Scent.pdf', category: 'scent' },
+            'Ranger 4': { template: 'Scent.pdf', category: 'scent' },
+            'Ranger 5': { template: 'Scent.pdf', category: 'scent' },
+            'Dasher 3': { template: 'Scent.pdf', category: 'scent' },
+            'Dasher 4': { template: 'Scent.pdf', category: 'scent' },
+            'Dasher 5': { template: 'Scent.pdf', category: 'scent' },
+            'Dasher 6': { template: 'Scent.pdf', category: 'scent' },
+            'Obedience 1': { template: 'Obedience.pdf', category: 'obedience' },
+            'Obedience 2': { template: 'Obedience.pdf', category: 'obedience' },
+            'Obedience 3': { template: 'Obedience.pdf', category: 'obedience' },
+            'Obedience 4': { template: 'Obedience.pdf', category: 'obedience' },
+            'Obedience 5': { template: 'Obedience.pdf', category: 'obedience' },
+            'Starter': { template: 'Rally.pdf', category: 'rally' },
+            'Advanced': { template: 'Rally.pdf', category: 'rally' },
+            'Pro': { template: 'Rally.pdf', category: 'rally' },
+            'ARF': { template: 'Rally.pdf', category: 'rally' },
+            'Zoom 1': { template: 'Rally.pdf', category: 'rally' },
+            'Zoom 1.5': { template: 'Rally.pdf', category: 'rally' },
+            'Zoom 2': { template: 'Rally.pdf', category: 'rally' },
+            'Games 1': { template: 'Games.pdf', category: 'games' },
+            'Games 2': { template: 'Games.pdf', category: 'games' },
+            'Games 3': { template: 'Games.pdf', category: 'games' },
+            'Games 4': { template: 'Games.pdf', category: 'games' }
+        };
+
+        // Title certificate positioning
+        const titleCertificateConfig = {
+            registrationNumber: { x: 120, y: 400, size: 12, color: [0, 0, 0] },
+            handlerName: { x: 414, y: 370, size: 30, color: [0, 0, 0], align: 'center' },
+            dogName: { x: 414, y: 280, size: 30, color: [0, 0, 0], align: 'center' },
+            dateEarned: { x: 82, y: 235, size: 12, color: [0, 0, 0] },
+            titleAbbreviation: { x: 700, y: 175, size: 30, color: [0, 0, 0.8], align: 'right' }
+        };
+
+        // ACE certificate positioning
+        const aceCertificateConfig = {
+            dateLine: { x: 448, y: 425, size: 12, color: [0, 0, 0], align: 'center' },
+            levelAbbreviation: { x: 398, y: 355, size: 31, color: [0.85, 0.65, 0.13], align: 'center' },
+            callName: { x: 398, y: 270, size: 28, color: [0, 0, 0], align: 'center' },
+            handlerName: { x: 398, y: 180, size: 28, color: [0, 0, 0], align: 'left' },
+            registrationNumber: { x: 540, y: 150, size: 12, color: [0, 0, 0], align: 'left' }
+        };
+
         // Proper level ordering
         const levelOrder = [
             "Patrol 1", "Detective 2", "Investigator 3", "Super Sleuth 4", "Private Inv", "Det Diversions",
@@ -471,6 +959,104 @@
             "Games 1", "Games 2", "Games 3", "Games 4"
         ];
 
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text.toString()
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+
+        function escapeJs(text) {
+            if (!text) return '';
+            return text.toString()
+                .replace(/\\/g, "\\\\")
+                .replace(/'/g, "\\'")
+                .replace(/"/g, '\\"')
+                .replace(/\n/g, "\\n")
+                .replace(/\r/g, "\\r");
+        }
+
+        // Load DogInfo.xlsx data with timeout and error handling
+        async function loadDogInfoData() {
+            return new Promise((resolve) => {
+                const timeoutId = setTimeout(() => {
+                    console.warn('⏰ DogInfo loading timed out - continuing without it');
+                    resolve(false);
+                }, 2000);
+
+                fetch('DogInfo.xlsx', {
+                    method: 'GET',
+                    cache: 'no-cache'
+                })
+                .then(response => {
+                    clearTimeout(timeoutId);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.arrayBuffer();
+                })
+                .then(fileContent => {
+                    const workbook = XLSX.read(new Uint8Array(fileContent), { 
+                        cellStyles: true, 
+                        cellFormulas: true, 
+                        cellDates: true 
+                    });
+                    
+                    const sheetName = workbook.SheetNames[0];
+                    const sheet = workbook.Sheets[sheetName];
+                    const jsonData = XLSX.utils.sheet_to_json(sheet, {header: 1});
+                    
+                    let loadedCount = 0;
+                    // Process DogInfo data - skip header row
+                    jsonData.slice(1).forEach(row => {
+                        if (row && row[0]) { // Column A is Registration Number
+                            const regNumber = row[0].toString().trim();
+                            const callName = row[1] ? row[1].toString().trim() : '';
+                            const handlerName = row[2] ? row[2].toString().trim() : '';
+                            const registeredName = row[3] ? row[3].toString().trim() : '';
+                            
+                            dogInfoData[regNumber] = {
+                                callName: callName,
+                                handlerName: handlerName,
+                                registeredName: registeredName
+                            };
+                            loadedCount++;
+                        }
+                    });
+                    
+                    console.log('✅ DogInfo data loaded:', loadedCount, 'dogs');
+                    resolve(true);
+                })
+                .catch(error => {
+                    clearTimeout(timeoutId);
+                    console.warn('⚠️ Could not load DogInfo data:', error.message);
+                    console.log('💡 Continuing without DogInfo lookup');
+                    resolve(false);
+                });
+            });
+        }
+
+        // Helper function to get handler name from DogInfo.xlsx
+        function getHandlerNameFromDogInfo(regNumber) {
+            if (!regNumber || !dogInfoData[regNumber]) return '';
+            return dogInfoData[regNumber].handlerName || '';
+        }
+
+        // Helper function to get registered name from DogInfo.xlsx
+        function getRegisteredNameFromDogInfo(regNumber) {
+            if (!regNumber || !dogInfoData[regNumber]) return '';
+            return dogInfoData[regNumber].registeredName || dogInfoData[regNumber].callName || '';
+        }
+
+        // Helper function to get call name from DogInfo.xlsx (fallback to trialing data)
+        function getCallNameFromDogInfo(regNumber, fallbackCallName = '') {
+            if (!regNumber || !dogInfoData[regNumber]) return fallbackCallName;
+            return dogInfoData[regNumber].callName || fallbackCallName;
+        }
+
         function getSortedLevels(levelSummary) {
             const availableLevels = Object.keys(levelSummary);
             const orderedLevels = levelOrder.filter(level => availableLevels.includes(level));
@@ -478,10 +1064,716 @@
             return [...orderedLevels, ...unorderedLevels.sort()];
         }
 
+        // Load Title Placement data with timeout and error handling
+        async function loadTitlePlacementData() {
+            return new Promise((resolve) => {
+                // Set a 2 second timeout to prevent hanging
+                const timeoutId = setTimeout(() => {
+                    console.warn('⏰ Title Placement loading timed out - continuing without it');
+                    resolve(false);
+                }, 2000);
+
+                fetch('Title Placement.xlsx', {
+                    method: 'GET',
+                    cache: 'no-cache'
+                })
+                .then(response => {
+                    clearTimeout(timeoutId);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.arrayBuffer();
+                })
+                .then(fileContent => {
+                    const workbook = XLSX.read(new Uint8Array(fileContent), { 
+                        cellStyles: true, 
+                        cellFormulas: true, 
+                        cellDates: true 
+                    });
+                    
+                    const sheetName = workbook.SheetNames[0];
+                    const sheet = workbook.Sheets[sheetName];
+                    const jsonData = XLSX.utils.sheet_to_json(sheet, {header: 1});
+                    
+                    let loadedCount = 0;
+                    jsonData.slice(1).forEach(row => {
+                        if (row && row[1] && row[2] && row[3]) {
+                            const className = row[1].toString().trim();
+                            const certificateName = row[2].toString().trim();
+                            const aceCertificateName = row[3].toString().trim();
+                            
+                            titlePlacementData[className] = {
+                                certificateName: certificateName,
+                                aceCertificateName: aceCertificateName
+                            };
+                            loadedCount++;
+                        }
+                    });
+                    
+                    console.log('✅ Title Placement data loaded:', loadedCount, 'classes');
+                    resolve(true);
+                })
+                .catch(error => {
+                    clearTimeout(timeoutId);
+                    console.warn('⚠️ Could not load Title Placement data:', error.message);
+                    console.log('💡 Continuing with original certificate names');
+                    resolve(false);
+                });
+            });
+        }
+
+        // Get certificate name (Column C)
+        function getCertificateName(level) {
+            return titlePlacementData[level]?.certificateName || level;
+        }
+
+        // Helper function to get ACE certificate name (Column D + abbreviation in brackets + multiplier)
+        function getAceCertificateName(level, aceCount) {
+            const abbreviation = titleAbbreviations[level] || level;
+            
+            if (titlePlacementData[level]) {
+                let aceName = titlePlacementData[level].aceCertificateName;
+                
+                // Format: "Scent Patrol Ace x 4 (CW-SPAx4)" for multiple, "Scent Patrol Ace (CW-SPA)" for single
+                let aceDesignation;
+                let displayText;
+                
+                if (aceCount === 1) {
+                    aceDesignation = `${abbreviation}A`;
+                    displayText = `${aceName} (${aceDesignation})`;
+                } else {
+                    aceDesignation = `${abbreviation}Ax${aceCount}`;
+                    displayText = `${aceName} x ${aceCount} (${aceDesignation})`;
+                }
+                
+                return displayText;
+            }
+            
+            // Fallback to original system if not found
+            return aceCount === 1 ? `${abbreviation}A` : `${abbreviation}Ax${aceCount}`;
+        }
+
+        // Generate title certificate
+        async function generateTitleCertificate(level, regNumber, abbreviation) {
+            try {
+                const btn = event.target;
+                btn.textContent = 'Generating...';
+                btn.disabled = true;
+
+                const templateInfo = certificateTemplateMapping[level];
+                if (!templateInfo) throw new Error(`No template mapped for level: ${level}`);
+
+                const levelRecords = trialingData.filter(r => r.registrationNumber === regNumber && r.level === level);
+                if (levelRecords.length === 0) throw new Error('No records found for this level');
+
+                const titleInfo = calculateTitlePoints(levelRecords);
+                const dateEarned = titleInfo.titleDate ? titleInfo.titleDate.toLocaleDateString() : new Date().toLocaleDateString();
+                const certificateName = getCertificateName(level);
+
+                // Get names from DogInfo.xlsx
+                const handlerName = getHandlerNameFromDogInfo(regNumber) || 'Handler Name';
+                const registeredName = getRegisteredNameFromDogInfo(regNumber) || 'Dog Name';
+
+                const templateUrl = `https://raw.githubusercontent.com/cwagtracker/Tracker/main/templates/${templateInfo.template}`;
+                const response = await fetch(templateUrl);
+                if (!response.ok) throw new Error(`Template not found: ${templateUrl}`);
+                
+                const templateBytes = await response.arrayBuffer();
+                const pdfDoc = await PDFLib.PDFDocument.load(templateBytes);
+                const firstPage = pdfDoc.getPages()[0];
+                
+                const font = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
+                const timesBold = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRomanBold);
+                let maiandraFont = timesBold;
+
+                // Try to load custom font
+                if (typeof fontkit !== 'undefined') {
+                    try {
+                        pdfDoc.registerFontkit(fontkit);
+                        const fontUrls = [
+                            'https://cdn.jsdelivr.net/gh/cwagtracker/Tracker@main/fonts/Maiandra%20GD.TTF',
+                            'https://raw.githubusercontent.com/cwagtracker/Tracker/main/fonts/Maiandra%20GD.TTF'
+                        ];
+                        
+                        for (const fontUrl of fontUrls) {
+                            try {
+                                const fontResponse = await fetch(fontUrl, { mode: 'cors' });
+                                if (fontResponse.ok) {
+                                    const fontBytes = await fontResponse.arrayBuffer();
+                                    maiandraFont = await pdfDoc.embedFont(fontBytes);
+                                    break;
+                                }
+                            } catch (e) { /* continue */ }
+                        }
+                    } catch (e) { /* use fallback */ }
+                }
+
+                // Add text to certificate
+                const regConfig = titleCertificateConfig.registrationNumber;
+                firstPage.drawText(regNumber, {
+                    x: regConfig.x, y: regConfig.y, size: regConfig.size, font: font,
+                    color: PDFLib.rgb(regConfig.color[0], regConfig.color[1], regConfig.color[2])
+                });
+
+                const handlerConfig = titleCertificateConfig.handlerName;
+                const handlerTextWidth = maiandraFont.widthOfTextAtSize(handlerName, handlerConfig.size);
+                const handlerX = handlerConfig.x - (handlerTextWidth / 2);
+                firstPage.drawText(handlerName, {
+                    x: handlerX, y: handlerConfig.y, size: handlerConfig.size, font: maiandraFont,
+                    color: PDFLib.rgb(0, 0, 0)
+                });
+
+                const dogConfig = titleCertificateConfig.dogName;
+                const dogTextWidth = maiandraFont.widthOfTextAtSize(registeredName, dogConfig.size);
+                const dogX = dogConfig.x - (dogTextWidth / 2);
+                firstPage.drawText(registeredName, {
+                    x: dogX, y: dogConfig.y, size: dogConfig.size, font: maiandraFont,
+                    color: PDFLib.rgb(0, 0, 0)
+                });
+
+                const dateConfig = titleCertificateConfig.dateEarned;
+                firstPage.drawText('On ', {
+                    x: dateConfig.x - 20, y: dateConfig.y, size: dateConfig.size, font: font,
+                    color: PDFLib.rgb(0, 0, 0)
+                });
+                firstPage.drawText(dateEarned, {
+                    x: dateConfig.x, y: dateConfig.y, size: dateConfig.size, font: font,
+                    color: PDFLib.rgb(0, 0, 0)
+                });
+                const dateWidth = font.widthOfTextAtSize(dateEarned, dateConfig.size);
+                firstPage.drawText(', has completed the requirements for the title of', {
+                    x: dateConfig.x + dateWidth, y: dateConfig.y, size: dateConfig.size, font: font,
+                    color: PDFLib.rgb(0, 0, 0)
+                });
+
+                const titleConfig = titleCertificateConfig.titleAbbreviation;
+                const titleText = `${certificateName} (${abbreviation})`;
+                const titleTextWidth = timesBold.widthOfTextAtSize(titleText, titleConfig.size);
+                firstPage.drawText(titleText, {
+                    x: titleConfig.x - titleTextWidth, y: titleConfig.y, size: titleConfig.size, font: maiandraFont,
+                    color: PDFLib.rgb(titleConfig.color[0], titleConfig.color[1], titleConfig.color[2])
+                });
+
+                const pdfBytes = await pdfDoc.save();
+                
+                downloadPDF(pdfBytes, `${registeredName}-${level.replace(/\s+/g, '-')}-Title-Certificate.pdf`);
+                btn.textContent = '📜 Title Certificate';
+                btn.disabled = false;
+
+            } catch (error) {
+                console.error('Certificate generation error:', error);
+                alert(`Unable to generate certificate: ${error.message}`);
+                
+                const btn = event.target;
+                btn.textContent = '📜 Title Certificate';
+                btn.disabled = false;
+            }
+        }
+
+        // Generate ACE certificate
+        async function generateAceCertificate(level, regNumber, aceCount) {
+            try {
+                const btn = event.target;
+                btn.textContent = 'Generating...';
+                btn.disabled = true;
+
+                const levelRecords = trialingData.filter(r => r.registrationNumber === regNumber && r.level === level);
+                if (levelRecords.length === 0) throw new Error('No records found for this level');
+
+                const titleInfo = calculateTitlePoints(levelRecords);
+                const dateEarned = titleInfo.titleDate ? titleInfo.titleDate.toLocaleDateString() : new Date().toLocaleDateString();
+                const aceCertificateName = getAceCertificateName(level, aceCount);
+
+                // Get names from DogInfo.xlsx
+                const handlerName = getHandlerNameFromDogInfo(regNumber) || 'Handler Name';
+                const registeredName = getRegisteredNameFromDogInfo(regNumber) || 'Dog Name';
+
+                // ACE certificates use dedicated Ace.pdf template
+                const templateUrl = 'https://raw.githubusercontent.com/cwagtracker/Tracker/main/templates/Ace.pdf';
+                const response = await fetch(templateUrl);
+                if (!response.ok) throw new Error(`ACE template not found: ${templateUrl}`);
+                
+                const templateBytes = await response.arrayBuffer();
+                const pdfDoc = await PDFLib.PDFDocument.load(templateBytes);
+                const firstPage = pdfDoc.getPages()[0];
+                
+                const helvetica = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
+                const timesBold = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRomanBold);
+                let maiandraFont = timesBold;
+
+                // Try to load custom font
+                if (typeof fontkit !== 'undefined') {
+                    try {
+                        pdfDoc.registerFontkit(fontkit);
+                        const fontUrls = [
+                            'https://cdn.jsdelivr.net/gh/cwagtracker/Tracker@main/fonts/Maiandra%20GD.TTF',
+                            'https://raw.githubusercontent.com/cwagtracker/Tracker/main/fonts/Maiandra%20GD.TTF'
+                        ];
+                        
+                        for (const fontUrl of fontUrls) {
+                            try {
+                                const fontResponse = await fetch(fontUrl, { mode: 'cors' });
+                                if (fontResponse.ok) {
+                                    const fontBytes = await fontResponse.arrayBuffer();
+                                    maiandraFont = await pdfDoc.embedFont(fontBytes);
+                                    break;
+                                }
+                            } catch (e) { /* continue */ }
+                        }
+                    } catch (e) { /* use fallback */ }
+                }
+
+                // Helper function for text alignment
+                function drawTextWithAlignment(page, text, config, font) {
+                    let x = config.x;
+                    if (config.align === 'center') {
+                        const textWidth = font.widthOfTextAtSize(text, config.size);
+                        x = config.x - (textWidth / 2);
+                    } else if (config.align === 'right') {
+                        const textWidth = font.widthOfTextAtSize(text, config.size);
+                        x = config.x - textWidth;
+                    }
+                    page.drawText(text, {
+                        x: x, y: config.y, size: config.size, font: font,
+                        color: PDFLib.rgb(config.color[0], config.color[1], config.color[2])
+                    });
+                }
+
+                // Add text to ACE certificate
+                const dateLineText = `This certifies that on ${dateEarned} the requirements have been met for the title of:`;
+                drawTextWithAlignment(firstPage, dateLineText, aceCertificateConfig.dateLine, helvetica);
+
+                drawTextWithAlignment(firstPage, registeredName, aceCertificateConfig.callName, maiandraFont);
+                drawTextWithAlignment(firstPage, handlerName, aceCertificateConfig.handlerName, maiandraFont);
+                drawTextWithAlignment(firstPage, regNumber, aceCertificateConfig.registrationNumber, helvetica);
+
+                const pdfBytes = await pdfDoc.save();
+                downloadPDF(pdfBytes, `${registeredName}-${level.replace(/\s+/g, '-')}-ACE-Certificate.pdf`);
+
+                btn.textContent = '🏆 Ace Certificate';
+                btn.disabled = false;
+
+            } catch (error) {
+                console.error('ACE certificate generation error:', error);
+                alert(`Unable to generate ACE certificate: ${error.message}`);
+                
+                const btn = event.target;
+                btn.textContent = '🏆 Ace Certificate';
+                btn.disabled = false;
+            }
+        }
+
+        // Helper functions
+        function downloadPDF(pdfBytes, filename) {
+            const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
         function handleKeyPress(event) {
             if (event.key === 'Enter') {
                 searchDog();
             }
+        }
+
+        function showOwnerView() {
+            if (trialingData.length === 0) {
+                alert('Please wait for trialing data to load');
+                return;
+            }
+
+            document.getElementById('summaryContent').innerHTML = `
+                <div style="text-align: center; padding: 40px;">
+                    <h3 style="color: #17a2b8; margin-bottom: 20px;">👤 Owner View</h3>
+                    <p style="margin-bottom: 20px;">Enter the middle 4 digits from your registration number:</p>
+                    
+                    <div style="background: #f8f9fa; padding: 30px; border-radius: 12px; border: 2px solid #dee2e6; margin: 20px 0;">
+                        <input type="text" id="ownerIdInput" placeholder="e.g., 1734" 
+                               style="padding: 15px 20px; font-size: 1.2rem; border: 2px solid #ddd; border-radius: 10px; width: 200px; text-align: center;"
+                               onkeypress="handleOwnerKeyPress(event)" maxlength="4">
+                        <br><br>
+                        <button onclick="loadOwnerView()" style="background: #28a745; color: white; border: none; padding: 15px 30px; border-radius: 10px; cursor: pointer; font-size: 1.1rem;">
+                            📊 Load Owner View
+                        </button>
+                    </div>
+                    
+                    <button onclick="backToSearch()" style="background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 0.9rem;">
+                        ← Back to Search
+                    </button>
+                </div>
+            `;
+        }
+
+        function handleOwnerKeyPress(event) {
+            if (event.key === 'Enter') {
+                loadOwnerView();
+            }
+        }
+
+        function loadOwnerView() {
+            const ownerIdInput = document.getElementById('ownerIdInput');
+            if (!ownerIdInput) {
+                console.error('Owner ID input not found');
+                return;
+            }
+            
+            const ownerId = ownerIdInput.value.trim();
+            
+            if (!ownerId) {
+                alert('Please enter the middle 4 digits');
+                return;
+            }
+
+            if (!/^\d{4}$/.test(ownerId)) {
+                alert('Please enter exactly 4 digits');
+                return;
+            }
+
+            const ownerDogs = {};
+            let matchCount = 0;
+            
+            trialingData.forEach(record => {
+                if (!record.registrationNumber) return;
+                
+                const parts = record.registrationNumber.split('-');
+                if (parts.length >= 2) {
+                    if (parts[1] === ownerId) {
+                        matchCount++;
+                        const regNumber = record.registrationNumber;
+                        const callName = getCallNameFromDogInfo(regNumber, record.callName) || 'Unknown';
+                        const handlerName = getHandlerNameFromDogInfo(regNumber);
+                        
+                        if (!ownerDogs[regNumber]) {
+                            ownerDogs[regNumber] = {
+                                callName: callName,
+                                handlerName: handlerName,
+                                regNumber: regNumber,
+                                records: []
+                            };
+                        }
+                        ownerDogs[regNumber].records.push(record);
+                    }
+                }
+            });
+
+            if (Object.keys(ownerDogs).length === 0) {
+                alert(`No dogs found for owner ID: ${ownerId}`);
+                return;
+            }
+
+            displayOwnerGrid(ownerDogs, ownerId);
+        }
+
+        function displayOwnerGrid(ownerDogs, ownerId) {
+            const sortedDogs = Object.keys(ownerDogs).sort((a, b) => {
+                const nameA = ownerDogs[a].callName || 'Unknown';
+                const nameB = ownerDogs[b].callName || 'Unknown';
+                return nameA.localeCompare(nameB);
+            });
+
+            let html = `
+                <div class="owner-header" style="text-align: center; padding: 20px; background: linear-gradient(45deg, #667eea, #764ba2); color: white; margin-bottom: 20px; border-radius: 12px;">
+                    <h2>Owner View - ID: ${ownerId}</h2>
+                    <p>${Object.keys(ownerDogs).length} dog(s) found</p>
+                </div>
+                
+                <div style="margin-bottom: 20px; text-align: center;">
+                    <button class="back-to-search" onclick="showOwnerView()" style="margin-right: 10px;">← Change Owner ID</button>
+                    <button onclick="printOwnerView()" style="background: #6f42c1; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 1rem;">
+                        🖨️ Print View
+                    </button>
+                </div>
+                
+                <div class="owner-view-container" id="printableArea">
+                    <div class="print-header" style="display: none;">
+                        <h2 style="text-align: center; margin-bottom: 5px;">C-WAGS Owner Progress Report</h2>
+                        <p style="text-align: center; margin-bottom: 20px;">Owner ID: ${ownerId} | ${Object.keys(ownerDogs).length} Dogs | Generated: ${new Date().toLocaleDateString()}</p>
+                    </div>
+                    
+                    <table class="owner-grid">
+                        <thead>
+                            <tr>
+                                <th class="level-cell">Level</th>
+            `;
+
+            sortedDogs.forEach(regNumber => {
+                const dog = ownerDogs[regNumber];
+                const displayName = dog.callName.length > 6 ? dog.callName.substring(0, 6) : dog.callName;
+                const handlerInfo = dog.handlerName ? `<br><small style="color: #6c757d; font-weight: normal; font-size: 0.6rem;">${escapeHtml(dog.handlerName)}</small>` : '';
+                html += `<th class="dog-header" onclick="searchSpecificDog('${dog.regNumber}')" title="Click to view ${dog.callName}'s detailed records">${escapeHtml(displayName)}${handlerInfo}<br><small style="color: #6c757d; font-weight: normal; font-size: 0.7rem;">${escapeHtml(dog.regNumber)}</small></th>`;
+            });
+
+            html += `</tr></thead><tbody>`;
+
+            levelOrder.forEach(level => {
+                html += `<tr><td class="level-cell">${level}</td>`;
+                
+                sortedDogs.forEach(regNumber => {
+                    const dog = ownerDogs[regNumber];
+                    const dogRecords = dog.records.filter(r => r.level === level);
+                    const analysis = analyzeProgressForOwnerView(dogRecords, level, dog.records);
+                    
+                    html += `<td class="${analysis.cellClass}">${analysis.cellContent}</td>`;
+                });
+                
+                html += `</tr>`;
+            });
+
+            html += `</tbody></table>
+                    
+                    <div class="legend-container">
+                        <h4>Legend:</h4>
+                        <div class="legend-grid">
+                            <div class="legend-item"><span class="legend-box q-needed" style="background: #fff3cd; color: #856404;">2Q</span> Q's needed for title</div>
+                            <div class="legend-item"><span class="legend-box title-ready" style="background: #d4edda; color: #155724;">Title!</span> Title earned, ready to submit</div>
+                            <div class="legend-item"><span class="legend-box ace-progress" style="background: #e7e3ff; color: #6f42c1;">3Q→Ace</span> Q's needed for next Ace</div>
+                            <div class="legend-item"><span class="legend-box no-data" style="background: #f8d7da; color: #721c24;">-</span> No qualifying scores</div>
+                        </div>
+                        <p class="requirements-text">
+                            <strong>Requirements:</strong> 4+ Q's from 2+ different judges | Games levels need 2+ different games | Prerequisites must be met for advanced levels
+                        </p>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('summaryContent').innerHTML = html;
+        }
+
+        function analyzeProgressForOwnerView(levelRecords, level, allDogRecords) {
+            if (levelRecords.length === 0) {
+                return { 
+                    cellClass: 'no-data', 
+                    cellContent: '-' 
+                };
+            }
+
+            let totalPoints = 0;
+            const judges = new Set();
+            
+            levelRecords.forEach(record => {
+                if (record.points > 0) {
+                    totalPoints += record.points;
+                    if (record.judge) {
+                        judges.add(record.judge);
+                    }
+                }
+            });
+
+            const isValidated = checkPrerequisites(level, allDogRecords);
+            const hasEnoughQs = totalPoints >= 4;
+            const hasEnoughJudges = judges.size >= 2;
+            let hasEnoughGames = true;
+            
+            if (level.startsWith('Games ')) {
+                const uniqueGames = getUniqueGames(levelRecords);
+                hasEnoughGames = uniqueGames.size >= 2;
+            }
+            
+            const hasTitleRequirements = hasEnoughQs && hasEnoughJudges && hasEnoughGames && isValidated;
+            
+            if (hasTitleRequirements) {
+                const titleInfo = calculateTitlePoints(levelRecords);
+                const acePoints = Math.max(0, totalPoints - titleInfo.titlePoints);
+                
+                if (acePoints === 0) {
+                    return {
+                        cellClass: 'title-ready',
+                        cellContent: 'Title!'
+                    };
+                } else {
+                    const qsUntilNextAce = 10 - (acePoints % 10);
+                    const aceCount = Math.floor(acePoints / 10);
+                    const aceSuffix = aceCount > 0 ? ` (${aceCount} Ace${aceCount > 1 ? 's' : ''})` : '';
+                    
+                    return {
+                        cellClass: 'ace-progress',
+                        cellContent: `${qsUntilNextAce}Q→Ace${aceSuffix}`
+                    };
+                }
+            } else {
+                let qsNeeded = Math.max(0, 4 - totalPoints);
+                let additionalNeeds = [];
+                
+                if (!hasEnoughJudges) {
+                    const judgesNeeded = 2 - judges.size;
+                    if (judgesNeeded > 0) {
+                        additionalNeeds.push(`${judgesNeeded}J`);
+                    }
+                }
+                
+                if (level.startsWith('Games ') && !hasEnoughGames) {
+                    const uniqueGames = getUniqueGames(levelRecords);
+                    const gamesNeeded = 2 - uniqueGames.size;
+                    if (gamesNeeded > 0) {
+                        additionalNeeds.push(`${gamesNeeded}G`);
+                    }
+                }
+                
+                if (!isValidated) {
+                    additionalNeeds.push('Prereq');
+                }
+                
+                let content = '';
+                if (qsNeeded > 0) {
+                    content = `${qsNeeded}Q`;
+                }
+                
+                if (additionalNeeds.length > 0) {
+                    if (content) content += '+';
+                    content += additionalNeeds.join('+');
+                }
+                
+                if (!content) content = 'Ready!';
+                
+                return {
+                    cellClass: qsNeeded > 0 || additionalNeeds.length > 0 ? 'q-needed' : 'title-ready',
+                    cellContent: content
+                };
+            }
+        }
+
+        function printOwnerView() {
+            const printWindow = window.open('', '_blank');
+            const printableArea = document.getElementById('printableArea');
+            if (!printableArea) {
+                alert('No content to print');
+                return;
+            }
+            
+            const clonedContent = printableArea.cloneNode(true);
+            const printHeader = clonedContent.querySelector('.print-header');
+            if (printHeader) {
+                printHeader.style.display = 'block';
+            }
+            
+            // Force horizontal text by replacing the dog header cells completely
+            const dogHeaders = clonedContent.querySelectorAll('th.dog-header');
+            dogHeaders.forEach(header => {
+                // Get the text content and split by <br> or newlines
+                const text = header.innerHTML.replace(/<br\s*\/?>/gi, ' ');
+                header.innerHTML = text;
+                // Remove all CSS classes and add a new one
+                header.className = 'dog-header-horizontal';
+            });
+            
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>C-WAGS Owner Progress Report</title>
+                    <style>
+                        @page { size: 8.5in 11in; margin: 0.3in; }
+                        body { font-family: Arial, sans-serif; font-size: 13px; line-height: 1.2; margin: 0; padding: 0; }
+                        .print-header h2 { font-size: 22px; margin-bottom: 3px; color: #2c3e50; line-height: 1.2; }
+                        .print-header p { font-size: 16px; color: #666; margin-bottom: 10px; line-height: 1.2; }
+                        .owner-grid { width: 100%; border-collapse: collapse; font-size: 12px; line-height: 1.1; table-layout: fixed; }
+                        .owner-grid th, .owner-grid td { border: 1px solid #333; padding: 4px 3px; text-align: center; vertical-align: middle; line-height: 1.1; }
+                        .owner-grid th { background: #2c3e50 !important; color: white !important; font-weight: 600; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-size: 12px; }
+                        .owner-grid .level-cell { background: #bdc3c7 !important; color: #2c3e50 !important; font-weight: 600; text-align: left; padding-left: 8px; font-size: 11px; -webkit-print-color-adjust: exact; print-color-adjust: exact; line-height: 1.1; width: 100px; }
+                        .dog-header-horizontal { 
+                            background: #ecf0f1 !important; 
+                            color: #2c3e50 !important; 
+                            font-size: 10px !important; 
+                            padding: 4px 3px !important; 
+                            text-align: center !important;
+                            writing-mode: horizontal-tb !important;
+                            -webkit-print-color-adjust: exact !important; 
+                            print-color-adjust: exact !important;
+                            white-space: nowrap !important;
+                            line-height: 1.2 !important;
+                            font-weight: 600 !important;
+                            overflow: hidden !important;
+                        }
+                        .q-needed { background: #fff3cd !important; color: #856404 !important; font-weight: 600; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-size: 11px; line-height: 1.1; }
+                        .title-ready { background: #d4edda !important; color: #155724 !important; font-weight: 600; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-size: 11px; line-height: 1.1; }
+                        .ace-progress { background: #e7e3ff !important; color: #6f42c1 !important; font-weight: 600; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-size: 11px; line-height: 1.1; }
+                        .no-data { background: #f8f9fa !important; color: #6c757d !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-size: 11px; line-height: 1.1; }
+                        .legend-container { margin-top: 12px; page-break-inside: avoid; font-size: 11px; border-top: 1px solid #333; padding-top: 8px; line-height: 1.2; }
+                        .legend-container h4 { font-size: 13px; margin-bottom: 4px; color: #2c3e50; line-height: 1.2; }
+                        .legend-grid { display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 4px; }
+                        .legend-item { display: flex; align-items: center; gap: 4px; }
+                        .legend-box { display: inline-block; padding: 3px 6px; border-radius: 3px; font-weight: 600; font-size: 10px; }
+                        .requirements-text { font-size: 10px; color: #666; margin-top: 4px; line-height: 1.3; }
+                    </style>
+                </head>
+                <body>
+                    ${clonedContent.innerHTML}
+                </body>
+                </html>
+            `);
+            
+            printWindow.document.close();
+            printWindow.onload = function() {
+                setTimeout(() => {
+                    printWindow.print();
+                    printWindow.close();
+                }, 250);
+            };
+        }
+
+        function checkPrerequisites(level, allDogRecords) {
+            if (!prerequisites[level] && !level.startsWith('Games ')) {
+                return true;
+            }
+            
+            if (level.startsWith('Games ')) {
+                return true;
+            }
+            
+            if (level === "Investigator 3") {
+                const patrol1Records = allDogRecords.filter(r => r.level === "Patrol 1");
+                const detective2Records = allDogRecords.filter(r => r.level === "Detective 2");
+                
+                const patrol1Valid = checkLevelTitleRequirements(patrol1Records);
+                const detective2Valid = checkLevelTitleRequirements(detective2Records);
+                
+                return patrol1Valid || detective2Valid;
+            } else {
+                const prereqLevel = prerequisites[level][0];
+                const prereqRecords = allDogRecords.filter(r => r.level === prereqLevel);
+                return checkLevelTitleRequirements(prereqRecords);
+            }
+        }
+
+        function checkLevelTitleRequirements(records) {
+            if (records.length === 0) return false;
+            
+            let totalPoints = 0;
+            const judges = new Set();
+            
+            records.forEach(record => {
+                if (record.points > 0) {
+                    totalPoints += record.points;
+                    if (record.judge) judges.add(record.judge);
+                }
+            });
+            
+            return totalPoints >= 4 && judges.size >= 2;
+        }
+
+        function searchSpecificDog(regNumber) {
+            document.getElementById('searchInput').value = regNumber;
+            searchDog();
+        }
+
+        function backToSearch() {
+            document.getElementById('summaryContent').innerHTML = `
+                <div class="validation-rules">
+                    <h4>Title Requirements</h4>
+                    <ul>
+                        <li>Minimum 4 points required for each level</li>
+                        <li>Points must come from at least 2 different judges</li>
+                        <li>Prerequisites must be met before advancing to higher levels</li>
+                        <li>Special case: "Investigator 3" requires either "Patrol 1" OR "Detective 2"</li>
+                        <li>Games levels require at least 2 different games (BJ, C, P, T, GB)</li>
+                        <li>Ace awards given every 10 points after title is earned</li>
+                    </ul>
+                </div>
+            `;
         }
 
         function loadDataFromFile() {
@@ -622,13 +1914,13 @@
                 }
                 
                 return {
-                    registrationNumber: row[0],
-                    callName: row[1],
-                    date: processedDate,
-                    level: row[3],
-                    results: row[4],
-                    judge: row[5],
-                    points: parseFloat(row[6]) || 0
+                    registrationNumber: row[0],       // Column A
+                    callName: row[1],                 // Column B  
+                    date: processedDate,              // Column C
+                    level: row[3],                    // Column D
+                    results: row[4],                  // Column E
+                    judge: row[5],                    // Column F
+                    points: parseFloat(row[6]) || 0   // Column G
                 };
             }).filter(record => record.registrationNumber && record.level);
             
@@ -746,8 +2038,11 @@
         }
 
         function displaySummary(records) {
-            const dogName = records[0].callName || 'Unknown';
             const regNumber = records[0].registrationNumber;
+            
+            // Get names - prioritize DogInfo.xlsx, fallback to trialing data
+            const callName = getCallNameFromDogInfo(regNumber, records[0].callName) || 'Unknown';
+            const handlerName = getHandlerNameFromDogInfo(regNumber);
             
             const levelSummary = {};
             
@@ -777,7 +2072,8 @@
 
             let html = `
                 <div class="dog-info">
-                    <h3>${dogName}</h3>
+                    ${handlerName ? `<p class="handler-name"><strong>Handler:</strong> ${handlerName}</p>` : ''}
+                    <h3>${callName}</h3>
                     <p><strong>Registration:</strong> ${regNumber}</p>
                     <p><strong>Total Trialing Records:</strong> ${records.length}</p>
                 </div>
@@ -829,6 +2125,32 @@
                     titleStatus = 'No Title Yet';
                     titleClass = 'no-title';
                 }
+
+                // Generate certificate buttons
+                let certificateButtons = '';
+                if (hasTitleRequirements) {
+                    const officialTitle = titleAbbreviations[level] || level;
+                    const escapedLevel = escapeJs(level);
+                    const escapedRegNumber = escapeJs(regNumber);
+                    const escapedOfficialTitle = escapeJs(officialTitle);
+                    
+                    // Title certificate button
+                    certificateButtons += `
+                        <button class="certificate-btn" onclick="generateTitleCertificate('${escapedLevel}', '${escapedRegNumber}', '${escapedOfficialTitle}')">
+                            📜 Title Certificate
+                        </button>
+                    `;
+                    
+                    // Ace certificate button (if applicable)
+                    if (acePoints >= 10) {
+                        const aceCount = Math.floor(acePoints / 10);
+                        certificateButtons += `
+                            <button class="certificate-btn" onclick="generateAceCertificate('${escapedLevel}', '${escapedRegNumber}', ${aceCount})">
+                                🏆 Ace Certificate
+                            </button>
+                        `;
+                    }
+                }
                 
                 html += `
                     <div class="level-summary">
@@ -867,7 +2189,10 @@
                                 `}
                             </div>
                         </div>
-                        <button class="details-btn" onclick="showLevelDetails('${level}', '${dogName}')">Details</button>
+                        <div class="certificate-controls">
+                            <button class="details-btn" onclick="showLevelDetails('${escapeJs(level)}', '${escapeJs(callName)}')">Details</button>
+                            ${certificateButtons}
+                        </div>
                     </div>
                 `;
             });
@@ -1091,14 +2416,48 @@
 
         // Initialize - but make it more immediate
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM loaded, starting data load...');
-            // Show we're ready immediately
+            console.log('🚀 CWAGS Tracker initializing...');
             document.getElementById('lastUpdated').textContent = 'Loading data...';
             
-            // Load data with a small delay to ensure DOM is ready
+            // Check fontkit after a delay
             setTimeout(() => {
-                loadDataFromFile();
-            }, 100);
+                if (typeof fontkit !== 'undefined') {
+                    console.log('✅ Fontkit library loaded successfully');
+                } else {
+                    console.warn('⚠️ Fontkit library failed to load - custom fonts will not work');
+                }
+            }, 1000);
+            
+            // Load files with proper sequencing and error handling
+            setTimeout(async () => {
+                try {
+                    console.log('📊 Step 1: Loading DogInfo data...');
+                    const dogInfoLoaded = await loadDogInfoData();
+                    
+                    if (dogInfoLoaded) {
+                        console.log('✅ Step 1 complete: DogInfo data ready');
+                    } else {
+                        console.log('⚠️ Step 1 skipped: DogInfo not available');
+                    }
+
+                    console.log('📊 Step 2: Loading Title Placement data...');
+                    const titlePlacementLoaded = await loadTitlePlacementData();
+                    
+                    if (titlePlacementLoaded) {
+                        console.log('✅ Step 2 complete: Title Placement data ready');
+                    } else {
+                        console.log('⚠️ Step 2 skipped: Title Placement not available');
+                    }
+                    
+                    console.log('📁 Step 3: Loading main trialing data...');
+                    loadDataFromFile();
+                    
+                } catch (error) {
+                    console.error('❌ Initialization error:', error);
+                    document.getElementById('lastUpdated').textContent = 'Initialization failed';
+                    showFileUpload();
+                }
+            }, 200);
         });
 
         // Close modal when clicking outside of it
