@@ -2452,21 +2452,141 @@
             
             document.getElementById('lastUpdated').textContent = 'Ready - Please upload your data file';
             
-            // Try to load DogInfo and Title Placement in background (optional)
+            // Check if main data file exists and offer auto-load option
+            setTimeout(() => {
+                checkMainDataFile();
+            }, 1000);
+            
+            // Try to load optional files in background (optional)
             setTimeout(() => {
                 loadOptionalFiles();
-            }, 1000);
+            }, 2000);
         });
 
-        // Load optional files without blocking the interface
+        // Load optional files without blocking the interface - with better error handling
         async function loadOptionalFiles() {
             try {
                 console.log('Loading optional files...');
-                await loadDogInfoData();
-                await loadTitlePlacementData();
-                console.log('Optional files loaded');
+                
+                // Try DogInfo with explicit error handling
+                try {
+                    const dogInfoSuccess = await loadDogInfoData();
+                    if (dogInfoSuccess) {
+                        console.log('✅ DogInfo.xlsx loaded successfully');
+                    } else {
+                        console.log('⚠️ DogInfo.xlsx not found or inaccessible');
+                    }
+                } catch (dogInfoError) {
+                    console.log('⚠️ DogInfo.xlsx error:', dogInfoError.message);
+                }
+                
+                // Try Title Placement with explicit error handling
+                try {
+                    const titlePlacementSuccess = await loadTitlePlacementData();
+                    if (titlePlacementSuccess) {
+                        console.log('✅ Title Placement.xlsx loaded successfully');
+                    } else {
+                        console.log('⚠️ Title Placement.xlsx not found or inaccessible');
+                    }
+                } catch (titleError) {
+                    console.log('⚠️ Title Placement.xlsx error:', titleError.message);
+                }
+                
+                console.log('Optional files processing complete');
             } catch (error) {
-                console.log('Optional files not available:', error.message);
+                console.log('Optional files general error:', error.message);
+            }
+        }
+
+        // Diagnostic function to check if main data file exists
+        async function checkMainDataFile() {
+            try {
+                console.log('🔍 Checking for main data file...');
+                const response = await fetch('Data for Tracker web.xlsx', { 
+                    method: 'HEAD',  // Just check if file exists without downloading
+                    cache: 'no-cache'
+                });
+                
+                if (response.ok) {
+                    console.log('✅ Main data file found - you can try auto-loading');
+                    
+                    // Add auto-load option to the interface
+                    const currentContent = document.getElementById('summaryContent').innerHTML;
+                    document.getElementById('summaryContent').innerHTML = currentContent.replace(
+                        '<button onclick="loadStartupFile()"',
+                        '<button onclick="tryAutoLoad()" style="background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; margin: 5px;">🔄 Try Auto-Load</button><br><button onclick="loadStartupFile()"'
+                    );
+                } else {
+                    console.log('⚠️ Main data file not found - manual upload required');
+                }
+            } catch (error) {
+                console.log('⚠️ Cannot access main data file:', error.message);
+            }
+        }
+
+        // Function to try auto-loading the main data file
+        async function tryAutoLoad() {
+            try {
+                console.log('🔄 Attempting to auto-load main data file...');
+                document.getElementById('lastUpdated').textContent = 'Loading main data file...';
+                
+                const response = await fetch('Data for Tracker web.xlsx', {
+                    cache: 'no-cache'
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const arrayBuffer = await response.arrayBuffer();
+                const data = new Uint8Array(arrayBuffer);
+                
+                console.log('📊 Processing data...');
+                processExcelData(data);
+                updateLastUpdatedDate();
+                
+                // Show success
+                document.getElementById('summaryContent').innerHTML = `
+                    <div style="text-align: center; padding: 20px; background: #d4edda; color: #155724; border-radius: 8px; margin-bottom: 20px;">
+                        <h4>✅ Data Loaded Successfully!</h4>
+                        <p>Loaded ${trialingData.length} records from "Data for Tracker web.xlsx"</p>
+                        <p>You can now search for dogs or view owner data.</p>
+                    </div>
+                    <div class="validation-rules">
+                        <h4>Title Requirements</h4>
+                        <ul>
+                            <li>Minimum 4 points required for each level</li>
+                            <li>Points must come from at least 2 different judges</li>
+                            <li>Prerequisites must be met before advancing to higher levels</li>
+                            <li>Special case: "Investigator 3" requires either "Patrol 1" OR "Detective 2"</li>
+                            <li>Games levels require at least 2 different games (BJ, C, P, T, GB)</li>
+                            <li>Ace awards given every 10 points after title is earned</li>
+                        </ul>
+                    </div>
+                `;
+                
+            } catch (error) {
+                console.error('❌ Auto-load failed:', error);
+                document.getElementById('lastUpdated').textContent = 'Auto-load failed - please upload manually';
+                
+                // Show error message
+                document.getElementById('summaryContent').innerHTML = `
+                    <div style="text-align: center; padding: 20px; background: #f8d7da; color: #721c24; border-radius: 8px; margin-bottom: 20px;">
+                        <h4>❌ Auto-Load Failed</h4>
+                        <p>Could not load "Data for Tracker web.xlsx"</p>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <p>Please use manual upload below instead.</p>
+                    </div>
+                    <div style="text-align: center; margin-top: 20px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+                        <h4>📁 Manual Upload</h4>
+                        <p>Upload your Excel file to get started:</p>
+                        <input type="file" id="startupFileInput" accept=".xlsx,.xls,.csv" style="margin: 10px;">
+                        <br>
+                        <button onclick="loadStartupFile()" style="background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; margin: 10px;">
+                            📤 Load File
+                        </button>
+                    </div>
+                `;
             }
         }
 
