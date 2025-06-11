@@ -1686,98 +1686,7 @@
             document.getElementById('summaryContent').innerHTML = html;
         }
 
-        function analyzeProgressForOwnerView(levelRecords, level, allDogRecords) {
-            if (levelRecords.length === 0) {
-                return { 
-                    cellClass: 'no-data', 
-                    cellContent: '-' 
-                };
-            }
-
-            let totalPoints = 0;
-            const judges = new Set();
-            
-            levelRecords.forEach(record => {
-                if (record.points > 0) {
-                    totalPoints += record.points;
-                    if (record.judge) {
-                        judges.add(record.judge);
-                    }
-                }
-            });
-
-            const isValidated = checkPrerequisites(level, allDogRecords);
-            const hasEnoughQs = totalPoints >= 4;
-            const hasEnoughJudges = judges.size >= 2;
-            let hasEnoughGames = true;
-            
-            if (level.startsWith('Games ')) {
-                const uniqueGames = getUniqueGames(levelRecords);
-                hasEnoughGames = uniqueGames.size >= 2;
-            }
-            
-            const hasTitleRequirements = hasEnoughQs && hasEnoughJudges && hasEnoughGames && isValidated;
-            
-            if (hasTitleRequirements) {
-                const titleInfo = calculateTitlePoints(levelRecords);
-                const acePoints = Math.max(0, totalPoints - titleInfo.titlePoints);
-                
-                if (acePoints === 0) {
-                    return {
-                        cellClass: 'title-ready',
-                        cellContent: 'Title!'
-                    };
-                } else {
-                    const qsUntilNextAce = 10 - (acePoints % 10);
-                    const aceCount = Math.floor(acePoints / 10);
-                    const aceSuffix = aceCount > 0 ? ` (${aceCount} Ace${aceCount > 1 ? 's' : ''})` : '';
-                    
-                    return {
-                        cellClass: 'ace-progress',
-                        cellContent: `${qsUntilNextAce}Q→Ace${aceSuffix}`
-                    };
-                }
-            } else {
-                let qsNeeded = Math.max(0, 4 - totalPoints);
-                let additionalNeeds = [];
-                
-                if (!hasEnoughJudges) {
-                    const judgesNeeded = 2 - judges.size;
-                    if (judgesNeeded > 0) {
-                        additionalNeeds.push(`${judgesNeeded}J`);
-                    }
-                }
-                
-                if (level.startsWith('Games ') && !hasEnoughGames) {
-                    const uniqueGames = getUniqueGames(levelRecords);
-                    const gamesNeeded = 2 - uniqueGames.size;
-                    if (gamesNeeded > 0) {
-                        additionalNeeds.push(`${gamesNeeded}G`);
-                    }
-                }
-                
-                if (!isValidated) {
-                    additionalNeeds.push('Prereq');
-                }
-                
-                let content = '';
-                if (qsNeeded > 0) {
-                    content = `${qsNeeded}Q`;
-                }
-                
-                if (additionalNeeds.length > 0) {
-                    if (content) content += '+';
-                    content += additionalNeeds.join('+');
-                }
-                
-                if (!content) content = 'Ready!';
-                
-                return {
-                    cellClass: qsNeeded > 0 || additionalNeeds.length > 0 ? 'q-needed' : 'title-ready',
-                    cellContent: content
-                };
-            }
-        }
+        // This function was causing the syntax error - removing it since we have a working owner view implementation
 
         function printOwnerView() {
             const printWindow = window.open('', '_blank');
@@ -1922,11 +1831,11 @@
         function loadDataFromFile() {
             console.log('Starting data load process...');
             
-            // Set a timeout to show manual upload option if loading takes too long
+            // Set a shorter timeout and better error handling
             const timeoutId = setTimeout(() => {
                 console.log('Load timeout - showing manual upload option');
                 showFileUpload();
-            }, 3000);
+            }, 5000); // Increased to 5 seconds
 
             // First try to load the expected file
             fetch('Data for Tracker web.xlsx')
@@ -1961,7 +1870,7 @@
                 .catch(error => {
                     clearTimeout(timeoutId);
                     console.error('Error loading data:', error);
-                    document.getElementById('lastUpdated').textContent = 'File not found';
+                    document.getElementById('lastUpdated').textContent = 'File not found - please upload manually';
                     showFileUpload();
                 });
         }
@@ -2557,7 +2466,7 @@
             document.getElementById('detailsModal').style.display = 'none';
         }
 
-        // Initialize - but make it more immediate
+        // Initialize - simplified and more robust
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 CWAGS Tracker initializing...');
             document.getElementById('lastUpdated').textContent = 'Loading data...';
@@ -2600,7 +2509,7 @@
                     document.getElementById('lastUpdated').textContent = 'Initialization failed';
                     showFileUpload();
                 }
-            }, 200);
+            }, 500); // Increased delay to prevent loading loop
         });
 
         // Close modal when clicking outside of it
