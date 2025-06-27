@@ -360,149 +360,6 @@
             font-size: 0.9rem;
         }
 
-        /* Owner View Styles */
-        .owner-view-container {
-            overflow-x: auto;
-            margin: 20px 0;
-        }
-
-        .owner-grid {
-            min-width: 800px;
-            border-collapse: collapse;
-            width: 100%;
-            font-size: 0.9rem;
-        }
-
-        .owner-grid th,
-        .owner-grid td {
-            border: 1px solid #dee2e6;
-            padding: 8px 6px;
-            text-align: center;
-            vertical-align: middle;
-        }
-
-        .owner-grid th {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            font-weight: 600;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-
-        .owner-grid th.dog-header {
-            background: #f8f9fa;
-            color: #2c3e50;
-            min-width: 80px;
-            max-width: 120px;
-            font-size: 0.8rem;
-            padding: 8px 4px;
-            line-height: 1.2;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .owner-grid th.dog-header:hover {
-            background: #e9ecef;
-            color: #007bff;
-            transform: translateY(-1px);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .owner-grid tr:nth-child(even) {
-            background: #f8f9fa;
-        }
-
-        .owner-grid tr:hover {
-            background: #e3f2fd;
-        }
-
-        .owner-grid .level-cell {
-            background: #e9ecef;
-            font-weight: 600;
-            color: #495057;
-            text-align: left;
-            padding-left: 12px;
-        }
-
-        .q-needed {
-            background: #fff3cd;
-            color: #856404;
-            font-weight: 600;
-        }
-
-        .title-ready {
-            background: #d4edda;
-            color: #155724;
-            font-weight: 600;
-        }
-
-        .ace-progress {
-            background: #e7e3ff;
-            color: #6f42c1;
-            font-weight: 600;
-        }
-
-        .no-data {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        .back-to-search {
-            background: #6c757d;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 10px 20px;
-            cursor: pointer;
-            font-size: 1rem;
-            margin-bottom: 20px;
-            transition: all 0.3s ease;
-        }
-
-        .back-to-search:hover {
-            background: #5a6268;
-            transform: translateY(-1px);
-        }
-
-        .legend-container {
-            margin-top: 20px;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 8px;
-        }
-
-        .legend-container h4 {
-            margin-bottom: 10px;
-            color: #2c3e50;
-        }
-
-        .legend-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            font-size: 0.9rem;
-            margin-bottom: 8px;
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .legend-box {
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-weight: 600;
-        }
-
-        .requirements-text {
-            font-size: 0.85rem;
-            color: #6c757d;
-            margin-top: 10px;
-        }
-
         /* Modal Styles */
         .modal {
             display: none;
@@ -615,151 +472,80 @@
                 display: none !important;
             }
             
-            /* Print styles for owner view */
-            .print-header { 
-                display: block !important; 
+            /* Owner view table print optimization */
+            .owner-view-table {
+                font-size: 8px !important;
+                width: 100% !important;
+                page-break-inside: avoid !important;
+                border-collapse: collapse !important;
             }
             
-            .owner-grid { 
-                width: 100% !important; 
-                border-collapse: collapse !important; 
-                font-size: 12px !important; 
-                line-height: 1.1 !important; 
-                table-layout: fixed !important; 
-            }
-            
-            .owner-grid th, .owner-grid td { 
-                border: 1px solid #333 !important; 
-                padding: 4px 3px !important; 
-                text-align: center !important; 
-                vertical-align: middle !important; 
-                line-height: 1.1 !important; 
-            }
-            
-            .owner-grid th { 
-                background: #2c3e50 !important; 
-                color: white !important; 
-                font-weight: 600 !important; 
-                -webkit-print-color-adjust: exact !important; 
-                print-color-adjust: exact !important; 
-                font-size: 12px !important; 
-            }
-            
-            .owner-grid .level-cell { 
-                background: #bdc3c7 !important; 
-                color: #2c3e50 !important; 
-                font-weight: 600 !important; 
-                text-align: left !important; 
-                padding-left: 8px !important; 
-                font-size: 11px !important; 
-                -webkit-print-color-adjust: exact !important; 
-                print-color-adjust: exact !important; 
-                line-height: 1.1 !important; 
-                width: 100px !important; 
-            }
-            
-            .dog-header { 
-                background: #ecf0f1 !important; 
-                color: #2c3e50 !important; 
-                font-size: 10px !important; 
-                padding: 4px 3px !important; 
-                text-align: center !important;
-                writing-mode: horizontal-tb !important;
-                -webkit-print-color-adjust: exact !important; 
+            .owner-view-table th {
+                padding: 2px 1px !important;
+                font-size: 7px !important;
+                font-weight: bold !important;
+                background: #f8f9fa !important;
+                -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
-                white-space: nowrap !important;
-                line-height: 1.2 !important;
-                font-weight: 600 !important;
-                overflow: hidden !important;
+                border: 1px solid #ccc !important;
             }
             
-            .q-needed { 
-                background: #fff3cd !important; 
-                color: #856404 !important; 
-                font-weight: 600 !important; 
-                -webkit-print-color-adjust: exact !important; 
-                print-color-adjust: exact !important; 
-                font-size: 11px !important; 
-                line-height: 1.1 !important; 
+            .owner-view-table td {
+                padding: 2px 1px !important;
+                font-size: 7px !important;
+                text-align: center !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                border: 1px solid #ccc !important;
             }
             
-            .title-ready { 
-                background: #d4edda !important; 
-                color: #155724 !important; 
-                font-weight: 600 !important; 
-                -webkit-print-color-adjust: exact !important; 
-                print-color-adjust: exact !important; 
-                font-size: 11px !important; 
-                line-height: 1.1 !important; 
+            /* Preserve background colors in print */
+            .owner-view-table td[style*="background: #d4edda"] {
+                background: #d4edda !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
             
-            .ace-progress { 
-                background: #e7e3ff !important; 
-                color: #6f42c1 !important; 
-                font-weight: 600 !important; 
-                -webkit-print-color-adjust: exact !important; 
-                print-color-adjust: exact !important; 
-                font-size: 11px !important; 
-                line-height: 1.1 !important; 
+            .owner-view-table td[style*="background: #fff3cd"] {
+                background: #fff3cd !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
             
-            .no-data { 
-                background: #f8f9fa !important; 
-                color: #6c757d !important; 
-                -webkit-print-color-adjust: exact !important; 
-                print-color-adjust: exact !important; 
-                font-size: 11px !important; 
-                line-height: 1.1 !important; 
-            }
-            
-            .legend-container { 
-                margin-top: 12px !important; 
-                page-break-inside: avoid !important; 
-                font-size: 11px !important; 
-                border-top: 1px solid #333 !important; 
-                padding-top: 8px !important; 
-                line-height: 1.2 !important; 
-            }
-            
-            .legend-container h4 { 
-                font-size: 13px !important; 
-                margin-bottom: 4px !important; 
-                color: #2c3e50 !important; 
-                line-height: 1.2 !important; 
-            }
-            
-            .legend-grid { 
-                display: flex !important; 
-                flex-wrap: wrap !important; 
-                gap: 15px !important; 
-                margin-bottom: 4px !important; 
-            }
-            
-            .legend-item { 
-                display: flex !important; 
-                align-items: center !important; 
-                gap: 4px !important; 
-            }
-            
-            .legend-box { 
-                display: inline-block !important; 
-                padding: 3px 6px !important; 
-                border-radius: 3px !important; 
-                font-weight: 600 !important; 
-                font-size: 10px !important; 
-            }
-            
-            .requirements-text { 
-                font-size: 10px !important; 
-                color: #666 !important; 
-                margin-top: 4px !important; 
-                line-height: 1.3 !important; 
+            .owner-view-table td[style*="background: linear-gradient"] {
+                background: #e8f5e8 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
             
             /* Adjust margins for print */
             @page {
                 margin: 0.3in !important;
                 size: portrait !important;
+            }
+            
+            /* Legend print styling */
+            .legend-print {
+                margin-top: 5px !important;
+                padding: 5px !important;
+                font-size: 6px !important;
+                background: #e7f3ff !important;
+                border: 1px solid #b8daff !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                page-break-inside: avoid !important;
+            }
+            
+            .legend-print h4 {
+                font-size: 7px !important;
+                margin-bottom: 3px !important;
+            }
+            
+            .legend-print div {
+                display: inline-block !important;
+                margin-right: 8px !important;
+                margin-bottom: 2px !important;
+                font-size: 6px !important;
             }
         }
     </style>
@@ -933,16 +719,16 @@
         // Title certificate positioning
         const titleCertificateConfig = {
             registrationNumber: { x: 120, y: 400, size: 12, color: [0, 0, 0] },
-            handlerName: { x: 414, y: 370, size: 30, color: [0, 0, 0], align: 'center' },
+            handlerName: { x: 414, y: 370, size: 28, color: [0, 0, 0], align: 'center' },
             dogName: { x: 414, y: 280, size: 30, color: [0, 0, 0], align: 'center' },
             dateEarned: { x: 82, y: 235, size: 12, color: [0, 0, 0] },
-            titleAbbreviation: { x: 700, y: 175, size: 30, color: [0, 0, 0.8], align: 'right' }
+            titleAbbreviation: { x: 682, y: 175, size: 28, color: [0, 0, 0.8], align: 'right' }
         };
 
         // ACE certificate positioning
         const aceCertificateConfig = {
             dateLine: { x: 448, y: 425, size: 12, color: [0, 0, 0], align: 'center' },
-            levelAbbreviation: { x: 398, y: 355, size: 31, color: [0.85, 0.65, 0.13], align: 'center' },
+            levelAbbreviation: { x: 398, y: 355, size: 28, color: [0.85, 0.65, 0.13], align: 'center' },
             callName: { x: 398, y: 270, size: 28, color: [0, 0, 0], align: 'center' },
             handlerName: { x: 398, y: 180, size: 28, color: [0, 0, 0], align: 'left' },
             registrationNumber: { x: 540, y: 150, size: 12, color: [0, 0, 0], align: 'left' }
@@ -1012,11 +798,11 @@
                     let loadedCount = 0;
                     // Process DogInfo data - skip header row
                     jsonData.slice(1).forEach(row => {
-                        if (row && row[0]) { // Column A is Registration Number
+                       if (row && row[0]) { // Column A is Registration Number
                             const regNumber = row[0].toString().trim();
                             const callName = row[1] ? row[1].toString().trim() : '';
-                            const handlerName = row[2] ? row[2].toString().trim() : '';
-                            const registeredName = row[3] ? row[3].toString().trim() : '';
+                            const registeredName = row[2] ? row[2].toString().trim() : '';  // Column C
+                            const handlerName = row[3] ? row[3].toString().trim() : '';     // Column D
                             
                             dogInfoData[regNumber] = {
                                 callName: callName,
@@ -1271,97 +1057,115 @@
         }
 
         // Generate ACE certificate
-        async function generateAceCertificate(level, regNumber, aceCount) {
-            try {
-                const btn = event.target;
-                btn.textContent = 'Generating...';
-                btn.disabled = true;
+async function generateAceCertificate(level, regNumber, aceCount) {
+    try {
+        const btn = event.target;
+        btn.textContent = 'Generating...';
+        btn.disabled = true;
 
-                const levelRecords = trialingData.filter(r => r.registrationNumber === regNumber && r.level === level);
-                if (levelRecords.length === 0) throw new Error('No records found for this level');
+        const levelRecords = trialingData.filter(r => r.registrationNumber === regNumber && r.level === level);
+        if (levelRecords.length === 0) throw new Error('No records found for this level');
 
-                const titleInfo = calculateTitlePoints(levelRecords);
-                const dateEarned = titleInfo.titleDate ? titleInfo.titleDate.toLocaleDateString() : new Date().toLocaleDateString();
-                const aceCertificateName = getAceCertificateName(level, aceCount);
+        const titleInfo = calculateTitlePoints(levelRecords);
+        const titlePoints = titleInfo.titlePoints;
 
-                // Get names from DogInfo.xlsx
-                const handlerName = getHandlerNameFromDogInfo(regNumber) || 'Handler Name';
-                const registeredName = getRegisteredNameFromDogInfo(regNumber) || 'Dog Name';
+        // Find when the specific ACE was earned by using existing function
+        const aceEarnedDates = findAceEarnedDates(levelRecords, titlePoints);
+        let aceEarnedDate = titleInfo.titleDate; // fallback to title date
 
-                // ACE certificates use dedicated Ace.pdf template
-                const templateUrl = 'https://raw.githubusercontent.com/cwagtracker/Tracker/main/templates/Ace.pdf';
-                const response = await fetch(templateUrl);
-                if (!response.ok) throw new Error(`ACE template not found: ${templateUrl}`);
-                
-                const templateBytes = await response.arrayBuffer();
-                const pdfDoc = await PDFLib.PDFDocument.load(templateBytes);
-                const firstPage = pdfDoc.getPages()[0];
-                
-                const helvetica = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
-                const timesBold = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRomanBold);
-                let maiandraFont = timesBold;
-
-                // Try to load custom font
-                if (typeof fontkit !== 'undefined') {
-                    try {
-                        pdfDoc.registerFontkit(fontkit);
-                        const fontUrls = [
-                            'https://cdn.jsdelivr.net/gh/cwagtracker/Tracker@main/fonts/Maiandra%20GD.TTF',
-                            'https://raw.githubusercontent.com/cwagtracker/Tracker/main/fonts/Maiandra%20GD.TTF'
-                        ];
-                        
-                        for (const fontUrl of fontUrls) {
-                            try {
-                                const fontResponse = await fetch(fontUrl, { mode: 'cors' });
-                                if (fontResponse.ok) {
-                                    const fontBytes = await fontResponse.arrayBuffer();
-                                    maiandraFont = await pdfDoc.embedFont(fontBytes);
-                                    break;
-                                }
-                            } catch (e) { /* continue */ }
-                        }
-                    } catch (e) { /* use fallback */ }
-                }
-
-                // Helper function for text alignment
-                function drawTextWithAlignment(page, text, config, font) {
-                    let x = config.x;
-                    if (config.align === 'center') {
-                        const textWidth = font.widthOfTextAtSize(text, config.size);
-                        x = config.x - (textWidth / 2);
-                    } else if (config.align === 'right') {
-                        const textWidth = font.widthOfTextAtSize(text, config.size);
-                        x = config.x - textWidth;
-                    }
-                    page.drawText(text, {
-                        x: x, y: config.y, size: config.size, font: font,
-                        color: PDFLib.rgb(config.color[0], config.color[1], config.color[2])
-                    });
-                }
-
-                // Add text to ACE certificate
-                const dateLineText = `This certifies that on ${dateEarned} the requirements have been met for the title of:`;
-                drawTextWithAlignment(firstPage, dateLineText, aceCertificateConfig.dateLine, helvetica);
-
-                drawTextWithAlignment(firstPage, registeredName, aceCertificateConfig.callName, maiandraFont);
-                drawTextWithAlignment(firstPage, handlerName, aceCertificateConfig.handlerName, maiandraFont);
-                drawTextWithAlignment(firstPage, regNumber, aceCertificateConfig.registrationNumber, helvetica);
-
-                const pdfBytes = await pdfDoc.save();
-                downloadPDF(pdfBytes, `${registeredName}-${level.replace(/\s+/g, '-')}-ACE-Certificate.pdf`);
-
-                btn.textContent = '🏆 Ace Certificate';
-                btn.disabled = false;
-
-            } catch (error) {
-                console.error('ACE certificate generation error:', error);
-                alert(`Unable to generate ACE certificate: ${error.message}`);
-                
-                const btn = event.target;
-                btn.textContent = '🏆 Ace Certificate';
-                btn.disabled = false;
+        // Find the date for the specific ACE count we're generating
+        if (aceEarnedDates.length > 0) {
+            const targetAce = aceEarnedDates.find(ace => ace.aceNumber === aceCount);
+            if (targetAce) {
+                aceEarnedDate = targetAce.date;
+            } else {
+                // If exact ACE not found, use the last ACE date available
+                aceEarnedDate = aceEarnedDates[aceEarnedDates.length - 1].date;
             }
         }
+
+        const dateEarned = aceEarnedDate ? aceEarnedDate.toLocaleDateString() : new Date().toLocaleDateString();
+        const aceCertificateName = getAceCertificateName(level, aceCount);
+
+        // Get names from DogInfo.xlsx
+        const handlerName = getHandlerNameFromDogInfo(regNumber) || 'Handler Name';
+        const registeredName = getRegisteredNameFromDogInfo(regNumber) || 'Dog Name';
+
+        // ACE certificates use dedicated Ace.pdf template
+        const templateUrl = 'https://raw.githubusercontent.com/cwagtracker/Tracker/main/templates/Ace.pdf';
+        const response = await fetch(templateUrl);
+        if (!response.ok) throw new Error(`ACE template not found: ${templateUrl}`);
+        
+        const templateBytes = await response.arrayBuffer();
+        const pdfDoc = await PDFLib.PDFDocument.load(templateBytes);
+        const firstPage = pdfDoc.getPages()[0];
+        
+        const helvetica = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
+        const timesBold = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRomanBold);
+        let maiandraFont = timesBold;
+
+        // Try to load custom font
+        if (typeof fontkit !== 'undefined') {
+            try {
+                pdfDoc.registerFontkit(fontkit);
+                const fontUrls = [
+                    'https://cdn.jsdelivr.net/gh/cwagtracker/Tracker@main/fonts/Maiandra%20GD.TTF',
+                    'https://raw.githubusercontent.com/cwagtracker/Tracker/main/fonts/Maiandra%20GD.TTF'
+                ];
+                
+                for (const fontUrl of fontUrls) {
+                    try {
+                        const fontResponse = await fetch(fontUrl, { mode: 'cors' });
+                        if (fontResponse.ok) {
+                            const fontBytes = await fontResponse.arrayBuffer();
+                            maiandraFont = await pdfDoc.embedFont(fontBytes);
+                            break;
+                        }
+                    } catch (e) { /* continue */ }
+                }
+            } catch (e) { /* use fallback */ }
+        }
+
+        // Helper function for text alignment
+        function drawTextWithAlignment(page, text, config, font) {
+            let x = config.x;
+            if (config.align === 'center') {
+                const textWidth = font.widthOfTextAtSize(text, config.size);
+                x = config.x - (textWidth / 2);
+            } else if (config.align === 'right') {
+                const textWidth = font.widthOfTextAtSize(text, config.size);
+                x = config.x - textWidth;
+            }
+            page.drawText(text, {
+                x: x, y: config.y, size: config.size, font: font,
+                color: PDFLib.rgb(config.color[0], config.color[1], config.color[2])
+            });
+        }
+
+        // Add text to ACE certificate
+        const dateLineText = `This certifies that on ${dateEarned} the requirements have been met for the title of:`;
+        drawTextWithAlignment(firstPage, dateLineText, aceCertificateConfig.dateLine, helvetica);
+
+        drawTextWithAlignment(firstPage, registeredName, aceCertificateConfig.callName, maiandraFont);
+        drawTextWithAlignment(firstPage, handlerName, aceCertificateConfig.handlerName, maiandraFont);
+        drawTextWithAlignment(firstPage, regNumber, aceCertificateConfig.registrationNumber, helvetica);
+        drawTextWithAlignment(firstPage, aceCertificateName, aceCertificateConfig.levelAbbreviation, maiandraFont);
+
+        const pdfBytes = await pdfDoc.save();
+        downloadPDF(pdfBytes, `${registeredName}-${level.replace(/\s+/g, '-')}-ACE-Certificate.pdf`);
+
+        btn.textContent = '🏆 Ace Certificate';
+        btn.disabled = false;
+
+    } catch (error) {
+        console.error('ACE certificate generation error:', error);
+        alert(`Unable to generate ACE certificate: ${error.message}`);
+        
+        const btn = event.target;
+        btn.textContent = '🏆 Ace Certificate';
+        btn.disabled = false;
+    }
+}
 
         // Helper functions
         function downloadPDF(pdfBytes, filename) {
@@ -1380,627 +1184,52 @@
             }
         }
 
-        function showOwnerView() {
-            if (trialingData.length === 0) {
-                alert('Please wait for trialing data to load');
-                return;
-            }
-
-            document.getElementById('summaryContent').innerHTML = `
-                <div style="text-align: center; padding: 40px;">
-                    <h3 style="color: #17a2b8; margin-bottom: 20px;">👤 Owner View</h3>
-                    <p style="margin-bottom: 20px;">Enter the middle 4 digits from your registration number:</p>
-                    
-                    <div style="background: #f8f9fa; padding: 30px; border-radius: 12px; border: 2px solid #dee2e6; margin: 20px 0;">
-                        <input type="text" id="ownerIdInput" placeholder="e.g., 1734" 
-                               style="padding: 15px 20px; font-size: 1.2rem; border: 2px solid #ddd; border-radius: 10px; width: 200px; text-align: center;"
-                               onkeypress="handleOwnerKeyPress(event)" maxlength="4">
-                        <br><br>
-                        <button onclick="loadOwnerView()" style="background: #28a745; color: white; border: none; padding: 15px 30px; border-radius: 10px; cursor: pointer; font-size: 1.1rem;">
-                            📊 Load Owner View
-                        </button>
-                    </div>
-                    
-                    <button onclick="backToSearch()" style="background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 0.9rem;">
-                        ← Back to Search
-                    </button>
-                </div>
-            `;
-        }
-
-        function handleOwnerKeyPress(event) {
-            if (event.key === 'Enter') {
-                loadOwnerView();
-            }
-        }
-
-        function loadOwnerView() {
-            const ownerIdInput = document.getElementById('ownerIdInput');
-            if (!ownerIdInput) {
-                console.error('Owner ID input not found');
-                return;
-            }
+        function loadDataFromFile() {
+            console.log('Starting data load process...');
             
-            const ownerId = ownerIdInput.value.trim();
-            
-            if (!ownerId) {
-                alert('Please enter the middle 4 digits');
-                return;
-            }
+            // Set a timeout to show manual upload option if loading takes too long
+            const timeoutId = setTimeout(() => {
+                console.log('Load timeout - showing manual upload option');
+                showFileUpload();
+            }, 3000);
 
-            if (!/^\d{4}$/.test(ownerId)) {
-                alert('Please enter exactly 4 digits');
-                return;
-            }
-
-            // Find all dogs with matching middle 4 digits
-            const matchingDogs = trialingData.filter(record => {
-                if (!record.registrationNumber) return false;
-                const regParts = record.registrationNumber.split('-');
-                return regParts.length >= 2 && regParts[1] === ownerId;
-            });
-
-            if (matchingDogs.length === 0) {
-                document.getElementById('summaryContent').innerHTML = `
-                    <div class="error-message">No dogs found with owner ID: <strong>${ownerId}</strong></div>
-                    <div style="text-align: center; margin-top: 20px;">
-                        <button onclick="showOwnerView()" style="background: #17a2b8; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer;">
-                            ← Try Again
-                        </button>
-                    </div>
-                `;
-                return;
-            }
-
-            // Group by unique registration numbers
-            const dogsByReg = {};
-            matchingDogs.forEach(record => {
-                if (!dogsByReg[record.registrationNumber]) {
-                    dogsByReg[record.registrationNumber] = [];
-                }
-                dogsByReg[record.registrationNumber].push(record);
-            });
-
-            const dogRegistrations = Object.keys(dogsByReg);
-            const dogCount = dogRegistrations.length;
-
-            displayOwnerGrid(dogsByReg, ownerId, dogCount);
-        }
-
-        function displayOwnerGrid(dogsByReg, ownerId, dogCount) {
-            // Calculate data for each dog
-            const dogsData = Object.keys(dogsByReg).map(regNumber => {
-                const dogRecords = dogsByReg[regNumber];
-                
-                // Get names - prioritize DogInfo.xlsx, fallback to trialing data
-                const callName = getCallNameFromDogInfo(regNumber, dogRecords[0].callName) || 'Unknown';
-                const handlerName = getHandlerNameFromDogInfo(regNumber);
-
-                // Calculate level summaries
-                const levelSummary = {};
-                dogRecords.forEach(record => {
-                    if (!record.level) return;
-                    
-                    if (!levelSummary[record.level]) {
-                        levelSummary[record.level] = {
-                            totalPoints: 0,
-                            judges: new Set(),
-                            records: []
-                        };
+            // First try to load the expected file
+            fetch('Data for Tracker web.xlsx')
+                .then(response => {
+                    clearTimeout(timeoutId);
+                    console.log('Fetch response status:', response.status);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
                     }
-                    
-                    if (record.points > 0) {
-                        levelSummary[record.level].totalPoints += record.points;
-                        if (record.judge) {
-                            levelSummary[record.level].judges.add(record.judge);
-                        }
-                    }
-                    levelSummary[record.level].records.push(record);
-                });
-
-                return {
-                    regNumber,
-                    callName,
-                    handlerName,
-                    levelSummary
-                };
-            });
-
-            // Create header with owner info and navigation
-            let html = `
-                <div style="background: linear-gradient(45deg, #667eea, #764ba2); color: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; text-align: center;">
-                    <h3 style="margin: 0; font-size: 1.4rem;">${dogCount} dog(s) found</h3>
-                </div>
-
-                <div style="text-align: center; margin-bottom: 15px;">
-                    <button onclick="showOwnerView()" style="background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; margin-right: 10px;">
-                        ← Change Owner ID
-                    </button>
-                    <button onclick="printOwnerView()" style="background: #6f42c1; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 0.9rem;">
-                        🖨️ Print View
-                    </button>
-                </div>
-
-                <div class="legend-print" style="margin-bottom: 15px; padding: 15px; background: #e7f3ff; border: 1px solid #b8daff; border-radius: 8px;">
-                    <h4 style="color: #004085; margin-bottom: 10px;">Legend:</h4>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px; font-size: 0.9rem; color: #004085;">
-                        <div><span style="background: #d4edda; padding: 2px 6px; border-radius: 3px; margin-right: 8px;"><strong>Title!</strong></span> - Title earned</div>
-                        <div><span style="background: #d4edda; padding: 2px 6px; border-radius: 3px; margin-right: 8px;"><strong>Ace2</strong></span> - Has earned Ace2</div>
-                        <div><span style="background: linear-gradient(135deg, #e8f5e8, #d4edda); padding: 2px 6px; border-radius: 3px; margin-right: 8px;"><strong>3 → Ace</strong></span> - Needs 3 Q's for first Ace</div>
-                        <div><span style="background: linear-gradient(135deg, #e8f5e8, #d4edda); padding: 2px 6px; border-radius: 3px; margin-right: 8px;"><strong>7 → Ace3</strong></span> - Needs 7 Q's for next Ace level</div>
-                        <div><span style="background: #fff3cd; padding: 2px 6px; border-radius: 3px; margin-right: 8px;"><strong>3 Q's, 1 judge needed for title</strong></span> - Requirements to achieve Title</div>
-                        <div><span style="color: #666; margin-right: 8px;"><strong>-</strong></span> - No entries at this level</div>
-                    </div>
-                </div>
-            `;
-
-            // Create the table
-            html += `
-                <div style="overflow-x: auto; border: 1px solid #dee2e6; border-radius: 8px;">
-                    <table class="owner-view-table" style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
-                        <thead>
-                            <tr style="background: #f8f9fa;">
-                                <th style="padding: 12px 8px; text-align: left; border-bottom: 2px solid #dee2e6; font-weight: 600; position: sticky; left: 0; background: #f8f9fa; z-index: 10;">Level</th>
-            `;
-
-            // Add dog name headers (clickable) with handler info
-            dogsData.forEach(dog => {
-                const displayName = dog.callName.length > 6 ? dog.callName.substring(0, 6) : dog.callName;
-                const escapedRegNumber = escapeJs(dog.regNumber);
-                const handlerInfo = dog.handlerName ? `<br><small style="color: #6c757d; font-weight: normal; font-size: 0.6rem;">${escapeHtml(dog.handlerName)}</small>` : '';
-                html += `
-                    <th style="padding: 8px 4px; text-align: center; border-bottom: 2px solid #dee2e6; font-weight: 600; width: ${75/dogsData.length}%;">
-                        <a href="javascript:void(0)" onclick="searchSpecificDog('${escapedRegNumber}')" 
-                           style="color: #667eea; text-decoration: none; font-weight: bold; cursor: pointer; font-size: 0.8rem;"
-                           onmouseover="this.style.textDecoration='underline'" 
-                           onmouseout="this.style.textDecoration='none'">
-                            ${escapeHtml(displayName)}
-                        </a>
-                        ${handlerInfo}
-                        <br>
-                        <small style="color: #6c757d; font-weight: normal; font-size: 0.7rem;">${escapeHtml(dog.regNumber)}</small>
-                    </th>
-                `;
-            });
-
-            html += `
-                            </tr>
-                        </thead>
-                        <tbody>
-            `;
-
-            // Add rows for each level
-            levelOrder.forEach(level => {
-                html += `
-                    <tr style="border-bottom: 1px solid #f0f0f0;">
-                        <td style="padding: 8px 4px; border-right: 1px solid #dee2e6; font-weight: 600; background: #f8f9fa; font-size: 0.8rem;">${level}</td>
-                `;
-
-                dogsData.forEach(dog => {
-                    const levelData = dog.levelSummary[level];
-                    let cellContent = '-';
-                    let cellStyle = 'padding: 10px 8px; text-align: center; border-right: 1px solid #f0f0f0;';
-
-                    if (levelData) {
-                        const totalPoints = levelData.totalPoints;
-                        const judgeCount = levelData.judges.size;
-                        const hasTitle = totalPoints >= 4 && judgeCount >= 2;
-
-                        if (hasTitle) {
-                            const titleInfo = calculateTitlePoints(levelData.records);
-                            const titlePoints = titleInfo.titlePoints;
-                            const acePoints = Math.max(0, totalPoints - titlePoints);
-                            
-                            if (acePoints >= 10) {
-                                const aceCount = Math.floor(acePoints / 10);
-                                const pointsToNextAce = 10 - (acePoints % 10);
-                                const nextAceNumber = aceCount + 1;
-                                
-                                if (pointsToNextAce === 10) {
-                                    // Exactly on an ACE milestone
-                                    cellContent = `<strong style="color: #6f42c1;">Ace${aceCount}</strong>`;
-                                } else {
-                                    // Show Q's needed to next ACE
-                                    cellContent = `<strong style="color: #6f42c1;">${pointsToNextAce} → Ace${nextAceNumber}</strong>`;
-                                }
-                                cellStyle += ' background: linear-gradient(135deg, #e8f5e8, #d4edda);';
-                            } else {
-                                // Has title but less than 10 ace points
-                                const pointsToFirstAce = 10 - acePoints;
-                                if (acePoints === 0) {
-                                    cellContent = `<strong style="color: #155724;">Title!</strong>`;
-                                } else {
-                                    cellContent = `<strong style="color: #155724;">${pointsToFirstAce} → Ace</strong>`;
-                                }
-                                cellStyle += ' background: #d4edda;';
-                            }
-                        } else if (totalPoints > 0) {
-                            const needMore = [];
-                            if (totalPoints < 4) needMore.push(`${4 - totalPoints} Q's`);
-                            if (judgeCount < 2) needMore.push(`${2 - judgeCount} judge${judgeCount === 0 ? 's' : ''} needed for title`);
-                            
-                            cellContent = `<span style="color: #856404;">${needMore.join(', ')}</span>`;
-                            cellStyle += ' background: #fff3cd;';
-                        }
-                    }
-
-                    html += `<td style="${cellStyle} font-size: 0.75rem;">${cellContent}</td>`;
-                });
-
-                html += '</tr>';
-            });
-
-            html += `
-                        </tbody>
-                    </table>
-                </div>
-
-                <div style="text-align: center; margin-top: 30px;">
-                    <button onclick="backToSearch()" style="background: #17a2b8; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 1rem;">
-                        Back to Dog Search
-                    </button>
-                </div>
-            `;
-
-            document.getElementById('summaryContent').innerHTML = html;
-        }
-
-        function printOwnerView() {
-            window.print();
-        }
-
-        function searchDog() {
-            const searchInput = document.getElementById('searchInput').value.trim();
-            if (!searchInput) {
-                alert('Please enter a registration number');
-                return;
-            }
-
-            if (trialingData.length === 0) {
-                alert('Please load data first');
-                return;
-            }
-
-            // Format the search input
-            const formattedSearch = formatRegistrationNumber(searchInput);
-            
-            // Find exact matching records only
-            const dogRecords = trialingData.filter(record => 
-                record.registrationNumber && 
-                record.registrationNumber.toLowerCase() === formattedSearch.toLowerCase()
-            );
-
-            if (dogRecords.length === 0) {
-                // If no exact match, show suggestion with partial matches
-                const partialMatches = trialingData.filter(record =>
-                    record.registrationNumber && 
-                    record.registrationNumber.toLowerCase().includes(formattedSearch.toLowerCase())
-                ).slice(0, 5); // Limit to 5 suggestions
-
-                let errorMessage = `No dog found with registration number: <strong>${formattedSearch}</strong>`;
-                
-                if (partialMatches.length > 0) {
-                    errorMessage += '<br><br><strong>Did you mean:</strong><ul style="text-align: left; margin: 10px 0;">';
-                    partialMatches.forEach(match => {
-                        errorMessage += `<li><a href="#" onclick="searchSpecific('${match.registrationNumber}')" style="color: #007bff; text-decoration: underline;">${match.registrationNumber} (${match.callName || 'Unknown'})</a></li>`;
-                    });
-                    errorMessage += '</ul>';
-                }
-
-                document.getElementById('summaryContent').innerHTML = 
-                    `<div class="error-message">${errorMessage}</div>`;
-                return;
-            }
-
-            // Store records globally for modal access
-            currentDogRecords = dogRecords;
-            displaySummary(dogRecords);
-        }
-
-        function formatRegistrationNumber(input) {
-            if (!input) return '';
-            
-            // Remove any non-digits and dashes
-            let cleaned = input.replace(/[^0-9-]/g, '');
-            
-            // If input has dashes, work with parts
-            if (cleaned.includes('-')) {
-                let parts = cleaned.split('-');
-                if (parts.length === 3) {
-                    // Format as XX-XXXX-XX with leading zeros
-                    let part1 = parts[0].padStart(2, '0').substring(0, 2);
-                    let part2 = parts[1].padStart(4, '0').substring(0, 4);
-                    let part3 = parts[2].padStart(2, '0').substring(0, 2);
-                    return `${part1}-${part2}-${part3}`;
-                }
-            }
-            
-            // If no dashes but enough digits, auto-format
-            const digitsOnly = cleaned.replace(/-/g, '');
-            if (digitsOnly.length >= 6) {
-                const part1 = digitsOnly.substring(0, 2).padStart(2, '0');
-                const part2 = digitsOnly.substring(2, 6).padStart(4, '0');
-                const part3 = digitsOnly.substring(6, 8).padStart(2, '0');
-                return `${part1}-${part2}-${part3}`;
-            }
-            
-            // If partial entry, try to format what we have
-            if (digitsOnly.length === 4) {
-                // Assume this is the middle part (most common entry)
-                return `XX-${digitsOnly}-XX`;
-            }
-            
-            return cleaned; // Return what we have if can't format
-        }
-
-        function showOwnerView() {
-            if (trialingData.length === 0) {
-                alert('Please load data first');
-                return;
-            }
-
-            document.getElementById('summaryContent').innerHTML = `
-                <div style="text-align: center; padding: 40px;">
-                    <h3 style="color: #17a2b8; margin-bottom: 20px;">👤 Owner View</h3>
-                    <p style="margin-bottom: 20px;">Enter the middle 4 digits from your registration number:</p>
-                    
-                    <div style="background: #f8f9fa; padding: 30px; border-radius: 12px; border: 2px solid #dee2e6; margin: 20px 0;">
-                        <input type="text" id="ownerIdInput" placeholder="e.g., 1734" 
-                               style="padding: 15px 20px; font-size: 1.2rem; border: 2px solid #ddd; border-radius: 10px; width: 200px; text-align: center;"
-                               onkeypress="handleOwnerKeyPress(event)" maxlength="4">
-                        <br><br>
-                        <button onclick="loadOwnerView()" style="background: #28a745; color: white; border: none; padding: 15px 30px; border-radius: 10px; cursor: pointer; font-size: 1.1rem;">
-                            📊 Load Owner View
-                        </button>
-                    </div>
-                    
-                    <button onclick="backToSearch()" style="background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 0.9rem;">
-                        ← Back to Search
-                    </button>
-                </div>
-            `;
-        }
-
-        function handleOwnerKeyPress(event) {
-            if (event.key === 'Enter') {
-                loadOwnerView();
-            }
-        }
-
-        function loadOwnerView() {
-            const ownerIdInput = document.getElementById('ownerIdInput');
-            if (!ownerIdInput) {
-                console.error('Owner ID input not found');
-                return;
-            }
-            
-            const ownerId = ownerIdInput.value.trim();
-            
-            if (!ownerId) {
-                alert('Please enter the middle 4 digits');
-                return;
-            }
-
-            if (!/^\d{4}$/.test(ownerId)) {
-                alert('Please enter exactly 4 digits');
-                return;
-            }
-
-            // Find all dogs with matching middle 4 digits
-            const matchingDogs = trialingData.filter(record => {
-                if (!record.registrationNumber) return false;
-                const regParts = record.registrationNumber.split('-');
-                return regParts.length >= 2 && regParts[1] === ownerId;
-            });
-
-            if (matchingDogs.length === 0) {
-                document.getElementById('summaryContent').innerHTML = `
-                    <div class="error-message">No dogs found with owner ID: <strong>${ownerId}</strong></div>
-                    <div style="text-align: center; margin-top: 20px;">
-                        <button onclick="showOwnerView()" style="background: #17a2b8; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer;">
-                            ← Try Again
-                        </button>
-                    </div>
-                `;
-                return;
-            }
-
-            // Group by unique registration numbers
-            const dogsByReg = {};
-            matchingDogs.forEach(record => {
-                if (!dogsByReg[record.registrationNumber]) {
-                    dogsByReg[record.registrationNumber] = [];
-                }
-                dogsByReg[record.registrationNumber].push(record);
-            });
-
-            const dogRegistrations = Object.keys(dogsByReg);
-            const dogCount = dogRegistrations.length;
-
-            displayOwnerGrid(dogsByReg, ownerId, dogCount);
-        }
-
-        function searchSpecificDog(regNumber) {
-            document.getElementById('searchInput').value = regNumber;
-            searchDog();
-        }level => {
-                html += `<tr><td class="level-cell">${level}</td>`;
-                
-                sortedDogs.forEach(regNumber => {
-                    const dog = ownerDogs[regNumber];
-                    const dogRecords = dog.records.filter(r => r.level === level);
-                    const analysis = analyzeProgressForOwnerView(dogRecords, level, dog.records);
-                    
-                    html += `<td class="${analysis.cellClass}">${analysis.cellContent}</td>`;
-                });
-                
-                html += `</tr>`;
-            });
-
-            html += `</tbody></table>
-                    
-                    <div class="legend-container">
-                        <h4>Legend:</h4>
-                        <div class="legend-grid">
-                            <div class="legend-item"><span class="legend-box q-needed" style="background: #fff3cd; color: #856404;">2Q</span> Q's needed for title</div>
-                            <div class="legend-item"><span class="legend-box title-ready" style="background: #d4edda; color: #155724;">Title!</span> Title earned, ready to submit</div>
-                            <div class="legend-item"><span class="legend-box ace-progress" style="background: #e7e3ff; color: #6f42c1;">3Q→Ace</span> Q's needed for next Ace</div>
-                            <div class="legend-item"><span class="legend-box no-data" style="background: #f8d7da; color: #721c24;">-</span> No qualifying scores</div>
+                    console.log('File found, reading data...');
+                    return response.arrayBuffer();
+                })
+                .then(data => {
+                    console.log('Data received, size:', data.byteLength, 'bytes');
+                    processExcelData(new Uint8Array(data));
+                    updateLastUpdatedDate();
+                    document.getElementById('summaryContent').innerHTML = `
+                        <div class="validation-rules">
+                            <h4>Title Requirements</h4>
+                            <ul>
+                                <li>Minimum 4 points required for each level</li>
+                                <li>Points must come from at least 2 different judges</li>
+                                <li>Prerequisites must be met before advancing to higher levels</li>
+                                <li>Special case: "Investigator 3" requires either "Patrol 1" OR "Detective 2"</li>
+                                <li>Games levels require at least 2 different games (BJ, C, P, T, GB)</li>
+                                <li>Ace awards given every 10 points after title is earned</li>
+                            </ul>
                         </div>
-                        <p class="requirements-text">
-                            <strong>Requirements:</strong> 4+ Q's from 2+ different judges | Games levels need 2+ different games | Prerequisites must be met for advanced levels
-                        </p>
-                    </div>
-                </div>
-            `;
-            
-            document.getElementById('summaryContent').innerHTML = html;
+                    `;
+                    console.log('Data processing complete');
+                })
+                .catch(error => {
+                    clearTimeout(timeoutId);
+                    console.error('Error loading data:', error);
+                    document.getElementById('lastUpdated').textContent = 'File not found';
+                    showFileUpload();
+                });
         }
-
-        // This function was causing the syntax error - removing it since we have a working owner view implementation
-
-        function printOwnerView() {
-            const printWindow = window.open('', '_blank');
-            const printableArea = document.getElementById('printableArea');
-            if (!printableArea) {
-                alert('No content to print');
-                return;
-            }
-            
-            const clonedContent = printableArea.cloneNode(true);
-            const printHeader = clonedContent.querySelector('.print-header');
-            if (printHeader) {
-                printHeader.style.display = 'block';
-            }
-            
-            // Force horizontal text by replacing the dog header cells completely
-            const dogHeaders = clonedContent.querySelectorAll('th.dog-header');
-            dogHeaders.forEach(header => {
-                // Get the text content and split by <br> or newlines
-                const text = header.innerHTML.replace(/<br\s*\/?>/gi, ' ');
-                header.innerHTML = text;
-                // Remove all CSS classes and add a new one
-                header.className = 'dog-header-horizontal';
-            });
-            
-            printWindow.document.write(`
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>C-WAGS Owner Progress Report</title>
-                    <style>
-                        @page { size: 8.5in 11in; margin: 0.3in; }
-                        body { font-family: Arial, sans-serif; font-size: 13px; line-height: 1.2; margin: 0; padding: 0; }
-                        .print-header h2 { font-size: 22px; margin-bottom: 3px; color: #2c3e50; line-height: 1.2; }
-                        .print-header p { font-size: 16px; color: #666; margin-bottom: 10px; line-height: 1.2; }
-                        .owner-grid { width: 100%; border-collapse: collapse; font-size: 12px; line-height: 1.1; table-layout: fixed; }
-                        .owner-grid th, .owner-grid td { border: 1px solid #333; padding: 4px 3px; text-align: center; vertical-align: middle; line-height: 1.1; }
-                        .owner-grid th { background: #2c3e50 !important; color: white !important; font-weight: 600; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-size: 12px; }
-                        .owner-grid .level-cell { background: #bdc3c7 !important; color: #2c3e50 !important; font-weight: 600; text-align: left; padding-left: 8px; font-size: 11px; -webkit-print-color-adjust: exact; print-color-adjust: exact; line-height: 1.1; width: 100px; }
-                        .dog-header-horizontal { 
-                            background: #ecf0f1 !important; 
-                            color: #2c3e50 !important; 
-                            font-size: 10px !important; 
-                            padding: 4px 3px !important; 
-                            text-align: center !important;
-                            writing-mode: horizontal-tb !important;
-                            -webkit-print-color-adjust: exact !important; 
-                            print-color-adjust: exact !important;
-                            white-space: nowrap !important;
-                            line-height: 1.2 !important;
-                            font-weight: 600 !important;
-                            overflow: hidden !important;
-                        }
-                        .q-needed { background: #fff3cd !important; color: #856404 !important; font-weight: 600; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-size: 11px; line-height: 1.1; }
-                        .title-ready { background: #d4edda !important; color: #155724 !important; font-weight: 600; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-size: 11px; line-height: 1.1; }
-                        .ace-progress { background: #e7e3ff !important; color: #6f42c1 !important; font-weight: 600; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-size: 11px; line-height: 1.1; }
-                        .no-data { background: #f8f9fa !important; color: #6c757d !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-size: 11px; line-height: 1.1; }
-                        .legend-container { margin-top: 12px; page-break-inside: avoid; font-size: 11px; border-top: 1px solid #333; padding-top: 8px; line-height: 1.2; }
-                        .legend-container h4 { font-size: 13px; margin-bottom: 4px; color: #2c3e50; line-height: 1.2; }
-                        .legend-grid { display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 4px; }
-                        .legend-item { display: flex; align-items: center; gap: 4px; }
-                        .legend-box { display: inline-block; padding: 3px 6px; border-radius: 3px; font-weight: 600; font-size: 10px; }
-                        .requirements-text { font-size: 10px; color: #666; margin-top: 4px; line-height: 1.3; }
-                    </style>
-                </head>
-                <body>
-                    ${clonedContent.innerHTML}
-                </body>
-                </html>
-            `);
-            
-            printWindow.document.close();
-            printWindow.onload = function() {
-                setTimeout(() => {
-                    printWindow.print();
-                    printWindow.close();
-                }, 250);
-            };
-        }
-
-        function checkPrerequisites(level, allDogRecords) {
-            if (!prerequisites[level] && !level.startsWith('Games ')) {
-                return true;
-            }
-            
-            if (level.startsWith('Games ')) {
-                return true;
-            }
-            
-            if (level === "Investigator 3") {
-                const patrol1Records = allDogRecords.filter(r => r.level === "Patrol 1");
-                const detective2Records = allDogRecords.filter(r => r.level === "Detective 2");
-                
-                const patrol1Valid = checkLevelTitleRequirements(patrol1Records);
-                const detective2Valid = checkLevelTitleRequirements(detective2Records);
-                
-                return patrol1Valid || detective2Valid;
-            } else {
-                const prereqLevel = prerequisites[level][0];
-                const prereqRecords = allDogRecords.filter(r => r.level === prereqLevel);
-                return checkLevelTitleRequirements(prereqRecords);
-            }
-        }
-
-        function checkLevelTitleRequirements(records) {
-            if (records.length === 0) return false;
-            
-            let totalPoints = 0;
-            const judges = new Set();
-            
-            records.forEach(record => {
-                if (record.points > 0) {
-                    totalPoints += record.points;
-                    if (record.judge) judges.add(record.judge);
-                }
-            });
-            
-            return totalPoints >= 4 && judges.size >= 2;
-        }
-
-        function searchSpecificDog(regNumber) {
-            document.getElementById('searchInput').value = regNumber;
-            searchDog();
-        }
-
-        function backToSearch() {
-            document.getElementById('summaryContent').innerHTML = `
-                <div class="validation-rules">
-                    <h4>Title Requirements</h4>
-                    <ul>
-                        <li>Minimum 4 points required for each level</li>
-                        <li>Points must come from at least 2 different judges</li>
-                        <li>Prerequisites must be met before advancing to higher levels</li>
-                        <li>Special case: "Investigator 3" requires either "Patrol 1" OR "Detective 2"</li>
-                        <li>Games levels require at least 2 different games (BJ, C, P, T, GB)</li>
-                        <li>Ace awards given every 10 points after title is earned</li>
-                    </ul>
-                </div>
-            `;
-        }
-
-        // Remove the problematic loadDataFromFile function that was causing loops
-        // Replace with a simpler approach that doesn't auto-retry
 
         function showFileUpload() {
             document.getElementById('summaryContent').innerHTML = `
@@ -2593,11 +1822,288 @@
             document.getElementById('detailsModal').style.display = 'none';
         }
 
-        // Initialize - much simpler approach to prevent loops
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 CWAGS Tracker initializing...');
+        function showOwnerView() {
+            if (trialingData.length === 0) {
+                alert('Please wait for trialing data to load');
+                return;
+            }
+
+            document.getElementById('summaryContent').innerHTML = `
+                <div style="text-align: center; padding: 40px;">
+                    <h3 style="color: #17a2b8; margin-bottom: 20px;">👤 Owner View</h3>
+                    <p style="margin-bottom: 20px;">Enter the middle 4 digits from your registration number:</p>
+                    
+                    <div style="background: #f8f9fa; padding: 30px; border-radius: 12px; border: 2px solid #dee2e6; margin: 20px 0;">
+                        <input type="text" id="ownerIdInput" placeholder="e.g., 1734" 
+                               style="padding: 15px 20px; font-size: 1.2rem; border: 2px solid #ddd; border-radius: 10px; width: 200px; text-align: center;"
+                               onkeypress="handleOwnerKeyPress(event)" maxlength="4">
+                        <br><br>
+                        <button onclick="loadOwnerView()" style="background: #28a745; color: white; border: none; padding: 15px 30px; border-radius: 10px; cursor: pointer; font-size: 1.1rem;">
+                            📊 Load Owner View
+                        </button>
+                    </div>
+                    
+                    <button onclick="backToSearch()" style="background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 0.9rem;">
+                        ← Back to Search
+                    </button>
+                </div>
+            `;
+        }
+
+        function handleOwnerKeyPress(event) {
+            if (event.key === 'Enter') {
+                loadOwnerView();
+            }
+        }
+
+        function loadOwnerView() {
+            const ownerIdInput = document.getElementById('ownerIdInput');
+            if (!ownerIdInput) {
+                console.error('Owner ID input not found');
+                return;
+            }
             
-            // Show the interface immediately
+            const ownerId = ownerIdInput.value.trim();
+            
+            if (!ownerId) {
+                alert('Please enter the middle 4 digits');
+                return;
+            }
+
+            if (!/^\d{4}$/.test(ownerId)) {
+                alert('Please enter exactly 4 digits');
+                return;
+            }
+
+            // Find all dogs with matching middle 4 digits
+            const matchingDogs = trialingData.filter(record => {
+                if (!record.registrationNumber) return false;
+                const regParts = record.registrationNumber.split('-');
+                return regParts.length >= 2 && regParts[1] === ownerId;
+            });
+
+            if (matchingDogs.length === 0) {
+                document.getElementById('summaryContent').innerHTML = `
+                    <div class="error-message">No dogs found with owner ID: <strong>${ownerId}</strong></div>
+                    <div style="text-align: center; margin-top: 20px;">
+                        <button onclick="showOwnerView()" style="background: #17a2b8; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer;">
+                            ← Try Again
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            // Group by unique registration numbers
+            const dogsByReg = {};
+            matchingDogs.forEach(record => {
+                if (!dogsByReg[record.registrationNumber]) {
+                    dogsByReg[record.registrationNumber] = [];
+                }
+                dogsByReg[record.registrationNumber].push(record);
+            });
+
+            const dogRegistrations = Object.keys(dogsByReg);
+            const dogCount = dogRegistrations.length;
+
+            // Create header with owner info and navigation
+            let html = `
+                <div style="background: linear-gradient(45deg, #667eea, #764ba2); color: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; text-align: center;">
+                    <h3 style="margin: 0; font-size: 1.4rem;">${dogCount} dog(s) found</h3>
+                </div>
+
+                <div style="text-align: center; margin-bottom: 15px;">
+                    <button onclick="showOwnerView()" style="background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; margin-right: 10px;">
+                        ← Change Owner ID
+                    </button>
+                    <button onclick="printOwnerView()" style="background: #6f42c1; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 0.9rem;">
+                        🖨️ Print View
+                    </button>
+                </div>
+
+                <div class="legend-print" style="margin-bottom: 15px; padding: 15px; background: #e7f3ff; border: 1px solid #b8daff; border-radius: 8px;">
+                    <h4 style="color: #004085; margin-bottom: 10px;">Legend:</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px; font-size: 0.9rem; color: #004085;">
+                        <div><span style="background: #d4edda; padding: 2px 6px; border-radius: 3px; margin-right: 8px;"><strong>Title!</strong></span> - Title earned</div>
+                        <div><span style="background: #d4edda; padding: 2px 6px; border-radius: 3px; margin-right: 8px;"><strong>Ace2</strong></span> - Has earned Ace2</div>
+                        <div><span style="background: linear-gradient(135deg, #e8f5e8, #d4edda); padding: 2px 6px; border-radius: 3px; margin-right: 8px;"><strong>3 → Ace</strong></span> - Needs 3 Q's for first Ace</div>
+                        <div><span style="background: linear-gradient(135deg, #e8f5e8, #d4edda); padding: 2px 6px; border-radius: 3px; margin-right: 8px;"><strong>7 → Ace3</strong></span> - Needs 7 Q's for next Ace level</div>
+                        <div><span style="background: #fff3cd; padding: 2px 6px; border-radius: 3px; margin-right: 8px;"><strong>3 Q's, 1 judge needed for title</strong></span> - Requirements to achieve Title</div>
+                        <div><span style="color: #666; margin-right: 8px;"><strong>-</strong></span> - No entries at this level</div>
+                    </div>
+                </div>
+            `;
+
+            // Define all levels in proper order
+            const allLevels = [
+                "Patrol 1", "Detective 2", "Investigator 3", "Super Sleuth 4", "Private Inv", "Det Diversions",
+                "Ranger 1", "Ranger 2", "Ranger 3", "Ranger 4", "Ranger 5",
+                "Dasher 3", "Dasher 4", "Dasher 5", "Dasher 6",
+                "Obedience 1", "Obedience 2", "Obedience 3", "Obedience 4", "Obedience 5",
+                "Starter", "Advanced", "Pro", "ARF",
+                "Zoom 1", "Zoom 1.5", "Zoom 2",
+                "Games 1", "Games 2", "Games 3", "Games 4"
+            ];
+
+            // Calculate data for each dog
+            const dogsData = dogRegistrations.map(regNumber => {
+                const dogRecords = dogsByReg[regNumber];
+                
+                // Get names - prioritize DogInfo.xlsx, fallback to trialing data
+                const callName = getCallNameFromDogInfo(regNumber, dogRecords[0].callName) || 'Unknown';
+                const handlerName = getHandlerNameFromDogInfo(regNumber);
+
+                // Calculate level summaries
+                const levelSummary = {};
+                dogRecords.forEach(record => {
+                    if (!record.level) return;
+                    
+                    if (!levelSummary[record.level]) {
+                        levelSummary[record.level] = {
+                            totalPoints: 0,
+                            judges: new Set(),
+                            records: []
+                        };
+                    }
+                    
+                    if (record.points > 0) {
+                        levelSummary[record.level].totalPoints += record.points;
+                        if (record.judge) {
+                            levelSummary[record.level].judges.add(record.judge);
+                        }
+                    }
+                    levelSummary[record.level].records.push(record);
+                });
+
+                return {
+                    regNumber,
+                    callName,
+                    handlerName,
+                    levelSummary
+                };
+            });
+
+            // Create the table
+            html += `
+                <div style="overflow-x: auto; border: 1px solid #dee2e6; border-radius: 8px;">
+                    <table class="owner-view-table" style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                        <thead>
+                            <tr style="background: #f8f9fa;">
+                                <th style="padding: 12px 8px; text-align: left; border-bottom: 2px solid #dee2e6; font-weight: 600; position: sticky; left: 0; background: #f8f9fa; z-index: 10;">Level</th>
+            `;
+
+            // Add dog name headers (clickable) with handler info
+            dogsData.forEach(dog => {
+                const displayName = dog.callName.length > 6 ? dog.callName.substring(0, 6) : dog.callName;
+                const escapedRegNumber = escapeJs(dog.regNumber);
+                const handlerInfo = dog.handlerName ? `<br><small style="color: #6c757d; font-weight: normal; font-size: 0.6rem;">${escapeHtml(dog.handlerName)}</small>` : '';
+                html += `
+                    <th style="padding: 8px 4px; text-align: center; border-bottom: 2px solid #dee2e6; font-weight: 600; width: ${75/dogsData.length}%;">
+                        <a href="javascript:void(0)" onclick="searchSpecificDog('${escapedRegNumber}')" 
+                           style="color: #667eea; text-decoration: none; font-weight: bold; cursor: pointer; font-size: 0.8rem;"
+                           onmouseover="this.style.textDecoration='underline'" 
+                           onmouseout="this.style.textDecoration='none'">
+                            ${escapeHtml(displayName)}
+                        </a>
+                        ${handlerInfo}
+                        <br>
+                        <small style="color: #6c757d; font-weight: normal; font-size: 0.7rem;">${escapeHtml(dog.regNumber)}</small>
+                    </th>
+                `;
+            });
+
+            html += `
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            // Add rows for each level
+            allLevels.forEach(level => {
+                html += `
+                    <tr style="border-bottom: 1px solid #f0f0f0;">
+                        <td style="padding: 8px 4px; border-right: 1px solid #dee2e6; font-weight: 600; background: #f8f9fa; font-size: 0.8rem;">${level}</td>
+                `;
+
+                dogsData.forEach(dog => {
+                    const levelData = dog.levelSummary[level];
+                    let cellContent = '-';
+                    let cellStyle = 'padding: 10px 8px; text-align: center; border-right: 1px solid #f0f0f0;';
+
+                    if (levelData) {
+                        const totalPoints = levelData.totalPoints;
+                        const judgeCount = levelData.judges.size;
+                        const hasTitle = totalPoints >= 4 && judgeCount >= 2;
+
+                        if (hasTitle) {
+                            const titleInfo = calculateTitlePoints(levelData.records);
+                            const titlePoints = titleInfo.titlePoints;
+                            const acePoints = Math.max(0, totalPoints - titlePoints);
+                            
+                            if (acePoints >= 10) {
+                                const aceCount = Math.floor(acePoints / 10);
+                                const pointsToNextAce = 10 - (acePoints % 10);
+                                const nextAceNumber = aceCount + 1;
+                                
+                                if (pointsToNextAce === 10) {
+                                    // Exactly on an ACE milestone
+                                    cellContent = `<strong style="color: #6f42c1;">Ace${aceCount}</strong>`;
+                                } else {
+                                    // Show Q's needed to next ACE
+                                    cellContent = `<strong style="color: #6f42c1;">${pointsToNextAce} → Ace${nextAceNumber}</strong>`;
+                                }
+                                cellStyle += ' background: linear-gradient(135deg, #e8f5e8, #d4edda);';
+                            } else {
+                                // Has title but less than 10 ace points
+                                const pointsToFirstAce = 10 - acePoints;
+                                if (acePoints === 0) {
+                                    cellContent = `<strong style="color: #155724;">Title!</strong>`;
+                                } else {
+                                    cellContent = `<strong style="color: #155724;">${pointsToFirstAce} → Ace</strong>`;
+                                }
+                                cellStyle += ' background: #d4edda;';
+                            }
+                        } else if (totalPoints > 0) {
+                            const needMore = [];
+                            if (totalPoints < 4) needMore.push(`${4 - totalPoints} Q's`);
+                            if (judgeCount < 2) needMore.push(`${2 - judgeCount} judge${judgeCount === 0 ? 's' : ''} needed for title`);
+                            
+                            cellContent = `<span style="color: #856404;">${needMore.join(', ')}</span>`;
+                            cellStyle += ' background: #fff3cd;';
+                        }
+                    }
+
+                    html += `<td style="${cellStyle} font-size: 0.75rem;">${cellContent}</td>`;
+                });
+
+                html += '</tr>';
+            });
+
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+
+                <div style="text-align: center; margin-top: 30px;">
+                    <button onclick="backToSearch()" style="background: #17a2b8; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 1rem;">
+                        Back to Dog Search
+                    </button>
+                </div>
+            `;
+
+            document.getElementById('summaryContent').innerHTML = html;
+        }
+
+        function printOwnerView() {
+            window.print();
+        }
+
+        function searchSpecificDog(regNumber) {
+            document.getElementById('searchInput').value = regNumber;
+            searchDog();
+        }
+
+        function backToSearch() {
             document.getElementById('summaryContent').innerHTML = `
                 <div class="validation-rules">
                     <h4>Title Requirements</h4>
@@ -2610,204 +2116,54 @@
                         <li>Ace awards given every 10 points after title is earned</li>
                     </ul>
                 </div>
-                <div style="text-align: center; margin-top: 20px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
-                    <h4>📁 Load Your Data</h4>
-                    <p>Upload your Excel file to get started:</p>
-                    <input type="file" id="startupFileInput" accept=".xlsx,.xls,.csv" style="margin: 10px;">
-                    <br>
-                    <button onclick="loadStartupFile()" style="background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; margin: 10px;">
-                        📤 Load File
-                    </button>
-                </div>
             `;
+        }
+
+        // Initialize - but make it more immediate
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 CWAGS Tracker initializing...');
+            document.getElementById('lastUpdated').textContent = 'Loading data...';
             
-            document.getElementById('lastUpdated').textContent = 'Ready - Please upload your data file';
-            
-            // Check if main data file exists and offer auto-load option
+            // Check fontkit after a delay
             setTimeout(() => {
-                checkMainDataFile();
+                if (typeof fontkit !== 'undefined') {
+                    console.log('✅ Fontkit library loaded successfully');
+                } else {
+                    console.warn('⚠️ Fontkit library failed to load - custom fonts will not work');
+                }
             }, 1000);
             
-            // Try to load optional files in background (optional)
-            setTimeout(() => {
-                loadOptionalFiles();
-            }, 2000);
-        });
-
-        // Load optional files without blocking the interface - with better error handling
-        async function loadOptionalFiles() {
-            try {
-                console.log('Loading optional files...');
-                
-                // Try DogInfo with explicit error handling
+            // Load files with proper sequencing and error handling
+            setTimeout(async () => {
                 try {
-                    const dogInfoSuccess = await loadDogInfoData();
-                    if (dogInfoSuccess) {
-                        console.log('✅ DogInfo.xlsx loaded successfully');
-                    } else {
-                        console.log('⚠️ DogInfo.xlsx not found or inaccessible');
-                    }
-                } catch (dogInfoError) {
-                    console.log('⚠️ DogInfo.xlsx error:', dogInfoError.message);
-                }
-                
-                // Try Title Placement with explicit error handling
-                try {
-                    const titlePlacementSuccess = await loadTitlePlacementData();
-                    if (titlePlacementSuccess) {
-                        console.log('✅ Title Placement.xlsx loaded successfully');
-                    } else {
-                        console.log('⚠️ Title Placement.xlsx not found or inaccessible');
-                    }
-                } catch (titleError) {
-                    console.log('⚠️ Title Placement.xlsx error:', titleError.message);
-                }
-                
-                console.log('Optional files processing complete');
-            } catch (error) {
-                console.log('Optional files general error:', error.message);
-            }
-        }
-
-        // Diagnostic function to check if main data file exists
-        async function checkMainDataFile() {
-            try {
-                console.log('🔍 Checking for main data file...');
-                const response = await fetch('Data for Tracker web.xlsx', { 
-                    method: 'HEAD',  // Just check if file exists without downloading
-                    cache: 'no-cache'
-                });
-                
-                if (response.ok) {
-                    console.log('✅ Main data file found - you can try auto-loading');
+                    console.log('📊 Step 1: Loading DogInfo data...');
+                    const dogInfoLoaded = await loadDogInfoData();
                     
-                    // Add auto-load option to the interface
-                    const currentContent = document.getElementById('summaryContent').innerHTML;
-                    document.getElementById('summaryContent').innerHTML = currentContent.replace(
-                        '<button onclick="loadStartupFile()"',
-                        '<button onclick="tryAutoLoad()" style="background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; margin: 5px;">🔄 Try Auto-Load</button><br><button onclick="loadStartupFile()"'
-                    );
-                } else {
-                    console.log('⚠️ Main data file not found - manual upload required');
-                }
-            } catch (error) {
-                console.log('⚠️ Cannot access main data file:', error.message);
-            }
-        }
+                    if (dogInfoLoaded) {
+                        console.log('✅ Step 1 complete: DogInfo data ready');
+                    } else {
+                        console.log('⚠️ Step 1 skipped: DogInfo not available');
+                    }
 
-        // Function to try auto-loading the main data file
-        async function tryAutoLoad() {
-            try {
-                console.log('🔄 Attempting to auto-load main data file...');
-                document.getElementById('lastUpdated').textContent = 'Loading main data file...';
-                
-                const response = await fetch('Data for Tracker web.xlsx', {
-                    cache: 'no-cache'
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
-                
-                const arrayBuffer = await response.arrayBuffer();
-                const data = new Uint8Array(arrayBuffer);
-                
-                console.log('📊 Processing data...');
-                processExcelData(data);
-                updateLastUpdatedDate();
-                
-                // Show success
-                document.getElementById('summaryContent').innerHTML = `
-                    <div style="text-align: center; padding: 20px; background: #d4edda; color: #155724; border-radius: 8px; margin-bottom: 20px;">
-                        <h4>✅ Data Loaded Successfully!</h4>
-                        <p>Loaded ${trialingData.length} records from "Data for Tracker web.xlsx"</p>
-                        <p>You can now search for dogs or view owner data.</p>
-                    </div>
-                    <div class="validation-rules">
-                        <h4>Title Requirements</h4>
-                        <ul>
-                            <li>Minimum 4 points required for each level</li>
-                            <li>Points must come from at least 2 different judges</li>
-                            <li>Prerequisites must be met before advancing to higher levels</li>
-                            <li>Special case: "Investigator 3" requires either "Patrol 1" OR "Detective 2"</li>
-                            <li>Games levels require at least 2 different games (BJ, C, P, T, GB)</li>
-                            <li>Ace awards given every 10 points after title is earned</li>
-                        </ul>
-                    </div>
-                `;
-                
-            } catch (error) {
-                console.error('❌ Auto-load failed:', error);
-                document.getElementById('lastUpdated').textContent = 'Auto-load failed - please upload manually';
-                
-                // Show error message
-                document.getElementById('summaryContent').innerHTML = `
-                    <div style="text-align: center; padding: 20px; background: #f8d7da; color: #721c24; border-radius: 8px; margin-bottom: 20px;">
-                        <h4>❌ Auto-Load Failed</h4>
-                        <p>Could not load "Data for Tracker web.xlsx"</p>
-                        <p><strong>Error:</strong> ${error.message}</p>
-                        <p>Please use manual upload below instead.</p>
-                    </div>
-                    <div style="text-align: center; margin-top: 20px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
-                        <h4>📁 Manual Upload</h4>
-                        <p>Upload your Excel file to get started:</p>
-                        <input type="file" id="startupFileInput" accept=".xlsx,.xls,.csv" style="margin: 10px;">
-                        <br>
-                        <button onclick="loadStartupFile()" style="background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; margin: 10px;">
-                            📤 Load File
-                        </button>
-                    </div>
-                `;
-            }
-        }
-
-        // Simple startup file loader
-        function loadStartupFile() {
-            const fileInput = document.getElementById('startupFileInput');
-            const file = fileInput.files[0];
-            
-            if (!file) {
-                alert('Please select a file first');
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    processExcelData(data);
-                    updateLastUpdatedDate();
+                    console.log('📊 Step 2: Loading Title Placement data...');
+                    const titlePlacementLoaded = await loadTitlePlacementData();
                     
-                    // Show success and normal interface
-                    document.getElementById('summaryContent').innerHTML = `
-                        <div style="text-align: center; padding: 20px; background: #d4edda; color: #155724; border-radius: 8px; margin-bottom: 20px;">
-                            <h4>✅ Data Loaded Successfully!</h4>
-                            <p>Loaded ${trialingData.length} records. You can now search for dogs or view owner data.</p>
-                        </div>
-                        <div class="validation-rules">
-                            <h4>Title Requirements</h4>
-                            <ul>
-                                <li>Minimum 4 points required for each level</li>
-                                <li>Points must come from at least 2 different judges</li>
-                                <li>Prerequisites must be met before advancing to higher levels</li>
-                                <li>Special case: "Investigator 3" requires either "Patrol 1" OR "Detective 2"</li>
-                                <li>Games levels require at least 2 different games (BJ, C, P, T, GB)</li>
-                                <li>Ace awards given every 10 points after title is earned</li>
-                            </ul>
-                        </div>
-                    `;
+                    if (titlePlacementLoaded) {
+                        console.log('✅ Step 2 complete: Title Placement data ready');
+                    } else {
+                        console.log('⚠️ Step 2 skipped: Title Placement not available');
+                    }
+                    
+                    console.log('📁 Step 3: Loading main trialing data...');
+                    loadDataFromFile();
+                    
                 } catch (error) {
-                    console.error('Error loading file:', error);
-                    alert(`Error loading file: ${error.message}`);
+                    console.error('❌ Initialization error:', error);
+                    document.getElementById('lastUpdated').textContent = 'Initialization failed';
+                    showFileUpload();
                 }
-            };
-            
-            reader.onerror = function() {
-                alert('Error reading file. Please try again.');
-            };
-            
-            reader.readAsArrayBuffer(file);
-        }
+            }, 200);
+        });
 
         // Close modal when clicking outside of it
         window.onclick = function(event) {
