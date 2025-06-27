@@ -1057,116 +1057,115 @@
         }
 
         // Generate ACE certificate
-async function generateAceCertificate(level, regNumber, aceCount) {
-    try {
-        const btn = event.target;
-        btn.textContent = 'Generating...';
-        btn.disabled = true;
-
-        const levelRecords = trialingData.filter(r => r.registrationNumber === regNumber && r.level === level);
-        if (levelRecords.length === 0) throw new Error('No records found for this level');
-
-        const titleInfo = calculateTitlePoints(levelRecords);
-        const titlePoints = titleInfo.titlePoints;
-
-        // Find when the specific ACE was earned by using existing function
-        const aceEarnedDates = findAceEarnedDates(levelRecords, titlePoints);
-        let aceEarnedDate = titleInfo.titleDate; // fallback to title date
-
-        // Find the date for the specific ACE count we're generating
-        if (aceEarnedDates.length > 0) {
-            const targetAce = aceEarnedDates.find(ace => ace.aceNumber === aceCount);
-            if (targetAce) {
-                aceEarnedDate = targetAce.date;
-            } else {
-                // If exact ACE not found, use the last ACE date available
-                aceEarnedDate = aceEarnedDates[aceEarnedDates.length - 1].date;
-            }
-        }
-
-        const dateEarned = aceEarnedDate ? aceEarnedDate.toLocaleDateString() : new Date().toLocaleDateString();
-        const aceCertificateName = getAceCertificateName(level, aceCount);
-
-        // Get names from DogInfo.xlsx
-        const handlerName = getHandlerNameFromDogInfo(regNumber) || 'Handler Name';
-        const registeredName = getRegisteredNameFromDogInfo(regNumber) || 'Dog Name';
-
-        // ACE certificates use dedicated Ace.pdf template
-        const templateUrl = 'https://raw.githubusercontent.com/cwagtracker/Tracker/main/templates/Ace.pdf';
-        const response = await fetch(templateUrl);
-        if (!response.ok) throw new Error(`ACE template not found: ${templateUrl}`);
-        
-        const templateBytes = await response.arrayBuffer();
-        const pdfDoc = await PDFLib.PDFDocument.load(templateBytes);
-        const firstPage = pdfDoc.getPages()[0];
-        
-        const helvetica = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
-        const timesBold = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRomanBold);
-        let maiandraFont = timesBold;
-
-        // Try to load custom font
-        if (typeof fontkit !== 'undefined') {
+        async function generateAceCertificate(level, regNumber, aceCount) {
             try {
-                pdfDoc.registerFontkit(fontkit);
-                const fontUrls = [
-                    'https://cdn.jsdelivr.net/gh/cwagtracker/Tracker@main/fonts/Maiandra%20GD.TTF',
-                    'https://raw.githubusercontent.com/cwagtracker/Tracker/main/fonts/Maiandra%20GD.TTF'
-                ];
-                
-                for (const fontUrl of fontUrls) {
-                    try {
-                        const fontResponse = await fetch(fontUrl, { mode: 'cors' });
-                        if (fontResponse.ok) {
-                            const fontBytes = await fontResponse.arrayBuffer();
-                            maiandraFont = await pdfDoc.embedFont(fontBytes);
-                            break;
-                        }
-                    } catch (e) { /* continue */ }
+                const btn = event.target;
+                btn.textContent = 'Generating...';
+                btn.disabled = true;
+
+                const levelRecords = trialingData.filter(r => r.registrationNumber === regNumber && r.level === level);
+                if (levelRecords.length === 0) throw new Error('No records found for this level');
+
+                const titleInfo = calculateTitlePoints(levelRecords);
+                const titlePoints = titleInfo.titlePoints;
+
+                // Find when the specific ACE was earned by using existing function
+                const aceEarnedDates = findAceEarnedDates(levelRecords, titlePoints);
+                let aceEarnedDate = titleInfo.titleDate; // fallback to title date
+
+                // Find the date for the specific ACE count we're generating
+                if (aceEarnedDates.length > 0) {
+                    const targetAce = aceEarnedDates.find(ace => ace.aceNumber === aceCount);
+                    if (targetAce) {
+                        aceEarnedDate = targetAce.date;
+                    } else {
+                        // If exact ACE not found, use the last ACE date available
+                        aceEarnedDate = aceEarnedDates[aceEarnedDates.length - 1].date;
+                    }
                 }
-            } catch (e) { /* use fallback */ }
-        }
 
-        // Helper function for text alignment
-        function drawTextWithAlignment(page, text, config, font) {
-            let x = config.x;
-            if (config.align === 'center') {
-                const textWidth = font.widthOfTextAtSize(text, config.size);
-                x = config.x - (textWidth / 2);
-            } else if (config.align === 'right') {
-                const textWidth = font.widthOfTextAtSize(text, config.size);
-                x = config.x - textWidth;
+                const dateEarned = aceEarnedDate ? aceEarnedDate.toLocaleDateString() : new Date().toLocaleDateString();
+                const aceCertificateName = getAceCertificateName(level, aceCount);
+
+                // Get names from DogInfo.xlsx
+                const handlerName = getHandlerNameFromDogInfo(regNumber) || 'Handler Name';
+                const registeredName = getRegisteredNameFromDogInfo(regNumber) || 'Dog Name';
+
+                // ACE certificates use dedicated Ace.pdf template
+                const templateUrl = 'https://raw.githubusercontent.com/cwagtracker/Tracker/main/templates/Ace.pdf';
+                const response = await fetch(templateUrl);
+                if (!response.ok) throw new Error(`ACE template not found: ${templateUrl}`);
+                
+                const templateBytes = await response.arrayBuffer();
+                const pdfDoc = await PDFLib.PDFDocument.load(templateBytes);
+                const firstPage = pdfDoc.getPages()[0];
+                
+                const helvetica = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
+                const timesBold = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRomanBold);
+                let maiandraFont = timesBold;
+
+                // Try to load custom font
+                if (typeof fontkit !== 'undefined') {
+                    try {
+                        pdfDoc.registerFontkit(fontkit);
+                        const fontUrls = [
+                            'https://cdn.jsdelivr.net/gh/cwagtracker/Tracker@main/fonts/Maiandra%20GD.TTF',
+                            'https://raw.githubusercontent.com/cwagtracker/Tracker/main/fonts/Maiandra%20GD.TTF'
+                        ];
+                        
+                        for (const fontUrl of fontUrls) {
+                            try {
+                                const fontResponse = await fetch(fontUrl, { mode: 'cors' });
+                                if (fontResponse.ok) {
+                                    const fontBytes = await fontResponse.arrayBuffer();
+                                    maiandraFont = await pdfDoc.embedFont(fontBytes);
+                                    break;
+                                }
+                            } catch (e) { /* continue */ }
+                        }
+                    } catch (e) { /* use fallback */ }
+                }
+
+                // Helper function for text alignment
+                function drawTextWithAlignment(page, text, config, font) {
+                    let x = config.x;
+                    if (config.align === 'center') {
+                        const textWidth = font.widthOfTextAtSize(text, config.size);
+                        x = config.x - (textWidth / 2);
+                    } else if (config.align === 'right') {
+                        const textWidth = font.widthOfTextAtSize(text, config.size);
+                        x = config.x - textWidth;
+                    }
+                    page.drawText(text, {
+                        x: x, y: config.y, size: config.size, font: font,
+                        color: PDFLib.rgb(config.color[0], config.color[1], config.color[2])
+                    });
+                }
+
+                // Add text to ACE certificate
+                const dateLineText = `This certifies that on ${dateEarned} the requirements have been met for the title of:`;
+                drawTextWithAlignment(firstPage, dateLineText, aceCertificateConfig.dateLine, helvetica);
+
+                drawTextWithAlignment(firstPage, registeredName, aceCertificateConfig.callName, maiandraFont);
+                drawTextWithAlignment(firstPage, handlerName, aceCertificateConfig.handlerName, maiandraFont);
+                drawTextWithAlignment(firstPage, regNumber, aceCertificateConfig.registrationNumber, helvetica);
+                drawTextWithAlignment(firstPage, aceCertificateName, aceCertificateConfig.levelAbbreviation, maiandraFont);
+
+                const pdfBytes = await pdfDoc.save();
+                downloadPDF(pdfBytes, `${registeredName}-${level.replace(/\s+/g, '-')}-ACE-Certificate.pdf`);
+
+                btn.textContent = '🏆 Ace Certificate';
+                btn.disabled = false;
+
+            } catch (error) {
+                console.error('ACE certificate generation error:', error);
+                alert(`Unable to generate ACE certificate: ${error.message}`);
+                
+                const btn = event.target;
+                btn.textContent = '🏆 Ace Certificate';
+                btn.disabled = false;
             }
-            page.drawText(text, {
-                x: x, y: config.y, size: config.size, font: font,
-                color: PDFLib.rgb(config.color[0], config.color[1], config.color[2])
-            });
         }
-
-        // Add text to ACE certificate
-        const dateLineText = `This certifies that on ${dateEarned} the requirements have been met for the title of:`;
-        drawTextWithAlignment(firstPage, dateLineText, aceCertificateConfig.dateLine, helvetica);
-
-        drawTextWithAlignment(firstPage, registeredName, aceCertificateConfig.callName, maiandraFont);
-        drawTextWithAlignment(firstPage, handlerName, aceCertificateConfig.handlerName, maiandraFont);
-        drawTextWithAlignment(firstPage, regNumber, aceCertificateConfig.registrationNumber, helvetica);
-        drawTextWithAlignment(firstPage, aceCertificateName, aceCertificateConfig.levelAbbreviation, maiandraFont);
-
-        const pdfBytes = await pdfDoc.save();
-        downloadPDF(pdfBytes, `${registeredName}-${level.replace(/\s+/g, '-')}-ACE-Certificate.pdf`);
-
-        btn.textContent = '🏆 Ace Certificate';
-        btn.disabled = false;
-
-    } catch (error) {
-        console.error('ACE certificate generation error:', error);
-        alert(`Unable to generate ACE certificate: ${error.message}`);
-        
-        const btn = event.target;
-        btn.textContent = '🏆 Ace Certificate';
-        btn.disabled = false;
-    }
-}
-
         // Helper functions
         function downloadPDF(pdfBytes, filename) {
             const blob = new Blob([pdfBytes], { type: 'application/pdf' });
