@@ -1058,21 +1058,33 @@ function drawTextWithAlignmentAndDynamicSize(page, text, config, font, maxWidth 
                     color: PDFLib.rgb(regConfig.color[0], regConfig.color[1], regConfig.color[2])
                 });
 
-                const handlerConfig = titleCertificateConfig.handlerName;
-                const handlerTextWidth = maiandraFont.widthOfTextAtSize(handlerName, handlerConfig.size);
-                const handlerX = handlerConfig.x - (handlerTextWidth / 2);
-                firstPage.drawText(handlerName, {
-                    x: handlerX, y: handlerConfig.y, size: handlerConfig.size, font: maiandraFont,
-                    color: PDFLib.rgb(0, 0, 0)
-                });
+               // Handler name with dynamic sizing (x:414 center, bounds x:72 to x:710, default size 28)
+const handlerConfig = titleCertificateConfig.handlerName;
+const handlerMaxWidth = 710 - 72; // 638 pixels available
+drawCenteredTextWithDynamicSize(
+    firstPage, 
+    handlerName, 
+    handlerConfig.x, 
+    handlerConfig.y, 
+    maiandraFont, 
+    PDFLib.rgb(0, 0, 0), 
+    handlerMaxWidth, 
+    handlerConfig.size
+);
 
-                const dogConfig = titleCertificateConfig.dogName;
-                const dogTextWidth = maiandraFont.widthOfTextAtSize(registeredName, dogConfig.size);
-                const dogX = dogConfig.x - (dogTextWidth / 2);
-                firstPage.drawText(registeredName, {
-                    x: dogX, y: dogConfig.y, size: dogConfig.size, font: maiandraFont,
-                    color: PDFLib.rgb(0, 0, 0)
-                });
+// Dog name with dynamic sizing (x:414 center, bounds x:72 to x:710, default size 30)
+const dogConfig = titleCertificateConfig.dogName;
+const dogMaxWidth = 710 - 72; // 638 pixels available
+drawCenteredTextWithDynamicSize(
+    firstPage, 
+    registeredName, 
+    dogConfig.x, 
+    dogConfig.y, 
+    maiandraFont, 
+    PDFLib.rgb(0, 0, 0), 
+    dogMaxWidth, 
+    dogConfig.size
+);
 
                 const dateConfig = titleCertificateConfig.dateEarned;
                 firstPage.drawText('On ', {
