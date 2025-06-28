@@ -1195,21 +1195,6 @@ async function generateAceCertificate(level, regNumber, aceCount) {
             } catch (e) { /* use fallback */ }
         }
 
-        // Helper function for text alignment
-        function drawTextWithAlignment(page, text, config, font) {
-            let x = config.x;
-            if (config.align === 'center') {
-                const textWidth = font.widthOfTextAtSize(text, config.size);
-                x = config.x - (textWidth / 2);
-            } else if (config.align === 'right') {
-                const textWidth = font.widthOfTextAtSize(text, config.size);
-                x = config.x - textWidth;
-            }
-            page.drawText(text, {
-                x: x, y: config.y, size: config.size, font: font,
-                color: PDFLib.rgb(config.color[0], config.color[1], config.color[2])
-            });
-        }
 
         // Add text to ACE certificate
         const dateLineText = `This certifies that on ${dateEarned} the requirements have been met for the title of:`;
