@@ -1549,14 +1549,20 @@ async function generateAceCertificate(level, regNumber, aceCount) {
                         </button>
                     `;
                     
-                    // Ace certificate button (if applicable)
+                    // Individual Ace certificate buttons (if applicable)
                     if (acePoints >= 10) {
-                        const aceCount = Math.floor(acePoints / 10);
-                        certificateButtons += `
-                            <button class="certificate-btn" onclick="generateAceCertificate('${escapedLevel}', '${escapedRegNumber}', ${aceCount})">
-                                🏆 Ace Certificate
-                            </button>
-                        `;
+                        const totalAceCount = Math.floor(acePoints / 10);
+                        
+                        // Create individual buttons for each Ace level earned
+                        for (let aceLevel = 1; aceLevel <= totalAceCount; aceLevel++) {
+                            const aceDisplayText = aceLevel === 1 ? 'Ace' : `Ace ${aceLevel}`;
+                            certificateButtons += `
+                                <button class="certificate-btn" onclick="generateAceCertificate('${escapedLevel}', '${escapedRegNumber}', ${aceLevel})" 
+                                        style="margin-top: 4px; font-size: 0.85rem; padding: 6px 12px;">
+                                    🏆 ${aceDisplayText}
+                                </button>
+                            `;
+                        }
                     }
                 }
                 
