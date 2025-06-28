@@ -745,6 +745,63 @@
             "Games 1", "Games 2", "Games 3", "Games 4"
         ];
 
+        // Calculate optimal font size for PDF certificates
+function calculateOptimalPDFFontSize(text, font, maxWidth, defaultSize, minSize = 8) {
+    let fontSize = defaultSize;
+    
+    while (fontSize >= minSize) {
+        const textWidth = font.widthOfTextAtSize(text, fontSize);
+        if (textWidth <= maxWidth) {
+            return fontSize;
+        }
+        fontSize--;
+    }
+    return minSize;
+}
+
+// Helper function to draw centered text with dynamic sizing
+function drawCenteredTextWithDynamicSize(page, text, centerX, y, font, color, maxWidth, defaultSize, minSize = 8) {
+    const optimalSize = calculateOptimalPDFFontSize(text, font, maxWidth, defaultSize, minSize);
+    const textWidth = font.widthOfTextAtSize(text, optimalSize);
+    const x = centerX - (textWidth / 2);
+    
+    page.drawText(text, {
+        x: x,
+        y: y,
+        size: optimalSize,
+        font: font,
+        color: color
+    });
+    
+    return optimalSize;
+}
+
+// Helper function for text alignment with dynamic sizing
+function drawTextWithAlignmentAndDynamicSize(page, text, config, font, maxWidth = null, defaultSize = null) {
+    let fontSize = defaultSize || config.size;
+    
+    // Apply dynamic sizing if maxWidth is provided
+    if (maxWidth && fontSize) {
+        fontSize = calculateOptimalPDFFontSize(text, font, maxWidth, fontSize);
+    }
+    
+    let x = config.x;
+    if (config.align === 'center') {
+        const textWidth = font.widthOfTextAtSize(text, fontSize);
+        x = config.x - (textWidth / 2);
+    } else if (config.align === 'right') {
+        const textWidth = font.widthOfTextAtSize(text, fontSize);
+        x = config.x - textWidth;
+    }
+    
+    page.drawText(text, {
+        x: x, y: config.y, size: fontSize, font: font,
+        color: PDFLib.rgb(config.color[0], config.color[1], config.color[2])
+    });
+    
+    return fontSize;
+}
+        
         function escapeHtml(text) {
             if (!text) return '';
             return text.toString()
