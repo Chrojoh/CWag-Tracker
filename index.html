@@ -1058,32 +1058,32 @@ function drawTextWithAlignmentAndDynamicSize(page, text, config, font, maxWidth 
                     color: PDFLib.rgb(regConfig.color[0], regConfig.color[1], regConfig.color[2])
                 });
 
-               // Handler name with dynamic sizing (x:414 center, bounds x:72 to x:710, default size 28)
-const handlerConfig = titleCertificateConfig.handlerName;
+               // Handler name with dynamic sizing - centered in available range
 const handlerMaxWidth = 710 - 72; // 638 pixels available
+const handlerCenterX = 72 + (handlerMaxWidth / 2); // Center of the range: 391
 drawCenteredTextWithDynamicSize(
     firstPage, 
     handlerName, 
-    handlerConfig.x, 
-    handlerConfig.y, 
+    handlerCenterX, 
+    titleCertificateConfig.handlerName.y, 
     maiandraFont, 
     PDFLib.rgb(0, 0, 0), 
     handlerMaxWidth, 
-    handlerConfig.size
+    titleCertificateConfig.handlerName.size
 );
 
-// Dog name with dynamic sizing (x:414 center, bounds x:72 to x:710, default size 30)
-const dogConfig = titleCertificateConfig.dogName;
+// Dog name with dynamic sizing - centered in available range
 const dogMaxWidth = 710 - 72; // 638 pixels available
+const dogCenterX = 72 + (dogMaxWidth / 2); // Center of the range: 391
 drawCenteredTextWithDynamicSize(
     firstPage, 
     registeredName, 
-    dogConfig.x, 
-    dogConfig.y, 
+    dogCenterX, 
+    titleCertificateConfig.dogName.y, 
     maiandraFont, 
     PDFLib.rgb(0, 0, 0), 
     dogMaxWidth, 
-    dogConfig.size
+    titleCertificateConfig.dogName.size
 );
 
                 const dateConfig = titleCertificateConfig.dateEarned;
