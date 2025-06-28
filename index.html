@@ -2074,7 +2074,7 @@ async function generateAceCertificate(level, regNumber, aceCount) {
                             if (totalPoints < 4) needMore.push(`${4 - totalPoints} Q's`);
                             if (judgeCount < 2) needMore.push(`${2 - judgeCount} judge${judgeCount === 0 ? 's' : ''} needed for title`);
                             
-                            cellContent = `<span style="color: #856404;">${needMore.join(', ')}</span>`;
+                            cellContent = `<span style="color: #856404;">${needMore.join(', ')} needed for title</span>`;
                             cellStyle += ' background: #fff3cd;';
                         }
                     }
