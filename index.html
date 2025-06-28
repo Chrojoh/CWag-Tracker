@@ -1580,15 +1580,19 @@ async function generateAceCertificate(level, regNumber, aceCount) {
                                     <div><span>Points Towards Title:</span> <strong>${titlePoints}</strong></div>
                                     <div><span>Points Towards Ace:</span> <strong class="ace-info">${acePoints}</strong></div>
                                     ${titleInfo && titleInfo.titleDate ? `<div style="color: #28a745; font-size: 0.85rem;"><span>Title Earned:</span> <strong>${titleInfo.titleDate instanceof Date && !isNaN(titleInfo.titleDate) ? titleInfo.titleDate.toLocaleDateString() : 'N/A'}</strong></div>` : ''}
-                                    ${(() => {
-                                        const aceEarnedDates = findAceEarnedDates(summary.records, titlePoints);
-                                        if (aceEarnedDates.length > 0) {
-                                            const latestAce = aceEarnedDates[aceEarnedDates.length - 1];
-                                            const aceDate = latestAce.date instanceof Date && !isNaN(latestAce.date) ? latestAce.date.toLocaleDateString() : 'N/A';
-                                            return `<div style="color: #6f42c1; font-size: 0.85rem;"><span>Latest Ace Earned:</span> <strong>${aceDate}</strong></div>`;
-                                        }
-                                        return '';
-                                    })()}
+                                   ${(() => {
+    const aceEarnedDates = findAceEarnedDates(summary.records, titlePoints);
+    if (aceEarnedDates.length > 0) {
+        let aceDisplayText = '';
+        aceEarnedDates.forEach(ace => {
+            const aceDate = ace.date instanceof Date && !isNaN(ace.date) ? ace.date.toLocaleDateString() : 'N/A';
+            const aceLabel = ace.aceNumber === 1 ? 'Ace Earned' : `Ace x${ace.aceNumber} Earned`;
+            aceDisplayText += `<div style="color: #6f42c1; font-size: 0.85rem;"><span>${aceLabel}:</span> <strong>${aceDate}</strong></div>`;
+        });
+        return aceDisplayText;
+    }
+    return '';
+})()}
                                     ${acePoints < 10 && acePoints >= 0 ? `<div class="ace-info"><span>Points until next Ace:</span> <strong>${10 - (acePoints % 10)}</strong></div>` : 
                                     acePoints >= 10 ? `<div class="ace-info"><span>Points until next Ace:</span> <strong>${10 - (acePoints % 10)}</strong></div>` : ''}
                                 ` : `
