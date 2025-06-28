@@ -1197,14 +1197,33 @@ async function generateAceCertificate(level, regNumber, aceCount) {
 
 
         // Add text to ACE certificate
-        const dateLineText = `This certifies that on ${dateEarned} the requirements have been met for the title of:`;
-        drawTextWithAlignment(firstPage, dateLineText, aceCertificateConfig.dateLine, helvetica);
+const dateLineText = `This certifies that on ${dateEarned} the requirements have been met for the title of:`;
+drawTextWithAlignmentAndDynamicSize(firstPage, dateLineText, aceCertificateConfig.dateLine, helvetica);
 
-        drawTextWithAlignment(firstPage, registeredName, aceCertificateConfig.callName, maiandraFont);
-        drawTextWithAlignment(firstPage, handlerName, aceCertificateConfig.handlerName, maiandraFont);
-        drawTextWithAlignment(firstPage, regNumber, aceCertificateConfig.registrationNumber, helvetica);
-        drawTextWithAlignment(firstPage, aceCertificateName, aceCertificateConfig.levelAbbreviation, maiandraFont);
+// Call name with dynamic sizing (x:398 center, bounds x:72 to x:710, default size 28)
+const callNameMaxWidth = 710 - 72; // 638 pixels available
+drawTextWithAlignmentAndDynamicSize(
+    firstPage, 
+    registeredName, 
+    aceCertificateConfig.callName, 
+    maiandraFont, 
+    callNameMaxWidth, 
+    aceCertificateConfig.callName.size
+);
 
+// Handler name with dynamic sizing (x:470 center, bounds x:235 to x:690, default size 28)
+const handlerMaxWidthAce = 690 - 235; // 455 pixels available
+drawTextWithAlignmentAndDynamicSize(
+    firstPage, 
+    handlerName, 
+    aceCertificateConfig.handlerName, 
+    maiandraFont, 
+    handlerMaxWidthAce, 
+    aceCertificateConfig.handlerName.size
+);
+
+drawTextWithAlignmentAndDynamicSize(firstPage, regNumber, aceCertificateConfig.registrationNumber, helvetica);
+drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificateConfig.levelAbbreviation, maiandraFont);
         const pdfBytes = await pdfDoc.save();
         downloadPDF(pdfBytes, `${registeredName}-${level.replace(/\s+/g, '-')}-ACE-Certificate.pdf`);
 
