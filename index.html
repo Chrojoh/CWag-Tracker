@@ -2070,11 +2070,21 @@ async function generateAceCertificate(level, regNumber, aceCount) {
                                 cellStyle += ' background: #d4edda;';
                             }
                         } else if (totalPoints > 0) {
-                            const needMore = [];
-                            if (totalPoints < 4) needMore.push(`${4 - totalPoints} Q's`);
-                            if (judgeCount < 2) needMore.push(`${2 - judgeCount} judge${judgeCount === 0 ? 's' : ''} needed for title`);
+                            const pointsNeeded = Math.max(0, 4 - totalPoints);
+                            const judgesNeeded = Math.max(0, 2 - judgeCount);
                             
-                            cellContent = `<span style="color: #856404;">${needMore.join(', ')} needed for title</span>`;
+                            let needMoreText = '';
+                            if (pointsNeeded > 0 && judgesNeeded > 0) {
+                                const qText = pointsNeeded === 1 ? '1 Q' : `${pointsNeeded} Q's`;
+                                const judgeText = judgesNeeded === 1 ? '1 judge' : `${judgesNeeded} judges`;
+                                needMoreText = `${qText}, ${judgeText} needed for title`;
+                            } else if (pointsNeeded > 0) {
+                                needMoreText = pointsNeeded === 1 ? '1 Q needed for title' : `${pointsNeeded} Q's needed for title`;
+                            } else if (judgesNeeded > 0) {
+                                needMoreText = judgesNeeded === 1 ? '1 judge needed for title' : `${judgesNeeded} judges needed for title`;
+                            }
+                            
+                            cellContent = `<span style="color: #856404;">${needMoreText}</span>`;
                             cellStyle += ' background: #fff3cd;';
                         }
                     }
