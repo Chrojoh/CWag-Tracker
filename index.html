@@ -1016,17 +1016,7 @@ function drawTextWithAlignmentAndDynamicSize(page, text, config, font, maxWidth 
                 const handlerName = getHandlerNameFromDogInfo(regNumber) || 'Handler Name';
                 const registeredName = getRegisteredNameFromDogInfo(regNumber) || 'Dog Name';
 
-                // Add "&" symbol centered on page at y:330
-const ampersandText = "&";
-const pageWidth = firstPage.getSize().width;
-const pageCenterX = pageWidth / 2;
-firstPage.drawText(ampersandText, {
-    x: pageCenterX - (maiandraFont.widthOfTextAtSize(ampersandText, dogConfig.size) / 2),
-    y: 330,
-    size: dogConfig.size,
-    font: maiandraFont,
-    color: PDFLib.rgb(0, 0, 0)
-});
+
                 
            const templateUrl = `https://raw.githubusercontent.com/Chrojoh/CWag-Tracker/main/templates/${templateInfo.template}`;
                 const response = await fetch(templateUrl);
@@ -1097,6 +1087,18 @@ drawCenteredTextWithDynamicSize(
     titleCertificateConfig.dogName.size
 );
 
+// Add "&" symbol centered on page at y:330
+const ampersandText = "&";
+const pageWidth = firstPage.getSize().width;
+const pageCenterX = pageWidth / 2;
+firstPage.drawText(ampersandText, {
+    x: pageCenterX - (maiandraFont.widthOfTextAtSize(ampersandText, titleCertificateConfig.dogName.size) / 2),
+    y: 330,
+    size: titleCertificateConfig.dogName.size,
+    font: maiandraFont,
+    color: PDFLib.rgb(0, 0, 0)
+});
+                
 const dateConfig = titleCertificateConfig.dateEarned;
 firstPage.drawText('On ', {
     x: dateConfig.x - 20, y: dateConfig.y, size: dateConfig.size, font: font,
