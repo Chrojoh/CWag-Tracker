@@ -1062,50 +1062,62 @@ firstPage.drawText(ampersandText, {
                     } catch (e) { /* use fallback */ }
                 }
 
-                // Add text to certificate
-                const regConfig = titleCertificateConfig.registrationNumber;
-                firstPage.drawText(regNumber, {
-                    x: regConfig.x, y: regConfig.y, size: regConfig.size, font: font,
-                    color: PDFLib.rgb(regConfig.color[0], regConfig.color[1], regConfig.color[2])
-                });
+               // Add text to certificate
+const regConfig = titleCertificateConfig.registrationNumber;
+firstPage.drawText(regNumber, {
+   x: regConfig.x, y: regConfig.y, size: regConfig.size, font: font,
+   color: PDFLib.rgb(regConfig.color[0], regConfig.color[1], regConfig.color[2])
+});
 
-               // Handler name with dynamic sizing - centered in available range
+// Handler name with dynamic sizing - centered in available range
 const handlerMaxWidth = 710 - 72; // 638 pixels available
 const handlerCenterX = 72 + (handlerMaxWidth / 2); // Center of the range: 391
 drawCenteredTextWithDynamicSize(
-    firstPage, 
-    handlerName, 
-    handlerCenterX, 
-    titleCertificateConfig.handlerName.y, 
-    maiandraFont, 
-    PDFLib.rgb(0, 0, 0), 
-    handlerMaxWidth, 
-    titleCertificateConfig.handlerName.size
+   firstPage, 
+   handlerName, 
+   handlerCenterX, 
+   titleCertificateConfig.handlerName.y, 
+   maiandraFont, 
+   PDFLib.rgb(0, 0, 0), 
+   handlerMaxWidth, 
+   titleCertificateConfig.handlerName.size
 );
 
 // Dog name with dynamic sizing - centered in available range
 const dogMaxWidth = 710 - 72; // 638 pixels available
 const dogCenterX = 72 + (dogMaxWidth / 2); // Center of the range: 391
 drawCenteredTextWithDynamicSize(
-    firstPage, 
-    registeredName, 
-    dogCenterX, 
-    titleCertificateConfig.dogName.y, 
-    maiandraFont, 
-    PDFLib.rgb(0, 0, 0), 
-    dogMaxWidth, 
-    titleCertificateConfig.dogName.size
+   firstPage, 
+   registeredName, 
+   dogCenterX, 
+   titleCertificateConfig.dogName.y, 
+   maiandraFont, 
+   PDFLib.rgb(0, 0, 0), 
+   dogMaxWidth, 
+   titleCertificateConfig.dogName.size
 );
 
-                const dateConfig = titleCertificateConfig.dateEarned;
-                firstPage.drawText('On ', {
-                    x: dateConfig.x - 20, y: dateConfig.y, size: dateConfig.size, font: font,
-                    color: PDFLib.rgb(0, 0, 0)
-                });
-                firstPage.drawText(dateEarned, {
-                    x: dateConfig.x, y: dateConfig.y, size: dateConfig.size, font: font,
-                    color: PDFLib.rgb(0, 0, 0)
-                });
+// Add "&" symbol centered on page at y:330
+const ampersandText = "&";
+const pageWidth = firstPage.getSize().width;
+const pageCenterX = pageWidth / 2;
+firstPage.drawText(ampersandText, {
+   x: pageCenterX - (maiandraFont.widthOfTextAtSize(ampersandText, titleCertificateConfig.dogName.size) / 2),
+   y: 330,
+   size: titleCertificateConfig.dogName.size,
+   font: maiandraFont,
+   color: PDFLib.rgb(0, 0, 0)
+});
+
+const dateConfig = titleCertificateConfig.dateEarned;
+firstPage.drawText('On ', {
+   x: dateConfig.x - 20, y: dateConfig.y, size: dateConfig.size, font: font,
+   color: PDFLib.rgb(0, 0, 0)
+});
+firstPage.drawText(dateEarned, {
+   x: dateConfig.x, y: dateConfig.y, size: dateConfig.size, font: font,
+   color: PDFLib.rgb(0, 0, 0)
+});
                 const dateWidth = font.widthOfTextAtSize(dateEarned, dateConfig.size);
                 firstPage.drawText(', has completed the requirements for the title of', {
                     x: dateConfig.x + dateWidth, y: dateConfig.y, size: dateConfig.size, font: font,
