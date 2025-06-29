@@ -1017,7 +1017,7 @@ function drawTextWithAlignmentAndDynamicSize(page, text, config, font, maxWidth 
                 const handlerName = getHandlerNameFromDogInfo(regNumber) || 'Handler Name';
                 const registeredName = getRegisteredNameFromDogInfo(regNumber) || 'Dog Name';
 
-                const templateUrl = `https://raw.githubusercontent.com/cwagtracker/Tracker/main/templates/${templateInfo.template}`;
+              const templateUrl = `https://raw.githubusercontent.com/cwagtracker/Tracker/main/templates/${templateInfo.template}?v=${Date.now()}`;
                 const response = await fetch(templateUrl);
                 if (!response.ok) throw new Error(`Template not found: ${templateUrl}`);
                 
