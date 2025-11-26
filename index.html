@@ -1464,14 +1464,15 @@ drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificat
         }
 
         function searchDog() {
+           function searchDog() {
             const searchInput = document.getElementById('searchInput').value.trim();
             if (!searchInput) {
                 alert('Please enter a registration number');
                 return;
             }
 
-            if (trialingData.length === 0) {
-                alert('Please wait for trialing data to load');
+            if (trialingData.length === 0 && Object.keys(dogInfoData).length === 0) {
+                alert('Please wait for data to load');
                 return;
             }
 
@@ -1484,7 +1485,10 @@ drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificat
                 record.registrationNumber.toString().toLowerCase() === formattedSearch.toLowerCase()
             );
 
-            if (dogRecords.length === 0) {
+            // Check if dog exists in DogInfo even if no trialing records
+            const dogExistsInInfo = dogInfoData[formattedSearch];
+
+            if (dogRecords.length === 0 && !dogExistsInInfo) {
                 // If no exact match, show suggestion with partial matches
                 const partialMatches = trialingData.filter(record =>
                     record.registrationNumber && 
@@ -1503,6 +1507,13 @@ drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificat
 
                 document.getElementById('summaryContent').innerHTML = 
                     `<div class="error-message">${errorMessage}</div>`;
+                return;
+            }
+
+            // If dog exists in DogInfo but has no records, create a pseudo-record
+            if (dogRecords.length === 0 && dogExistsInInfo) {
+                currentDogRecords = [];
+                displaySummary([], formattedSearch);
                 return;
             }
 
@@ -2275,6 +2286,7 @@ drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificat
     </script>
 </body>
 </html>
+
 
 
 
