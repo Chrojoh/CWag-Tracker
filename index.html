@@ -897,6 +897,339 @@
             return aceCount === 1 ? `${abbreviation}A` : `${abbreviation}Ax${aceCount}`;
         }
 
+        function calculateOptimalPDFFontSize(text, font, maxWidth, defaultSize, minSize = 8) {
+            let fontSize = defaultSize;
+            
+            while (fontSize >= minSize) {
+                const textWidth = font.widthOfTextAtSize(text, fontSize);
+                if (textWidth <= maxWidth) {
+                    return fontSize;
+                }
+                fontSize--;
+            }
+            return minSize;
+        }
+
+        function drawCenteredTextWithDynamicSize(page, text, centerX, y, font, color, maxWidth, defaultSize, minSize = 8) {
+            const optimalSize = calculateOptimalPDFFontSize(text, font, maxWidth, defaultSize, minSize);
+            const textWidth = font.widthOfTextAtSize(text, optimalSize);
+            const x = centerX - (textWidth / 2);
+            
+            page.drawText(text, {
+                x: x,
+                y: y,
+                size: optimalSize,
+                font: font,
+                color: color
+            });
+            
+            return optimalSize;
+        }
+
+        function drawTextWithAlignmentAndDynamicSize(page, text, config, font, maxWidth = null, defaultSize = null) {
+            let fontSize = defaultSize || config.size;
+            
+            if (maxWidth && fontSize) {
+                fontSize = calculateOptimalPDFFontSize(text, font, maxWidth, fontSize);
+            }
+            
+            let x = config.x;
+            if (config.align === 'center') {
+                const textWidth = font.widthOfTextAtSize(text, fontSize);
+                x = config.x - (textWidth / 2);
+            } else if (config.align === 'right') {
+                const textWidth = font.widthOfTextAtSize(text, fontSize);
+                x = config.x - textWidth;
+            }
+            
+            page.drawText(text, {
+                x: x, y: config.y, size: fontSize, font: font,
+                color: PDFLib.rgb(config.color[0], config.color[1], config.color[2])
+            });
+            
+            return fontSize;
+        }
+
+        async function generateTitleCertificate(level, regNumber, abbreviation) {
+            try {
+                const btn = event.target;
+                btn.textContent = 'Generating...';
+                btn.disabled = true;
+
+                const templateInfo = certificateTemplateMapping[level];
+                if (!templateInfo) throw new Error(`No template mapped for level: ${level}`);
+
+                const levelRecords = trialingData.filter(r => r.registrationNumber === regNumber && r.level === level);
+                if (levelRecords.length === 0) throw new Error('No records found for this level');
+
+                const titleInfo = calculateTitleQs(levelRecords);
+                const dateEarned = titleInfo.titleDate ? titleInfo.titleDate.toLocaleDateString() : new Date().toLocaleDateString();
+                const certificateName = getCertificateName(level);
+
+                const handlerName = getHandlerNameFromDogInfo(regNumber) || 'Handler Name';
+                const registeredName = getRegisteredNameFromDogInfo(regNumber) || 'Dog Name';
+
+                const templateUrl = `https://raw.githubusercontent.com/Cwagtracker/Tracker/main/templates/${templateInfo.template}`;
+                const response = await fetch(templateUrl);
+                if (!response.ok) throw new Error(`Template not found: ${templateUrl}`);
+                
+                const templateBytes = await response.arrayBuffer();
+                const pdfDoc = await PDFLib.PDFDocument.load(templateBytes);
+                const firstPage = pdfDoc.getPages()[0];
+                
+                const font = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
+                const timesBold = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRomanBold);
+                let maiandraFont = timesBold;
+
+                if (typeof fontkit !== 'undefined') {
+                    try {
+                        pdfDoc.registerFontkit(fontkit);
+                        const fontUrls = [
+                            'https://cdn.jsdelivr.net/gh/cwagtracker/Tracker@main/fonts/Maiandra%20GD.TTF',
+                            'https://raw.githubusercontent.com/cwagtracker/Tracker/main/fonts/Maiandra%20GD.TTF'
+                        ];
+                        
+                        for (const fontUrl of fontUrls) {
+                            try {
+                                const fontResponse = await fetch(fontUrl, { mode: 'cors' });
+                                if (fontResponse.ok) {
+                                    const fontBytes = await fontResponse.arrayBuffer();
+                                    maiandraFont = await pdfDoc.embedFont(fontBytes);
+                                    break;
+                                }
+                            } catch (e) { }
+                        }
+                    } catch (e) { }
+                }
+
+                const regConfig = titleCertificateConfig.registrationNumber;
+                firstPage.drawText(regNumber, {
+                    x: regConfig.x, y: regConfig.y, size: regConfig.size, font: font,
+                    color: PDFLib.rgb(regConfig.color[0], regConfig.color[1], regConfig.color[2])
+                });
+
+                const handlerMaxWidth = 710 - 72;
+                const handlerCenterX = 72 + (handlerMaxWidth / 2);
+                drawCenteredTextWithDynamicSize(
+                    firstPage, 
+                    handlerName, 
+                    handlerCenterX, 
+                    titleCertificateConfig.handlerName.y, 
+                    maiandraFont, 
+                    PDFLib.rgb(0, 0, 0), 
+                    handlerMaxWidth, 
+                    titleCertificateConfig.handlerName.size
+                );
+
+                const dogMaxWidth = 710 - 72;
+                const dogCenterX = 72 + (dogMaxWidth / 2);
+                drawCenteredTextWithDynamicSize(
+                    firstPage, 
+                    registeredName, 
+                    dogCenterX, 
+                    titleCertificateConfig.dogName.y, 
+                    maiandraFont, 
+                    PDFLib.rgb(0, 0, 0), 
+                    dogMaxWidth, 
+                    titleCertificateConfig.dogName.size
+                );
+
+                const ampersandText = "&";
+                const pageWidth = firstPage.getSize().width;
+                const pageCenterX = pageWidth / 2;
+                firstPage.drawText(ampersandText, {
+                    x: pageCenterX - (maiandraFont.widthOfTextAtSize(ampersandText, titleCertificateConfig.dogName.size) / 2),
+                    y: 310,
+                    size: titleCertificateConfig.dogName.size,
+                    font: maiandraFont,
+                    color: PDFLib.rgb(0, 0, 0)
+                });
+                
+                const dateConfig = titleCertificateConfig.dateEarned;
+                firstPage.drawText('On ', {
+                    x: dateConfig.x - 20, y: dateConfig.y, size: dateConfig.size, font: font,
+                    color: PDFLib.rgb(0, 0, 0)
+                });
+                firstPage.drawText(dateEarned, {
+                    x: dateConfig.x, y: dateConfig.y, size: dateConfig.size, font: font,
+                    color: PDFLib.rgb(0, 0, 0)
+                });
+                const dateWidth = font.widthOfTextAtSize(dateEarned, dateConfig.size);
+                firstPage.drawText(', has completed the requirements for the title of', {
+                    x: dateConfig.x + dateWidth, y: dateConfig.y, size: dateConfig.size, font: font,
+                    color: PDFLib.rgb(0, 0, 0)
+                });
+
+                const titleConfig = titleCertificateConfig.titleAbbreviation;
+                const titleText = `${certificateName} (${abbreviation})`;
+                const titleTextWidth = timesBold.widthOfTextAtSize(titleText, titleConfig.size);
+                firstPage.drawText(titleText, {
+                    x: titleConfig.x - titleTextWidth, y: titleConfig.y, size: titleConfig.size, font: maiandraFont,
+                    color: PDFLib.rgb(titleConfig.color[0], titleConfig.color[1], titleConfig.color[2])
+                });
+
+                const pdfBytes = await pdfDoc.save();
+                
+                downloadPDF(pdfBytes, `${registeredName}-${level.replace(/\s+/g, '-')}-Title-Certificate.pdf`);
+                btn.textContent = '📜 Title Certificate';
+                btn.disabled = false;
+
+            } catch (error) {
+                console.error('Certificate generation error:', error);
+                alert(`Unable to generate certificate: ${error.message}`);
+                
+                const btn = event.target;
+                btn.textContent = '📜 Title Certificate';
+                btn.disabled = false;
+            }
+        }
+
+        function findAceEarnedDates(records, titleQs) {
+            const sortedRecords = records
+                .filter(r => r.Qs > 0 && r.date instanceof Date && !isNaN(r.date))
+                .sort((a, b) => a.date - b.date);
+            
+            let cumulativeQs = 0;
+            const aceEarnedDates = [];
+            
+            for (const record of sortedRecords) {
+                const prevQs = cumulativeQs;
+                cumulativeQs += record.Qs;
+                
+                if (prevQs >= titleQs && cumulativeQs > titleQs) {
+                    const prevAceQs = prevQs - titleQs;
+                    const newAceQs = cumulativeQs - titleQs;
+                    
+                    const prevAceCount = Math.floor(prevAceQs / 10);
+                    const newAceCount = Math.floor(newAceQs / 10);
+                    
+                    for (let i = prevAceCount + 1; i <= newAceCount; i++) {
+                        aceEarnedDates.push({
+                            aceNumber: i,
+                            date: record.date
+                        });
+                    }
+                }
+            }
+            
+            return aceEarnedDates;
+        }
+
+        async function generateAceCertificate(level, regNumber, aceCount) {
+            try {
+                const btn = event.target;
+                btn.textContent = 'Generating...';
+                btn.disabled = true;
+
+                const levelRecords = trialingData.filter(r => r.registrationNumber === regNumber && r.level === level);
+                if (levelRecords.length === 0) throw new Error('No records found for this level');
+
+                const titleInfo = calculateTitleQs(levelRecords);
+                const titleQs = titleInfo.titleQs;
+
+                const aceEarnedDates = findAceEarnedDates(levelRecords, titleQs);
+                let aceEarnedDate = titleInfo.titleDate;
+
+                if (aceEarnedDates.length > 0) {
+                    const targetAce = aceEarnedDates.find(ace => ace.aceNumber === aceCount);
+                    if (targetAce) {
+                        aceEarnedDate = targetAce.date;
+                    } else {
+                        aceEarnedDate = aceEarnedDates[aceEarnedDates.length - 1].date;
+                    }
+                }
+
+                const dateEarned = aceEarnedDate ? aceEarnedDate.toLocaleDateString() : new Date().toLocaleDateString();
+                const aceCertificateName = getAceCertificateName(level, aceCount);
+
+                const handlerName = getHandlerNameFromDogInfo(regNumber) || 'Handler Name';
+                const registeredName = getRegisteredNameFromDogInfo(regNumber) || 'Dog Name';
+
+                const templateUrl = 'https://raw.githubusercontent.com/cwagtracker/Tracker/main/templates/Ace.pdf';
+                const response = await fetch(templateUrl);
+                if (!response.ok) throw new Error(`ACE template not found: ${templateUrl}`);
+                
+                const templateBytes = await response.arrayBuffer();
+                const pdfDoc = await PDFLib.PDFDocument.load(templateBytes);
+                const firstPage = pdfDoc.getPages()[0];
+                
+                const helvetica = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
+                const timesBold = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRomanBold);
+                let maiandraFont = timesBold;
+
+                if (typeof fontkit !== 'undefined') {
+                    try {
+                        pdfDoc.registerFontkit(fontkit);
+                        const fontUrls = [
+                            'https://cdn.jsdelivr.net/gh/cwagtracker/Tracker@main/fonts/Maiandra%20GD.TTF',
+                            'https://raw.githubusercontent.com/cwagtracker/Tracker/main/fonts/Maiandra%20GD.TTF'
+                        ];
+                        
+                        for (const fontUrl of fontUrls) {
+                            try {
+                                const fontResponse = await fetch(fontUrl, { mode: 'cors' });
+                                if (fontResponse.ok) {
+                                    const fontBytes = await fontResponse.arrayBuffer();
+                                    maiandraFont = await pdfDoc.embedFont(fontBytes);
+                                    break;
+                                }
+                            } catch (e) { }
+                        }
+                    } catch (e) { }
+                }
+
+                const dateLineText = `This certifies that on ${dateEarned} the requirements have been met for the title of:`;
+                drawTextWithAlignmentAndDynamicSize(firstPage, dateLineText, aceCertificateConfig.dateLine, helvetica);
+
+                const callNameMaxWidth = 710 - 72;
+                drawTextWithAlignmentAndDynamicSize(
+                    firstPage, 
+                    registeredName, 
+                    aceCertificateConfig.callName, 
+                    maiandraFont, 
+                    callNameMaxWidth, 
+                    aceCertificateConfig.callName.size
+                );
+
+                const handlerMaxWidthAce = 690 - 235;
+                drawTextWithAlignmentAndDynamicSize(
+                    firstPage, 
+                    handlerName, 
+                    aceCertificateConfig.handlerName, 
+                    maiandraFont, 
+                    handlerMaxWidthAce, 
+                    aceCertificateConfig.handlerName.size
+                );
+
+                drawTextWithAlignmentAndDynamicSize(firstPage, regNumber, aceCertificateConfig.registrationNumber, helvetica);
+                drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificateConfig.levelAbbreviation, maiandraFont);
+                
+                const pdfBytes = await pdfDoc.save();
+                downloadPDF(pdfBytes, `${registeredName}-${level.replace(/\s+/g, '-')}-ACE-Certificate.pdf`);
+
+                btn.textContent = '🏆 Ace Certificate';
+                btn.disabled = false;
+
+            } catch (error) {
+                console.error('ACE certificate generation error:', error);
+                alert(`Unable to generate ACE certificate: ${error.message}`);
+                
+                const btn = event.target;
+                btn.textContent = '🏆 Ace Certificate';
+                btn.disabled = false;
+            }
+        }
+
+        function downloadPDF(pdfBytes, filename) {
+            const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
         function handleKeyPress(event) {
             if (event.key === 'Enter') {
                 searchDog();
