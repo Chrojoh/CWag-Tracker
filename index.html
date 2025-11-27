@@ -424,10 +424,7 @@
             font-size: 1.1rem;
         }
 
-       /* Add these rules to your existing @media print section */
-
 @media print {
-    /* Keep existing body and container styles */
     body {
         background: white !important;
         padding: 5px !important;
@@ -470,23 +467,21 @@
         font-size: 0.6rem !important;
     }
     
-    /* Hide ALL buttons, search section, legend, and middle content */
     button, 
     .search-section,
     .legend-print,
-    div[style*="background: linear-gradient(45deg, #667eea, #764ba2)"], /* Hide the blue gradient header in owner view */
-    div[style*="text-align: center; margin-bottom: 15px;"], /* Hide button container */
-    div[style*="text-align: center; margin-top: 30px;"] /* Hide bottom button container */ {
+    div[style*="background: linear-gradient(45deg, #667eea, #764ba2)"],
+    div[style*="text-align: center; margin-bottom: 15px;"],
+    div[style*="text-align: center; margin-top: 30px;"] {
         display: none !important;
     }
     
-    /* Owner view table print optimization */
     .owner-view-table {
         font-size: 8px !important;
         width: 100% !important;
         page-break-inside: avoid !important;
         border-collapse: collapse !important;
-        margin-top: 10px !important; /* Add some space after header */
+        margin-top: 10px !important;
     }
     
     .owner-view-table th {
@@ -508,7 +503,6 @@
         border: 1px solid #ccc !important;
     }
     
-    /* Preserve background colors in print */
     .owner-view-table td[style*="background: #d4edda"] {
         background: #d4edda !important;
         -webkit-print-color-adjust: exact !important;
@@ -527,7 +521,6 @@
         print-color-adjust: exact !important;
     }
     
-    /* Adjust margins for print */
     @page {
         margin: 0.3in !important;
         size: portrait !important;
@@ -581,7 +574,6 @@
             </div>
         </div>
 
-        <!-- Modal for showing detailed records -->
         <div id="detailsModal" class="modal">
             <div class="modal-content">
                 <div class="modal-header">
@@ -589,7 +581,6 @@
                     <span class="close" onclick="closeModal()">&times;</span>
                 </div>
                 <div class="modal-body" id="modalBody">
-                    <!-- Details will be populated here -->
                 </div>
             </div>
         </div>
@@ -599,7 +590,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
     <script src="https://unpkg.com/@pdf-lib/fontkit@1.1.1/dist/fontkit.umd.min.js" onerror="console.error('Fontkit failed to load from unpkg')"></script>
     <script>
-        // Backup fontkit loading
         if (typeof fontkit === 'undefined') {
             console.log('Loading fontkit from backup CDN...');
             const script = document.createElement('script');
@@ -611,12 +601,11 @@
     <script>
         let trialingData = [];
         let currentDogRecords = [];
-        let dogInfoData = {}; // Store DogInfo.xlsx data for lookup
-        let titlePlacementData = {}; // Store Title Placement mapping data
+        let dogInfoData = {};
+        let titlePlacementData = {};
         
-        // Level prerequisites mapping
         const prerequisites = {
-            "Investigator 3": ["Patrol 1", "Detective 2"],  // Special case - either/or
+            "Investigator 3": ["Patrol 1", "Detective 2"],
             "Super Sleuth 4": ["Investigator 3"],
             "Private Inv": ["Super Sleuth 4"],
             "Det Diversions": ["Super Sleuth 4"],
@@ -631,7 +620,6 @@
             "Obedience 5": ["Obedience 4"]
         };
 
-        // Official title abbreviations
         const titleAbbreviations = {
             "Patrol 1": "CW-SP",
             "Detective 2": "CW-SD",
@@ -666,41 +654,40 @@
             "Games 4": "CW-G4"
         };
 
-        // Certificate template mapping
-       const certificateTemplateMapping = {
-    'Patrol 1': { template: 'Scent.pdf', category: 'scent' },
-    'Detective 2': { template: 'Scent.pdf', category: 'scent' },
-    'Investigator 3': { template: 'Scent.pdf', category: 'scent' },
-    'Super Sleuth 4': { template: 'Scent.pdf', category: 'scent' },
-    'Private Inv': { template: 'Scent.pdf', category: 'scent' },
-    'Det Diversions': { template: 'Scent.pdf', category: 'scent' },
-    'Ranger 1': { template: 'Scent.pdf', category: 'scent' },
-    'Ranger 2': { template: 'Scent.pdf', category: 'scent' },
-    'Ranger 3': { template: 'Scent.pdf', category: 'scent' },
-    'Ranger 4': { template: 'Scent.pdf', category: 'scent' },
-    'Ranger 5': { template: 'Scent.pdf', category: 'scent' },
-    'Dasher 3': { template: 'Scent.pdf', category: 'scent' },
-    'Dasher 4': { template: 'Scent.pdf', category: 'scent' },
-    'Dasher 5': { template: 'Scent.pdf', category: 'scent' },
-    'Dasher 6': { template: 'Scent.pdf', category: 'scent' },
-    'Obedience 1': { template: 'Obedience.pdf', category: 'obedience' },
-    'Obedience 2': { template: 'Obedience.pdf', category: 'obedience' },
-    'Obedience 3': { template: 'Obedience.pdf', category: 'obedience' },
-    'Obedience 4': { template: 'Obedience.pdf', category: 'obedience' },
-    'Obedience 5': { template: 'Obedience.pdf', category: 'obedience' },
-    'Starter': { template: 'Rally.pdf', category: 'rally' },
-    'Advanced': { template: 'Rally.pdf', category: 'rally' },
-    'Pro': { template: 'Rally.pdf', category: 'rally' },
-    'ARF': { template: 'Rally.pdf', category: 'rally' },
-    'Zoom 1': { template: 'Rally.pdf', category: 'rally' },
-    'Zoom 1.5': { template: 'Rally.pdf', category: 'rally' },
-    'Zoom 2': { template: 'Rally.pdf', category: 'rally' },
-    'Games 1': { template: 'Games.pdf', category: 'games' },
-    'Games 2': { template: 'Games.pdf', category: 'games' },
-    'Games 3': { template: 'Games.pdf', category: 'games' },
-    'Games 4': { template: 'Games.pdf', category: 'games' }
-};
-        // Title certificate positioning
+        const certificateTemplateMapping = {
+            'Patrol 1': { template: 'Scent.pdf', category: 'scent' },
+            'Detective 2': { template: 'Scent.pdf', category: 'scent' },
+            'Investigator 3': { template: 'Scent.pdf', category: 'scent' },
+            'Super Sleuth 4': { template: 'Scent.pdf', category: 'scent' },
+            'Private Inv': { template: 'Scent.pdf', category: 'scent' },
+            'Det Diversions': { template: 'Scent.pdf', category: 'scent' },
+            'Ranger 1': { template: 'Scent.pdf', category: 'scent' },
+            'Ranger 2': { template: 'Scent.pdf', category: 'scent' },
+            'Ranger 3': { template: 'Scent.pdf', category: 'scent' },
+            'Ranger 4': { template: 'Scent.pdf', category: 'scent' },
+            'Ranger 5': { template: 'Scent.pdf', category: 'scent' },
+            'Dasher 3': { template: 'Scent.pdf', category: 'scent' },
+            'Dasher 4': { template: 'Scent.pdf', category: 'scent' },
+            'Dasher 5': { template: 'Scent.pdf', category: 'scent' },
+            'Dasher 6': { template: 'Scent.pdf', category: 'scent' },
+            'Obedience 1': { template: 'Obedience.pdf', category: 'obedience' },
+            'Obedience 2': { template: 'Obedience.pdf', category: 'obedience' },
+            'Obedience 3': { template: 'Obedience.pdf', category: 'obedience' },
+            'Obedience 4': { template: 'Obedience.pdf', category: 'obedience' },
+            'Obedience 5': { template: 'Obedience.pdf', category: 'obedience' },
+            'Starter': { template: 'Rally.pdf', category: 'rally' },
+            'Advanced': { template: 'Rally.pdf', category: 'rally' },
+            'Pro': { template: 'Rally.pdf', category: 'rally' },
+            'ARF': { template: 'Rally.pdf', category: 'rally' },
+            'Zoom 1': { template: 'Rally.pdf', category: 'rally' },
+            'Zoom 1.5': { template: 'Rally.pdf', category: 'rally' },
+            'Zoom 2': { template: 'Rally.pdf', category: 'rally' },
+            'Games 1': { template: 'Games.pdf', category: 'games' },
+            'Games 2': { template: 'Games.pdf', category: 'games' },
+            'Games 3': { template: 'Games.pdf', category: 'games' },
+            'Games 4': { template: 'Games.pdf', category: 'games' }
+        };
+
         const titleCertificateConfig = {
             registrationNumber: { x: 92, y: 330, size: 12, color: [0, 0, 0] },
             handlerName: { x: 414, y: 350, size: 28, color: [0, 0, 0], align: 'center' },
@@ -709,7 +696,6 @@
             titleAbbreviation: { x: 662, y: 155, size: 28, color: [0, 0, 0.8], align: 'right' }
         };
 
-        // ACE certificate positioning
         const aceCertificateConfig = {
             dateLine: { x: 448, y: 425, size: 12, color: [0, 0, 0], align: 'center' },
             levelAbbreviation: { x: 398, y: 355, size: 28, color: [0.85, 0.65, 0.13], align: 'center' },
@@ -718,7 +704,6 @@
             registrationNumber: { x: 540, y: 150, size: 12, color: [0, 0, 0], align: 'left' }
         };
 
-        // Proper level ordering
         const levelOrder = [
             "Patrol 1", "Detective 2", "Investigator 3", "Super Sleuth 4", "Private Inv", "Det Diversions",
             "Ranger 1", "Ranger 2", "Ranger 3", "Ranger 4", "Ranger 5",
@@ -729,63 +714,6 @@
             "Games 1", "Games 2", "Games 3", "Games 4"
         ];
 
-        // Calculate optimal font size for PDF certificates
-function calculateOptimalPDFFontSize(text, font, maxWidth, defaultSize, minSize = 8) {
-    let fontSize = defaultSize;
-    
-    while (fontSize >= minSize) {
-        const textWidth = font.widthOfTextAtSize(text, fontSize);
-        if (textWidth <= maxWidth) {
-            return fontSize;
-        }
-        fontSize--;
-    }
-    return minSize;
-}
-
-// Helper function to draw centered text with dynamic sizing
-function drawCenteredTextWithDynamicSize(page, text, centerX, y, font, color, maxWidth, defaultSize, minSize = 8) {
-    const optimalSize = calculateOptimalPDFFontSize(text, font, maxWidth, defaultSize, minSize);
-    const textWidth = font.widthOfTextAtSize(text, optimalSize);
-    const x = centerX - (textWidth / 2);
-    
-    page.drawText(text, {
-        x: x,
-        y: y,
-        size: optimalSize,
-        font: font,
-        color: color
-    });
-    
-    return optimalSize;
-}
-
-// Helper function for text alignment with dynamic sizing
-function drawTextWithAlignmentAndDynamicSize(page, text, config, font, maxWidth = null, defaultSize = null) {
-    let fontSize = defaultSize || config.size;
-    
-    // Apply dynamic sizing if maxWidth is provided
-    if (maxWidth && fontSize) {
-        fontSize = calculateOptimalPDFFontSize(text, font, maxWidth, fontSize);
-    }
-    
-    let x = config.x;
-    if (config.align === 'center') {
-        const textWidth = font.widthOfTextAtSize(text, fontSize);
-        x = config.x - (textWidth / 2);
-    } else if (config.align === 'right') {
-        const textWidth = font.widthOfTextAtSize(text, fontSize);
-        x = config.x - textWidth;
-    }
-    
-    page.drawText(text, {
-        x: x, y: config.y, size: fontSize, font: font,
-        color: PDFLib.rgb(config.color[0], config.color[1], config.color[2])
-    });
-    
-    return fontSize;
-}
-        
         function escapeHtml(text) {
             if (!text) return '';
             return text.toString()
@@ -806,7 +734,6 @@ function drawTextWithAlignmentAndDynamicSize(page, text, config, font, maxWidth 
                 .replace(/\r/g, "\\r");
         }
 
-        // Load DogInfo.xlsx data with timeout and error handling
         async function loadDogInfoData() {
             return new Promise((resolve) => {
                 const timeoutId = setTimeout(() => {
@@ -837,13 +764,12 @@ function drawTextWithAlignmentAndDynamicSize(page, text, config, font, maxWidth 
                     const jsonData = XLSX.utils.sheet_to_json(sheet, {header: 1});
                     
                     let loadedCount = 0;
-                    // Process DogInfo data - skip header row
                     jsonData.slice(1).forEach(row => {
-                       if (row && row[0]) { // Column A is Registration Number
+                       if (row && row[0]) {
                             const regNumber = row[0].toString().trim();
                             const callName = row[1] ? row[1].toString().trim() : '';
-                            const registeredName = row[2] ? row[2].toString().trim() : '';  // Column C
-                            const handlerName = row[3] ? row[3].toString().trim() : '';     // Column D
+                            const registeredName = row[2] ? row[2].toString().trim() : '';
+                            const handlerName = row[3] ? row[3].toString().trim() : '';
                             
                             dogInfoData[regNumber] = {
                                 callName: callName,
@@ -866,19 +792,16 @@ function drawTextWithAlignmentAndDynamicSize(page, text, config, font, maxWidth 
             });
         }
 
-        // Helper function to get handler name from DogInfo.xlsx
         function getHandlerNameFromDogInfo(regNumber) {
             if (!regNumber || !dogInfoData[regNumber]) return '';
             return dogInfoData[regNumber].handlerName || '';
         }
 
-        // Helper function to get registered name from DogInfo.xlsx
         function getRegisteredNameFromDogInfo(regNumber) {
             if (!regNumber || !dogInfoData[regNumber]) return '';
             return dogInfoData[regNumber].registeredName || dogInfoData[regNumber].callName || '';
         }
 
-        // Helper function to get call name from DogInfo.xlsx (fallback to trialing data)
         function getCallNameFromDogInfo(regNumber, fallbackCallName = '') {
             if (!regNumber || !dogInfoData[regNumber]) return fallbackCallName;
             return dogInfoData[regNumber].callName || fallbackCallName;
@@ -891,10 +814,8 @@ function drawTextWithAlignmentAndDynamicSize(page, text, config, font, maxWidth 
             return [...orderedLevels, ...unorderedLevels.sort()];
         }
 
-        // Load Title Placement data with timeout and error handling
         async function loadTitlePlacementData() {
             return new Promise((resolve) => {
-                // Set a 2 second timeout to prevent hanging
                 const timeoutId = setTimeout(() => {
                     console.warn('⏰ Title Placement loading timed out - continuing without it');
                     resolve(false);
@@ -949,19 +870,16 @@ function drawTextWithAlignmentAndDynamicSize(page, text, config, font, maxWidth 
             });
         }
 
-        // Get certificate name (Column C)
         function getCertificateName(level) {
             return titlePlacementData[level]?.certificateName || level;
         }
 
-        // Helper function to get ACE certificate name (Column D + abbreviation in brackets + multiplier)
         function getAceCertificateName(level, aceCount) {
             const abbreviation = titleAbbreviations[level] || level;
             
             if (titlePlacementData[level]) {
                 let aceName = titlePlacementData[level].aceCertificateName;
                 
-                // Format: "Scent Patrol Ace x 4 (CW-SPAx4)" for multiple, "Scent Patrol Ace (CW-SPA)" for single
                 let aceDesignation;
                 let displayText;
                 
@@ -976,277 +894,7 @@ function drawTextWithAlignmentAndDynamicSize(page, text, config, font, maxWidth 
                 return displayText;
             }
             
-            // Fallback to original system if not found
             return aceCount === 1 ? `${abbreviation}A` : `${abbreviation}Ax${aceCount}`;
-        }
-
-        // Generate title certificate
-        async function generateTitleCertificate(level, regNumber, abbreviation) {
-            try {
-                const btn = event.target;
-                btn.textContent = 'Generating...';
-                btn.disabled = true;
-
-                const templateInfo = certificateTemplateMapping[level];
-                if (!templateInfo) throw new Error(`No template mapped for level: ${level}`);
-
-                const levelRecords = trialingData.filter(r => r.registrationNumber === regNumber && r.level === level);
-                if (levelRecords.length === 0) throw new Error('No records found for this level');
-
-                const titleInfo = calculateTitleQs(levelRecords);
-                const dateEarned = titleInfo.titleDate ? titleInfo.titleDate.toLocaleDateString() : new Date().toLocaleDateString();
-                const certificateName = getCertificateName(level);
-
-                // Get names from DogInfo.xlsx
-                const handlerName = getHandlerNameFromDogInfo(regNumber) || 'Handler Name';
-                const registeredName = getRegisteredNameFromDogInfo(regNumber) || 'Dog Name';
-
-
-                
-           const templateUrl = `https://raw.githubusercontent.com/Cwagtracker/Tracker/main/templates/${templateInfo.template}`;
-                const response = await fetch(templateUrl);
-                if (!response.ok) throw new Error(`Template not found: ${templateUrl}`);
-                
-                const templateBytes = await response.arrayBuffer();
-                const pdfDoc = await PDFLib.PDFDocument.load(templateBytes);
-                const firstPage = pdfDoc.getPages()[0];
-                
-                const font = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
-                const timesBold = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRomanBold);
-                let maiandraFont = timesBold;
-
-                // Try to load custom font
-                if (typeof fontkit !== 'undefined') {
-                    try {
-                        pdfDoc.registerFontkit(fontkit);
-                        const fontUrls = [
-                            'https://cdn.jsdelivr.net/gh/cwagtracker/Tracker@main/fonts/Maiandra%20GD.TTF',
-                            'https://raw.githubusercontent.com/cwagtracker/Tracker/main/fonts/Maiandra%20GD.TTF'
-                        ];
-                        
-                        for (const fontUrl of fontUrls) {
-                            try {
-                                const fontResponse = await fetch(fontUrl, { mode: 'cors' });
-                                if (fontResponse.ok) {
-                                    const fontBytes = await fontResponse.arrayBuffer();
-                                    maiandraFont = await pdfDoc.embedFont(fontBytes);
-                                    break;
-                                }
-                            } catch (e) { /* continue */ }
-                        }
-                    } catch (e) { /* use fallback */ }
-                }
-
-              // Add text to certificate
-const regConfig = titleCertificateConfig.registrationNumber;
-firstPage.drawText(regNumber, {
-    x: regConfig.x, y: regConfig.y, size: regConfig.size, font: font,
-    color: PDFLib.rgb(regConfig.color[0], regConfig.color[1], regConfig.color[2])
-});
-
-// Handler name with dynamic sizing - centered in available range
-const handlerMaxWidth = 710 - 72; // 638 pixels available
-const handlerCenterX = 72 + (handlerMaxWidth / 2); // Center of the range: 391
-drawCenteredTextWithDynamicSize(
-    firstPage, 
-    handlerName, 
-    handlerCenterX, 
-    titleCertificateConfig.handlerName.y, 
-    maiandraFont, 
-    PDFLib.rgb(0, 0, 0), 
-    handlerMaxWidth, 
-    titleCertificateConfig.handlerName.size
-);
-
-// Dog name with dynamic sizing - centered in available range
-const dogMaxWidth = 710 - 72; // 638 pixels available
-const dogCenterX = 72 + (dogMaxWidth / 2); // Center of the range: 391
-drawCenteredTextWithDynamicSize(
-    firstPage, 
-    registeredName, 
-    dogCenterX, 
-    titleCertificateConfig.dogName.y, 
-    maiandraFont, 
-    PDFLib.rgb(0, 0, 0), 
-    dogMaxWidth, 
-    titleCertificateConfig.dogName.size
-);
-
-// Add "&" symbol centered on page at y:330
-const ampersandText = "&";
-const pageWidth = firstPage.getSize().width;
-const pageCenterX = pageWidth / 2;
-firstPage.drawText(ampersandText, {
-    x: pageCenterX - (maiandraFont.widthOfTextAtSize(ampersandText, titleCertificateConfig.dogName.size) / 2),
-    y: 310,
-    size: titleCertificateConfig.dogName.size,
-    font: maiandraFont,
-    color: PDFLib.rgb(0, 0, 0)
-});
-                
-const dateConfig = titleCertificateConfig.dateEarned;
-firstPage.drawText('On ', {
-    x: dateConfig.x - 20, y: dateConfig.y, size: dateConfig.size, font: font,
-    color: PDFLib.rgb(0, 0, 0)
-});
-firstPage.drawText(dateEarned, {
-    x: dateConfig.x, y: dateConfig.y, size: dateConfig.size, font: font,
-    color: PDFLib.rgb(0, 0, 0)
-});
-                const dateWidth = font.widthOfTextAtSize(dateEarned, dateConfig.size);
-                firstPage.drawText(', has completed the requirements for the title of', {
-                    x: dateConfig.x + dateWidth, y: dateConfig.y, size: dateConfig.size, font: font,
-                    color: PDFLib.rgb(0, 0, 0)
-                });
-
-                const titleConfig = titleCertificateConfig.titleAbbreviation;
-                const titleText = `${certificateName} (${abbreviation})`;
-                const titleTextWidth = timesBold.widthOfTextAtSize(titleText, titleConfig.size);
-                firstPage.drawText(titleText, {
-                    x: titleConfig.x - titleTextWidth, y: titleConfig.y, size: titleConfig.size, font: maiandraFont,
-                    color: PDFLib.rgb(titleConfig.color[0], titleConfig.color[1], titleConfig.color[2])
-                });
-
-                const pdfBytes = await pdfDoc.save();
-                
-                downloadPDF(pdfBytes, `${registeredName}-${level.replace(/\s+/g, '-')}-Title-Certificate.pdf`);
-                btn.textContent = '📜 Title Certificate';
-                btn.disabled = false;
-
-            } catch (error) {
-                console.error('Certificate generation error:', error);
-                alert(`Unable to generate certificate: ${error.message}`);
-                
-                const btn = event.target;
-                btn.textContent = '📜 Title Certificate';
-                btn.disabled = false;
-            }
-        }
-
-        // Generate ACE certificate
-async function generateAceCertificate(level, regNumber, aceCount) {
-    try {
-        const btn = event.target;
-        btn.textContent = 'Generating...';
-        btn.disabled = true;
-
-        const levelRecords = trialingData.filter(r => r.registrationNumber === regNumber && r.level === level);
-        if (levelRecords.length === 0) throw new Error('No records found for this level');
-
-        const titleInfo = calculateTitleQs(levelRecords);
-        const titleQs = titleInfo.titleQs;
-
-        // Find when the specific ACE was earned by using existing function
-        const aceEarnedDates = findAceEarnedDates(levelRecords, titleQs);
-        let aceEarnedDate = titleInfo.titleDate; // fallback to title date
-
-        // Find the date for the specific ACE count we're generating
-        if (aceEarnedDates.length > 0) {
-            const targetAce = aceEarnedDates.find(ace => ace.aceNumber === aceCount);
-            if (targetAce) {
-                aceEarnedDate = targetAce.date;
-            } else {
-                // If exact ACE not found, use the last ACE date available
-                aceEarnedDate = aceEarnedDates[aceEarnedDates.length - 1].date;
-            }
-        }
-
-        const dateEarned = aceEarnedDate ? aceEarnedDate.toLocaleDateString() : new Date().toLocaleDateString();
-        const aceCertificateName = getAceCertificateName(level, aceCount);
-
-        // Get names from DogInfo.xlsx
-        const handlerName = getHandlerNameFromDogInfo(regNumber) || 'Handler Name';
-        const registeredName = getRegisteredNameFromDogInfo(regNumber) || 'Dog Name';
-
-        // ACE certificates use dedicated Ace.pdf template
-        const templateUrl = 'https://raw.githubusercontent.com/cwagtracker/Tracker/main/templates/Ace.pdf';
-        const response = await fetch(templateUrl);
-        if (!response.ok) throw new Error(`ACE template not found: ${templateUrl}`);
-        
-        const templateBytes = await response.arrayBuffer();
-        const pdfDoc = await PDFLib.PDFDocument.load(templateBytes);
-        const firstPage = pdfDoc.getPages()[0];
-        
-        const helvetica = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
-        const timesBold = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRomanBold);
-        let maiandraFont = timesBold;
-
-        // Try to load custom font
-        if (typeof fontkit !== 'undefined') {
-            try {
-                pdfDoc.registerFontkit(fontkit);
-                const fontUrls = [
-                    'https://cdn.jsdelivr.net/gh/cwagtracker/Tracker@main/fonts/Maiandra%20GD.TTF',
-                    'https://raw.githubusercontent.com/cwagtracker/Tracker/main/fonts/Maiandra%20GD.TTF'
-                ];
-                
-                for (const fontUrl of fontUrls) {
-                    try {
-                        const fontResponse = await fetch(fontUrl, { mode: 'cors' });
-                        if (fontResponse.ok) {
-                            const fontBytes = await fontResponse.arrayBuffer();
-                            maiandraFont = await pdfDoc.embedFont(fontBytes);
-                            break;
-                        }
-                    } catch (e) { /* continue */ }
-                }
-            } catch (e) { /* use fallback */ }
-        }
-
-
-        // Add text to ACE certificate
-const dateLineText = `This certifies that on ${dateEarned} the requirements have been met for the title of:`;
-drawTextWithAlignmentAndDynamicSize(firstPage, dateLineText, aceCertificateConfig.dateLine, helvetica);
-
-// Call name with dynamic sizing (x:398 center, bounds x:72 to x:710, default size 28)
-const callNameMaxWidth = 710 - 72; // 638 pixels available
-drawTextWithAlignmentAndDynamicSize(
-    firstPage, 
-    registeredName, 
-    aceCertificateConfig.callName, 
-    maiandraFont, 
-    callNameMaxWidth, 
-    aceCertificateConfig.callName.size
-);
-
-// Handler name with dynamic sizing (x:470 center, bounds x:235 to x:690, default size 28)
-const handlerMaxWidthAce = 690 - 235; // 455 pixels available
-drawTextWithAlignmentAndDynamicSize(
-    firstPage, 
-    handlerName, 
-    aceCertificateConfig.handlerName, 
-    maiandraFont, 
-    handlerMaxWidthAce, 
-    aceCertificateConfig.handlerName.size
-);
-
-drawTextWithAlignmentAndDynamicSize(firstPage, regNumber, aceCertificateConfig.registrationNumber, helvetica);
-drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificateConfig.levelAbbreviation, maiandraFont);
-        const pdfBytes = await pdfDoc.save();
-        downloadPDF(pdfBytes, `${registeredName}-${level.replace(/\s+/g, '-')}-ACE-Certificate.pdf`);
-
-        btn.textContent = '🏆 Ace Certificate';
-        btn.disabled = false;
-
-    } catch (error) {
-        console.error('ACE certificate generation error:', error);
-        alert(`Unable to generate ACE certificate: ${error.message}`);
-        
-        const btn = event.target;
-        btn.textContent = '🏆 Ace Certificate';
-        btn.disabled = false;
-    }
-}
-
-        // Helper functions
-        function downloadPDF(pdfBytes, filename) {
-            const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = filename;
-            link.click();
-            URL.revokeObjectURL(url);
         }
 
         function handleKeyPress(event) {
@@ -1255,189 +903,14 @@ drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificat
             }
         }
 
-        function loadDataFromFile() {
-            console.log('Starting data load process...');
-            
-            // Set a timeout to show manual upload option if loading takes too long
-            const timeoutId = setTimeout(() => {
-                console.log('Load timeout - showing manual upload option');
-                showFileUpload();
-            }, 3000);
-
-            // First try to load the expected file
-            fetch('Data for Tracker web.xlsx')
-                .then(response => {
-                    clearTimeout(timeoutId);
-                    console.log('Fetch response status:', response.status);
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    console.log('File found, reading data...');
-                    return response.arrayBuffer();
-                })
-                .then(data => {
-                    console.log('Data received, size:', data.byteLength, 'bytes');
-                    processExcelData(new Uint8Array(data));
-                    updateLastUpdatedDate();
-                    document.getElementById('summaryContent').innerHTML = `
-                        <div class="validation-rules">
-                            <h4>Title Requirements</h4>
-                            <ul>
-                                <li>Minimum 4 Q's required for each level</li>
-                                <li>Q's must come from at least 2 different judges</li>
-                                <li>Prerequisites must be met before advancing to higher levels</li>
-                                <li>Special case: "Investigator 3" requires either "Patrol 1" OR "Detective 2"</li>
-                                <li>Games levels require at least 2 different games (BJ, C, P, T, GB)</li>
-                                <li>Ace awards given every 10 Q's after title is earned</li>
-                            </ul>
-                        </div>
-                    `;
-                    console.log('Data processing complete');
-                })
-                .catch(error => {
-                    clearTimeout(timeoutId);
-                    console.error('Error loading data:', error);
-                    document.getElementById('lastUpdated').textContent = 'File not found';
-                    showFileUpload();
-                });
-        }
-
-        function showFileUpload() {
-            document.getElementById('summaryContent').innerHTML = `
-                <div style="text-align: center; padding: 40px;">
-                    <h3 style="color: #17a2b8; margin-bottom: 20px;">📁 Upload Data File</h3>
-                    <p style="margin-bottom: 20px;">Select your Excel file to load the trialing data:</p>
-                    
-                    <div style="background: #f8f9fa; padding: 30px; border-radius: 12px; border: 2px dashed #dee2e6; margin: 20px 0;">
-                        <input type="file" id="manualDataFile" accept=".xlsx,.xls,.csv" style="margin-bottom: 15px;">
-                        <br>
-                        <button onclick="loadManualFile()" style="background: #28a745; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 1rem;">
-                            📤 Load File
-                        </button>
-                    </div>
-                    
-                    <button onclick="loadDataFromFile()" style="background: #6c757d; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; margin-top: 15px;">
-                        ← Try Auto-Loading Again
-                    </button>
-                </div>
-            `;
-        }
-
-        function loadManualFile() {
-            const fileInput = document.getElementById('manualDataFile');
-            const file = fileInput.files[0];
-            
-            if (!file) {
-                alert('Please select a file first');
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    processExcelData(data);
-                    updateLastUpdatedDate();
-                    document.getElementById('summaryContent').innerHTML = `
-                        <div class="validation-rules">
-                            <h4>Title Requirements</h4>
-                            <ul>
-                                <li>Minimum 4 Q's required for each level</li>
-                                <li>Q's must come from at least 2 different judges</li>
-                                <li>Prerequisites must be met before advancing to higher levels</li>
-                                <li>Special case: "Investigator 3" requires either "Patrol 1" OR "Detective 2"</li>
-                                <li>Games levels require at least 2 different games (BJ, C, P, T, GB)</li>
-                                <li>Ace awards given every 10 Q's after title is earned</li>
-                            </ul>
-                        </div>
-                    `;
-                    alert(`Successfully loaded ${trialingData.length} records!`);
-                } catch (error) {
-                    console.error('Error loading manual file:', error);
-                    alert(`Error loading file: ${error.message}`);
-                }
-            };
-            
-            reader.onerror = function() {
-                alert('Error reading file. Please try again.');
-            };
-            
-            reader.readAsArrayBuffer(file);
-        }
-
-        function processExcelData(data) {
-            const workbook = XLSX.read(data, {type: 'array', cellDates: true});
-            
-            // Look for Data sheet
-            const dataSheet = workbook.Sheets['Data'] || workbook.Sheets[workbook.SheetNames[0]];
-            const jsonData = XLSX.utils.sheet_to_json(dataSheet, {header: 1, dateNF: 'yyyy-mm-dd'});
-            
-            // Process the data with proper date handling
-            trialingData = jsonData.slice(1).map(row => {
-                let processedDate = row[2];
-                
-                // Handle different date formats
-                if (typeof processedDate === 'number') {
-                    // Excel date serial number - convert to proper date
-                    processedDate = XLSX.SSF.parse_date_code(processedDate);
-                    processedDate = new Date(processedDate.y, processedDate.m - 1, processedDate.d);
-                } else if (typeof processedDate === 'string') {
-                    // String date - parse it
-                    processedDate = new Date(processedDate);
-                } else if (processedDate instanceof Date) {
-                    // Already a date object
-                    processedDate = processedDate;
-                } else {
-                    // Invalid date
-                    processedDate = null;
-                }
-                
-                return {
-                    registrationNumber: row[0],       // Column A
-                    callName: row[1],                 // Column B  
-                    date: processedDate,              // Column C
-                    level: row[3],                    // Column D
-                    results: row[4],                  // Column E
-                    judge: row[5],                    // Column F
-                    Qs: parseFloat(row[6]) || 0   // Column G
-                };
-            }).filter(record => record.registrationNumber && record.level);
-            
-            console.log('Data processed:', trialingData.length, 'records');
-        }
-
-        function updateLastUpdatedDate() {
-            if (trialingData.length === 0) {
-                document.getElementById('lastUpdated').textContent = 'No data available';
-                return;
-            }
-
-            // Find the most recent date in the data
-            const validDates = trialingData
-                .map(record => record.date)
-                .filter(date => date instanceof Date && !isNaN(date))
-                .sort((a, b) => b - a);
-
-            if (validDates.length > 0) {
-                const mostRecentDate = validDates[0];
-                document.getElementById('lastUpdated').textContent = 
-                    `Last updated: ${mostRecentDate.toLocaleDateString()}`;
-            } else {
-                document.getElementById('lastUpdated').textContent = 'Last updated: Unknown';
-            }
-        }
-
         function formatRegistrationNumber(input) {
             if (!input) return '';
             
-            // Remove any non-digits and dashes
             let cleaned = input.replace(/[^0-9-]/g, '');
             
-            // If input has dashes, work with parts
             if (cleaned.includes('-')) {
                 let parts = cleaned.split('-');
                 if (parts.length === 3) {
-                    // Format as XX-XXXX-XX with leading zeros
                     let part1 = parts[0].padStart(2, '0').substring(0, 2);
                     let part2 = parts[1].padStart(4, '0').substring(0, 4);
                     let part3 = parts[2].padStart(2, '0').substring(0, 2);
@@ -1445,7 +918,6 @@ drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificat
                 }
             }
             
-            // If no dashes but enough digits, auto-format
             const digitsOnly = cleaned.replace(/-/g, '');
             if (digitsOnly.length >= 6) {
                 const part1 = digitsOnly.substring(0, 2).padStart(2, '0');
@@ -1454,17 +926,14 @@ drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificat
                 return `${part1}-${part2}-${part3}`;
             }
             
-            // If partial entry, try to format what we have
             if (digitsOnly.length === 4) {
-                // Assume this is the middle part (most common entry)
                 return `XX-${digitsOnly}-XX`;
             }
             
-            return cleaned; // Return what we have if can't format
+            return cleaned;
         }
 
-        
-          function searchDog() {
+        function searchDog() {
             const searchInput = document.getElementById('searchInput').value.trim();
             if (!searchInput) {
                 alert('Please enter a registration number');
@@ -1476,24 +945,20 @@ drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificat
                 return;
             }
 
-            // Format the search input
             const formattedSearch = formatRegistrationNumber(searchInput);
             
-            // Find exact matching records only - convert to string first
             const dogRecords = trialingData.filter(record => 
                 record.registrationNumber && 
                 record.registrationNumber.toString().toLowerCase() === formattedSearch.toLowerCase()
             );
 
-            // Check if dog exists in DogInfo even if no trialing records
             const dogExistsInInfo = dogInfoData[formattedSearch];
 
             if (dogRecords.length === 0 && !dogExistsInInfo) {
-                // If no exact match, show suggestion with partial matches
                 const partialMatches = trialingData.filter(record =>
                     record.registrationNumber && 
                     record.registrationNumber.toString().toLowerCase().includes(formattedSearch.toLowerCase())
-                ).slice(0, 5); // Limit to 5 suggestions
+                ).slice(0, 5);
 
                 let errorMessage = `No dog found with registration number: <strong>${formattedSearch}</strong>`;
                 
@@ -1510,14 +975,12 @@ drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificat
                 return;
             }
 
-            // If dog exists in DogInfo but has no records, create a pseudo-record
             if (dogRecords.length === 0 && dogExistsInInfo) {
                 currentDogRecords = [];
                 displaySummary([], formattedSearch);
                 return;
             }
 
-            // Store records globally for modal access
             currentDogRecords = dogRecords;
             displaySummary(dogRecords);
         }
@@ -1527,16 +990,20 @@ drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificat
             searchDog();
         }
 
-        function displaySummary(records) {
-            const regNumber = records[0].registrationNumber;
+        function displaySummary(records, regNumberOverride = null) {
+            const regNumber = regNumberOverride || (records.length > 0 ? records[0].registrationNumber : null);
             
-            // Get names - prioritize DogInfo.xlsx, fallback to trialing data
-            const callName = getCallNameFromDogInfo(regNumber, records[0].callName) || 'Unknown';
+            if (!regNumber) {
+                document.getElementById('summaryContent').innerHTML = 
+                    `<div class="error-message">Unable to determine registration number</div>`;
+                return;
+            }
+            
+            const callName = getCallNameFromDogInfo(regNumber, records.length > 0 ? records[0].callName : null) || 'Unknown';
             const handlerName = getHandlerNameFromDogInfo(regNumber);
             
             const levelSummary = {};
             
-            // Group records by level
             records.forEach(record => {
                 if (!record.level) return;
                 
@@ -1557,7 +1024,6 @@ drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificat
                 levelSummary[record.level].records.push(record);
             });
 
-            // Apply validation rules
             const validatedLevels = applyValidationRules(levelSummary);
 
             let html = `
@@ -1566,9 +1032,20 @@ drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificat
                     <h3>${callName}</h3>
                     <p><strong>Registration:</strong> ${regNumber}</p>
                     <p><strong>Total Trialing Records:</strong> ${records.length}</p>
+                    ${records.length === 0 ? '<p style="color: #856404; background: #fff3cd; padding: 10px; border-radius: 6px; margin-top: 10px;"><strong>📋 No trialing entries found for this dog yet</strong></p>' : ''}
                 </div>
             `;
             
+            if (Object.keys(levelSummary).length === 0) {
+                document.getElementById('summaryContent').innerHTML = html + `
+                    <div style="text-align: center; padding: 20px; color: #6c757d;">
+                        <p>This dog has no trialing records yet. Once they compete, their results will appear here!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Continue with the rest of displaySummary logic here...
             getSortedLevels(levelSummary).forEach(level => {
                 const summary = levelSummary[level];
                 const isValidated = validatedLevels[level];
@@ -1576,14 +1053,12 @@ drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificat
                 
                 const hasTitleRequirements = summary.totalQs >= 4 && judgeCount >= 2 && isValidated;
                 
-                // For Games levels, also check if they have enough different games
                 let gamesInfo = '';
                 if (level.startsWith('Games ')) {
                     const uniqueGames = getUniqueGames(summary.records);
                     gamesInfo = `<div><span>Different Games:</span> <strong>${uniqueGames.size}/2</strong> (${Array.from(uniqueGames).join(', ') || 'None'})</div>`;
                 }
                 
-                // Calculate title Q's and ace Q's
                 let titleQs = 0;
                 let aceQs = 0;
                 let titleStatus = '';
@@ -1591,7 +1066,6 @@ drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificat
                 let titleInfo = null;
                 
                 if (hasTitleRequirements) {
-                    // Find the point at which title was earned (when both 4 Q's and 2 judges were achieved)
                     titleInfo = calculateTitleQs(summary.records);
                     titleQs = titleInfo.titleQs;
                     const titleDate = titleInfo.titleDate;
@@ -1616,7 +1090,6 @@ drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificat
                     titleClass = 'no-title';
                 }
 
-                // Generate certificate buttons
                 let certificateButtons = '';
                 if (hasTitleRequirements) {
                     const officialTitle = titleAbbreviations[level] || level;
@@ -1624,14 +1097,12 @@ drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificat
                     const escapedRegNumber = escapeJs(regNumber);
                     const escapedOfficialTitle = escapeJs(officialTitle);
                     
-                    // Title certificate button
                     certificateButtons += `
                         <button class="certificate-btn" onclick="generateTitleCertificate('${escapedLevel}', '${escapedRegNumber}', '${escapedOfficialTitle}')">
                             📜 Title Certificate
                         </button>
                     `;
                     
-                    // Ace certificate buttons (if applicable) - generate one for each ACE level earned
                     if (aceQs >= 10) {
                         const aceCount = Math.floor(aceQs / 10);
                         for (let i = 1; i <= aceCount; i++) {
@@ -1659,19 +1130,6 @@ drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificat
                                     <div><span>Q's Towards Title:</span> <strong>${titleQs}</strong></div>
                                     <div><span>Q's Towards Ace:</span> <strong class="ace-info">${aceQs}</strong></div>
                                     ${titleInfo && titleInfo.titleDate ? `<div style="color: #28a745; font-size: 0.85rem;"><span>Title Earned:</span> <strong>${titleInfo.titleDate instanceof Date && !isNaN(titleInfo.titleDate) ? titleInfo.titleDate.toLocaleDateString() : 'N/A'}</strong></div>` : ''}
-                                   ${(() => {
-    const aceEarnedDates = findAceEarnedDates(summary.records, titleQs);
-    if (aceEarnedDates.length > 0) {
-        let aceDisplayText = '';
-        aceEarnedDates.forEach(ace => {
-            const aceDate = ace.date instanceof Date && !isNaN(ace.date) ? ace.date.toLocaleDateString() : 'N/A';
-            const aceLabel = ace.aceNumber === 1 ? 'Ace Earned' : `Ace x${ace.aceNumber} Earned`;
-            aceDisplayText += `<div style="color: #6f42c1; font-size: 0.85rem;"><span>${aceLabel}:</span> <strong>${aceDate}</strong></div>`;
-        });
-        return aceDisplayText;
-    }
-    return '';
-})()}
                                     ${aceQs < 10 && aceQs >= 0 ? `<div class="ace-info"><span>Q's until next Ace:</span> <strong>${10 - (aceQs % 10)}</strong></div>` : 
                                     aceQs >= 10 ? `<div class="ace-info"><span>Q's until next Ace:</span> <strong>${10 - (aceQs % 10)}</strong></div>` : ''}
                                 ` : `
@@ -1698,7 +1156,6 @@ drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificat
         }
 
         function calculateTitleQs(records) {
-            // Sort records chronologically
             const sortedRecords = records
                 .filter(r => r.Qs > 0 && r.date instanceof Date && !isNaN(r.date))
                 .sort((a, b) => a.date - b.date);
@@ -1713,28 +1170,19 @@ drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificat
                 cumulativeQs += record.Qs;
                 if (record.judge) judges.add(record.judge);
                 
-                // Check if title requirements are NOW met (but weren't before)
                 const nowHasTitle = cumulativeQs >= 4 && judges.size >= 2;
                 const previouslyHadTitle = prevQs >= 4 && prevJudgeCount >= 2;
                 
                 if (nowHasTitle && !previouslyHadTitle) {
-                    // Title was just earned with this record
-                    // Calculate how many Qs from this record went to earning the title
                     let QsTowardTitle = record.Qs;
                     
-                    // If we already had 4+ Qs but needed another judge
                     if (prevQs >= 4 && prevJudgeCount < 2) {
-                        // Only 1 point goes to title (to satisfy the minimum), rest goes to ace
                         QsTowardTitle = 1;
                     }
-                    // If we had 2+ judges but needed more Qs
                     else if (prevJudgeCount >= 2 && prevQs < 4) {
-                        // Only enough Qs to reach 4 go to title
                         QsTowardTitle = 4 - prevQs;
                     }
-                    // If we needed both conditions
                     else if (prevQs < 4 && prevJudgeCount < 2) {
-                        // Enough Qs to reach 4, or all the Qs if less than needed
                         QsTowardTitle = Math.min(record.Qs, 4 - prevQs);
                     }
                     
@@ -1745,57 +1193,21 @@ drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificat
                 }
             }
             
-            // If we get here, either no title was earned, or all Qs go to title
             return {
                 titleQs: cumulativeQs,
                 titleDate: sortedRecords[sortedRecords.length - 1]?.date
             };
         }
 
-        function findAceEarnedDates(records, titleQs) {
-            const sortedRecords = records
-                .filter(r => r.Qs > 0 && r.date instanceof Date && !isNaN(r.date))
-                .sort((a, b) => a.date - b.date);
-            
-            let cumulativeQs = 0;
-            const aceEarnedDates = [];
-            
-            for (const record of sortedRecords) {
-                const prevQs = cumulativeQs;
-                cumulativeQs += record.Qs;
-                
-                // Check for ace milestones after title was earned
-                if (prevQs >= titleQs && cumulativeQs > titleQs) {
-                    const prevAceQs = prevQs - titleQs;
-                    const newAceQs = cumulativeQs - titleQs;
-                    
-                    const prevAceCount = Math.floor(prevAceQs / 10);
-                    const newAceCount = Math.floor(newAceQs / 10);
-                    
-                    // If ace count increased, record when each ace was earned
-                    for (let i = prevAceCount + 1; i <= newAceCount; i++) {
-                        aceEarnedDates.push({
-                            aceNumber: i,
-                            date: record.date
-                        });
-                    }
-                }
-            }
-            
-            return aceEarnedDates;
-        }
-
         function applyValidationRules(levelSummary) {
             const validatedLevels = {};
             
-            // First, mark all levels without prerequisites as valid (but check Games separately)
             Object.keys(levelSummary).forEach(level => {
                 if (!prerequisites[level] && !level.startsWith('Games ')) {
                     validatedLevels[level] = true;
                 }
             });
 
-            // Handle Games levels specially - they need 2+ different games
             Object.keys(levelSummary).forEach(level => {
                 if (level.startsWith('Games ')) {
                     const summary = levelSummary[level];
@@ -1806,7 +1218,6 @@ drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificat
                 }
             });
 
-            // Then validate levels with prerequisites
             Object.keys(prerequisites).forEach(level => {
                 if (!levelSummary[level]) {
                     validatedLevels[level] = false;
@@ -1816,12 +1227,10 @@ drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificat
                 let meetsPrereqCriteria = false;
 
                 if (level === "Investigator 3") {
-                    // Special case: requires either Patrol 1 OR Detective 2
                     const patrol1Valid = checkLevelRequirements(levelSummary["Patrol 1"]);
                     const detective2Valid = checkLevelRequirements(levelSummary["Detective 2"]);
                     meetsPrereqCriteria = patrol1Valid || detective2Valid;
                 } else {
-                    // Standard case: check direct prerequisite
                     const prereqLevel = prerequisites[level][0];
                     meetsPrereqCriteria = checkLevelRequirements(levelSummary[prereqLevel]);
                 }
@@ -1912,8 +1321,8 @@ drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificat
         }
 
         function showOwnerView() {
-            if (trialingData.length === 0) {
-                alert('Please wait for trialing data to load');
+            if (trialingData.length === 0 && Object.keys(dogInfoData).length === 0) {
+                alert('Please wait for data to load');
                 return;
             }
 
@@ -1945,7 +1354,7 @@ drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificat
             }
         }
 
-       function loadOwnerView() {
+        function loadOwnerView() {
             const ownerIdInput = document.getElementById('ownerIdInput');
             if (!ownerIdInput) {
                 console.error('Owner ID input not found');
@@ -1964,30 +1373,39 @@ drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificat
                 return;
             }
 
-            // Find all dogs with matching middle 4 digits
-            const matchingDogs = trialingData.filter(record => {
+            const matchingDogsFromTrialing = trialingData.filter(record => {
                 if (!record.registrationNumber) return false;
                 
                 const regNumber = record.registrationNumber.toString().trim();
                 
-                // Handle both formats:
-                // 1. Dashed format: "17-1734-06" 
-                // 2. Undashed format: "17173406"
-                
                 if (regNumber.includes('-')) {
-                    // Dashed format: split and check middle part
                     const regParts = regNumber.split('-');
                     return regParts.length >= 2 && regParts[1] === ownerId;
                 } else if (/^\d{8}$/.test(regNumber)) {
-                    // Undashed 8-digit format: extract middle 4 digits (positions 2-5)
                     const middlePart = regNumber.substring(2, 6);
                     return middlePart === ownerId;
                 }
                 
-                return false; // Unknown format
+                return false;
             });
 
-            if (matchingDogs.length === 0) {
+            const matchingDogsFromInfo = Object.keys(dogInfoData).filter(regNumber => {
+                if (regNumber.includes('-')) {
+                    const regParts = regNumber.split('-');
+                    return regParts.length >= 2 && regParts[1] === ownerId;
+                } else if (/^\d{8}$/.test(regNumber)) {
+                    const middlePart = regNumber.substring(2, 6);
+                    return middlePart === ownerId;
+                }
+                return false;
+            });
+
+            const allMatchingRegNumbers = [...new Set([
+                ...matchingDogsFromTrialing.map(r => r.registrationNumber.toString().trim()),
+                ...matchingDogsFromInfo
+            ])];
+
+            if (allMatchingRegNumbers.length === 0) {
                 document.getElementById('summaryContent').innerHTML = `
                     <div class="error-message">No dogs found with owner ID: <strong>${ownerId}</strong></div>
                     <div style="text-align: center; margin-top: 20px;">
@@ -1999,9 +1417,8 @@ drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificat
                 return;
             }
 
-            // Group by unique registration numbers
             const dogsByReg = {};
-            matchingDogs.forEach(record => {
+            matchingDogsFromTrialing.forEach(record => {
                 const regNumber = record.registrationNumber.toString().trim();
                 if (!dogsByReg[regNumber]) {
                     dogsByReg[regNumber] = [];
@@ -2009,10 +1426,15 @@ drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificat
                 dogsByReg[regNumber].push(record);
             });
 
-            const dogRegistrations = Object.keys(dogsByReg);
+            allMatchingRegNumbers.forEach(regNumber => {
+                if (!dogsByReg[regNumber]) {
+                    dogsByReg[regNumber] = [];
+                }
+            });
+
+            const dogRegistrations = allMatchingRegNumbers;
             const dogCount = dogRegistrations.length;
 
-            // Create header with owner info and navigation
             let html = `
                 <div style="background: linear-gradient(45deg, #667eea, #764ba2); color: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; text-align: center;">
                     <h3 style="margin: 0; font-size: 1.4rem;">${dogCount} dog(s) found</h3>
@@ -2040,7 +1462,6 @@ drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificat
                 </div>
             `;
 
-            // Define all levels in proper order
             const allLevels = [
                 "Patrol 1", "Detective 2", "Investigator 3", "Super Sleuth 4", "Private Inv", "Det Diversions",
                 "Ranger 1", "Ranger 2", "Ranger 3", "Ranger 4", "Ranger 5",
@@ -2051,15 +1472,15 @@ drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificat
                 "Games 1", "Games 2", "Games 3", "Games 4"
             ];
 
-            // Calculate data for each dog
             const dogsData = dogRegistrations.map(regNumber => {
-                const dogRecords = dogsByReg[regNumber];
+                const dogRecords = dogsByReg[regNumber] || [];
                 
-                // Get names - prioritize DogInfo.xlsx, fallback to trialing data
-                const callName = getCallNameFromDogInfo(regNumber, dogRecords[0].callName) || 'Unknown';
+                const callName = getCallNameFromDogInfo(
+                    regNumber, 
+                    dogRecords.length > 0 ? dogRecords[0].callName : null
+                ) || 'Unknown';
                 const handlerName = getHandlerNameFromDogInfo(regNumber);
 
-                // Calculate level summaries
                 const levelSummary = {};
                 dogRecords.forEach(record => {
                     if (!record.level) return;
@@ -2085,11 +1506,11 @@ drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificat
                     regNumber,
                     callName,
                     handlerName,
-                    levelSummary
+                    levelSummary,
+                    hasRecords: dogRecords.length > 0
                 };
             });
 
-            // Create the table
             html += `
                 <div style="overflow-x: auto; border: 1px solid #dee2e6; border-radius: 8px;">
                     <table class="owner-view-table" style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
@@ -2097,11 +1518,11 @@ drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificat
                             <tr style="background: #f8f9fa;">
                                 <th style="padding: 12px 8px; text-align: left; border-bottom: 2px solid #dee2e6; font-weight: 600; position: sticky; left: 0; background: #f8f9fa; z-index: 10;">Level</th>`;
 
-            // Add dog name headers (clickable) with handler info
             dogsData.forEach(dog => {
                 const displayName = dog.callName.length > 6 ? dog.callName.substring(0, 6) : dog.callName;
                 const escapedRegNumber = escapeJs(dog.regNumber);
                 const handlerInfo = dog.handlerName ? `<br><small style="color: #6c757d; font-weight: normal; font-size: 0.6rem;">${escapeHtml(dog.handlerName)}</small>` : '';
+                const noEntriesNote = !dog.hasRecords ? '<br><small style="color: #dc3545; font-weight: normal; font-size: 0.6rem;">(No entries)</small>' : '';
                 html += `
                                 <th style="padding: 8px 4px; text-align: center; border-bottom: 2px solid #dee2e6; font-weight: 600; width: ${75/dogsData.length}%;">
                                     <a href="javascript:void(0)" onclick="searchSpecificDog('${escapedRegNumber}')" 
@@ -2111,6 +1532,7 @@ drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificat
                                         ${escapeHtml(displayName)}
                                     </a>
                                     ${handlerInfo}
+                                    ${noEntriesNote}
                                     <br>
                                     <small style="color: #6c757d; font-weight: normal; font-size: 0.7rem;">${escapeHtml(dog.regNumber)}</small>
                                 </th>`;
@@ -2121,7 +1543,6 @@ drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificat
                         </thead>
                         <tbody>`;
 
-            // Add rows for each level
             allLevels.forEach(level => {
                 html += `
                             <tr style="border-bottom: 1px solid #f0f0f0;">
@@ -2148,15 +1569,12 @@ drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificat
                                 const nextAceNumber = aceCount + 1;
                                 
                                 if (QsToNextAce === 10) {
-                                    // Exactly on an ACE milestone
                                     cellContent = `<strong style="color: #6f42c1;">Ace${aceCount}</strong>`;
                                 } else {
-                                    // Show Q's needed to next ACE
                                     cellContent = `<strong style="color: #6f42c1;">${QsToNextAce} → Ace${nextAceNumber}</strong>`;
                                 }
                                 cellStyle += ' background: linear-gradient(135deg, #e8f5e8, #d4edda);';
                             } else {
-                                // Has title but less than 10 ace Q's
                                 const QsToFirstAce = 10 - aceQs;
                                 if (aceQs === 0) {
                                     cellContent = `<strong style="color: #155724;">Title!</strong>`;
@@ -2230,12 +1648,107 @@ drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificat
             `;
         }
 
-        // Initialize - but make it more immediate
+        function loadDataFromFile() {
+            console.log('Starting data load process...');
+            
+            const timeoutId = setTimeout(() => {
+                console.log('Load timeout - showing manual upload option');
+            }, 3000);
+
+            fetch('Data for Tracker web.xlsx')
+                .then(response => {
+                    clearTimeout(timeoutId);
+                    console.log('Fetch response status:', response.status);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    console.log('File found, reading data...');
+                    return response.arrayBuffer();
+                })
+                .then(data => {
+                    console.log('Data received, size:', data.byteLength, 'bytes');
+                    processExcelData(new Uint8Array(data));
+                    updateLastUpdatedDate();
+                    document.getElementById('summaryContent').innerHTML = `
+                        <div class="validation-rules">
+                            <h4>Title Requirements</h4>
+                            <ul>
+                                <li>Minimum 4 Q's required for each level</li>
+                                <li>Q's must come from at least 2 different judges</li>
+                                <li>Prerequisites must be met before advancing to higher levels</li>
+                                <li>Special case: "Investigator 3" requires either "Patrol 1" OR "Detective 2"</li>
+                                <li>Games levels require at least 2 different games (BJ, C, P, T, GB)</li>
+                                <li>Ace awards given every 10 Q's after title is earned</li>
+                            </ul>
+                        </div>
+                    `;
+                    console.log('Data processing complete');
+                })
+                .catch(error => {
+                    clearTimeout(timeoutId);
+                    console.error('Error loading data:', error);
+                    document.getElementById('lastUpdated').textContent = 'File not found';
+                });
+        }
+
+        function processExcelData(data) {
+            const workbook = XLSX.read(data, {type: 'array', cellDates: true});
+            
+            const dataSheet = workbook.Sheets['Data'] || workbook.Sheets[workbook.SheetNames[0]];
+            const jsonData = XLSX.utils.sheet_to_json(dataSheet, {header: 1, dateNF: 'yyyy-mm-dd'});
+            
+            trialingData = jsonData.slice(1).map(row => {
+                let processedDate = row[2];
+                
+                if (typeof processedDate === 'number') {
+                    processedDate = XLSX.SSF.parse_date_code(processedDate);
+                    processedDate = new Date(processedDate.y, processedDate.m - 1, processedDate.d);
+                } else if (typeof processedDate === 'string') {
+                    processedDate = new Date(processedDate);
+                } else if (processedDate instanceof Date) {
+                    processedDate = processedDate;
+                } else {
+                    processedDate = null;
+                }
+                
+                return {
+                    registrationNumber: row[0],
+                    callName: row[1],
+                    date: processedDate,
+                    level: row[3],
+                    results: row[4],
+                    judge: row[5],
+                    Qs: parseFloat(row[6]) || 0
+                };
+            }).filter(record => record.registrationNumber && record.level);
+            
+            console.log('Data processed:', trialingData.length, 'records');
+        }
+
+        function updateLastUpdatedDate() {
+            if (trialingData.length === 0) {
+                document.getElementById('lastUpdated').textContent = 'No data available';
+                return;
+            }
+
+            const validDates = trialingData
+                .map(record => record.date)
+                .filter(date => date instanceof Date && !isNaN(date))
+                .sort((a, b) => b - a);
+
+            if (validDates.length > 0) {
+                const mostRecentDate = validDates[0];
+                document.getElementById('lastUpdated').textContent = 
+                    `Last updated: ${mostRecentDate.toLocaleDateString()}`;
+            } else {
+                document.getElementById('lastUpdated').textContent = 'Last updated: Unknown';
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 CWAGS Tracker initializing...');
             document.getElementById('lastUpdated').textContent = 'Loading data...';
             
-            // Check fontkit after a delay
             setTimeout(() => {
                 if (typeof fontkit !== 'undefined') {
                     console.log('✅ Fontkit library loaded successfully');
@@ -2244,7 +1757,6 @@ drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificat
                 }
             }, 1000);
             
-            // Load files with proper sequencing and error handling
             setTimeout(async () => {
                 try {
                     console.log('📊 Step 1: Loading DogInfo data...');
@@ -2271,12 +1783,10 @@ drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificat
                 } catch (error) {
                     console.error('❌ Initialization error:', error);
                     document.getElementById('lastUpdated').textContent = 'Initialization failed';
-                    showFileUpload();
                 }
             }, 200);
         });
 
-        // Close modal when clicking outside of it
         window.onclick = function(event) {
             const modal = document.getElementById('detailsModal');
             if (event.target === modal) {
@@ -2286,10 +1796,3 @@ drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificat
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
