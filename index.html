@@ -1852,7 +1852,6 @@
                                 <th style="padding: 12px 8px; text-align: left; border-bottom: 2px solid #dee2e6; font-weight: 600; position: sticky; left: 0; background: #f8f9fa; z-index: 10;">Level</th>`;
 
             dogsData.forEach(dog => {
-                const displayName = dog.callName.length > 6 ? dog.callName.substring(0, 6) : dog.callName;
                 const escapedRegNumber = escapeJs(dog.regNumber);
                 const handlerInfo = dog.handlerName ? `<br><small style="color: #6c757d; font-weight: normal; font-size: 0.6rem;">${escapeHtml(dog.handlerName)}</small>` : '';
                 const noEntriesNote = !dog.hasRecords ? '<br><small style="color: #dc3545; font-weight: normal; font-size: 0.6rem;">(No entries)</small>' : '';
@@ -2129,3 +2128,4 @@
     </script>
 </body>
 </html>
+
