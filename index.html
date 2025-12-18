@@ -1403,6 +1403,24 @@
                     titleQs = titleInfo.titleQs;
                     const titleDate = titleInfo.titleDate;
                     aceQs = Math.max(0, summary.totalQs - titleQs);
+
+                    const aceEarnedDates = findAceEarnedDates(summary.records, titleQs);
+
+let aceDatesHtml = '';
+if (aceEarnedDates.length > 0) {
+    aceDatesHtml = aceEarnedDates
+        .map(a =>
+            `<div class="ace-info">
+                Ace ${a.aceNumber} earned:
+                <strong>${a.date instanceof Date && !isNaN(a.date)
+                    ? a.date.toLocaleDateString()
+                    : 'N/A'}
+                </strong>
+            </div>`
+        )
+        .join('');
+}
+
                     
                     const officialTitle = titleAbbreviations[level] || level;
                     
@@ -1462,6 +1480,7 @@
                                 ${hasTitleRequirements ? `
                                     <div><span>Q's Towards Title:</span> <strong>${titleQs}</strong></div>
                                     <div><span>Q's Towards Ace:</span> <strong class="ace-info">${aceQs}</strong></div>
+                                    ${aceDatesHtml}
                                     ${titleInfo && titleInfo.titleDate ? `<div style="color: #28a745; font-size: 0.85rem;"><span>Title Earned:</span> <strong>${titleInfo.titleDate instanceof Date && !isNaN(titleInfo.titleDate) ? titleInfo.titleDate.toLocaleDateString() : 'N/A'}</strong></div>` : ''}
                                     ${aceQs < 10 && aceQs >= 0 ? `<div class="ace-info"><span>Q's until next Ace:</span> <strong>${10 - (aceQs % 10)}</strong></div>` : 
                                     aceQs >= 10 ? `<div class="ace-info"><span>Q's until next Ace:</span> <strong>${10 - (aceQs % 10)}</strong></div>` : ''}
@@ -2128,4 +2147,5 @@
     </script>
 </body>
 </html>
+
 
