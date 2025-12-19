@@ -1398,28 +1398,30 @@
                 let titleClass = '';
                 let titleInfo = null;
                 
-                if (hasTitleRequirements) {
-                    titleInfo = calculateTitleQs(summary.records);
-                    titleQs = titleInfo.titleQs;
-                    const titleDate = titleInfo.titleDate;
-                    aceQs = Math.max(0, summary.totalQs - titleQs);
+               let aceDatesHtml = '';
 
-                    const aceEarnedDates = findAceEarnedDates(summary.records, titleQs);
+if (hasTitleRequirements) {
+    titleInfo = calculateTitleQs(summary.records);
+    titleQs = titleInfo.titleQs;
+    aceQs = Math.max(0, summary.totalQs - titleQs);
 
-let aceDatesHtml = '';
-if (aceEarnedDates.length > 0) {
-    aceDatesHtml = aceEarnedDates
-        .map(a =>
-            `<div class="ace-info">
-                Ace ${a.aceNumber} earned:
-                <strong>${a.date instanceof Date && !isNaN(a.date)
-                    ? a.date.toLocaleDateString()
-                    : 'N/A'}
-                </strong>
-            </div>`
-        )
-        .join('');
+    const aceEarnedDates = findAceEarnedDates(summary.records, titleQs);
+
+    if (aceEarnedDates.length > 0) {
+        aceDatesHtml = aceEarnedDates
+            .map(a =>
+                `<div class="ace-info">
+                    Ace ${a.aceNumber} earned:
+                    <strong>${a.date instanceof Date && !isNaN(a.date)
+                        ? a.date.toLocaleDateString()
+                        : 'N/A'}
+                    </strong>
+                </div>`
+            )
+            .join('');
+    }
 }
+
 
                     
                     const officialTitle = titleAbbreviations[level] || level;
@@ -2147,5 +2149,6 @@ if (aceEarnedDates.length > 0) {
     </script>
 </body>
 </html>
+
 
 
