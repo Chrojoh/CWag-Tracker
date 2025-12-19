@@ -1425,51 +1425,56 @@ if (hasTitleRequirements) {
 
                     
                     const officialTitle = titleAbbreviations[level] || level;
-                    
-                    if (aceQs >= 10) {
-                        const aceCount = Math.floor(aceQs / 10);
-                        if (aceCount === 1) {
-                            titleStatus = `${officialTitle}A`;
-                        } else {
-                            titleStatus = `${officialTitle}Ax${aceCount}`;
-                        }
-                        titleClass = 'title-earned';
-                    } else {
-                        titleStatus = `${officialTitle} Title Earned`;
-                        titleClass = 'title-earned';
-                    
-                } else {
-                    titleStatus = 'No Title Yet';
-                    titleClass = 'no-title';
-                }
 
-                let certificateButtons = '';
-                if (hasTitleRequirements) {
-                    const officialTitle = titleAbbreviations[level] || level;
-                    const escapedLevel = escapeJs(level);
-                    const escapedRegNumber = escapeJs(regNumber);
-                    const escapedOfficialTitle = escapeJs(officialTitle);
-                    
-                    certificateButtons += `
-                        <button class="certificate-btn" onclick="generateTitleCertificate('${escapedLevel}', '${escapedRegNumber}', '${escapedOfficialTitle}')">
-                            📜 Title Certificate
-                        </button>
-                    `;
-                    
-                    if (aceQs >= 10) {
-                        const aceCount = Math.floor(aceQs / 10);
-                        for (let i = 1; i <= aceCount; i++) {
-                            const aceLabel = i === 1 ? 'Ace' : `Ace ${i}`;
-                            certificateButtons += `
-                                <button class="certificate-btn" onclick="generateAceCertificate('${escapedLevel}', '${escapedRegNumber}', ${i})">
-                                    🏆 ${aceLabel}
-                                </button>
-                            `;
-                        }
-                    }
-                }
-                
-                html += `
+if (aceQs >= 10) {
+    const aceCount = Math.floor(aceQs / 10);
+    if (aceCount === 1) {
+        titleStatus = `${officialTitle}A`;
+    } else {
+        titleStatus = `${officialTitle}Ax${aceCount}`;
+    }
+    titleClass = 'title-earned';
+} else {
+    // This is the normal "title earned but no Ace yet" branch
+    titleStatus = `${officialTitle} Title Earned`;
+    titleClass = 'title-earned';
+}
+
+// If you intended a "No Title Yet" branch, it must be an else-if:
+if (!hasTitleRequirements) {
+    titleStatus = 'No Title Yet';
+    titleClass = 'no-title';
+}
+
+let certificateButtons = '';
+
+if (hasTitleRequirements) {
+    const officialTitle = titleAbbreviations[level] || level;
+    const escapedLevel = escapeJs(level);
+    const escapedRegNumber = escapeJs(regNumber);
+    const escapedOfficialTitle = escapeJs(officialTitle);
+
+    certificateButtons += `
+        <button class="certificate-btn" onclick="generateTitleCertificate('${escapedLevel}', '${escapedRegNumber}', '${escapedOfficialTitle}')">
+            📜 Title Certificate
+        </button>
+    `;
+
+    if (aceQs >= 10) {
+        const aceCount = Math.floor(aceQs / 10);
+        for (let i = 1; i <= aceCount; i++) {
+            const aceLabel = i === 1 ? 'Ace' : \`Ace ${i}\`;
+            certificateButtons += `
+                <button class="certificate-btn" onclick="generateAceCertificate('${escapedLevel}', '${escapedRegNumber}', ${i})">
+                    🏆 ${aceLabel}
+                </button>
+            `;
+        }
+    }
+}
+
+html += `
+
                     <div class="level-summary">
                         <div class="level-info">
                             <h4>${level}</h4>
@@ -2149,6 +2154,7 @@ if (hasTitleRequirements) {
     </script>
 </body>
 </html>
+
 
 
 
