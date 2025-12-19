@@ -1326,203 +1326,140 @@
         }
 
         function displaySummary(records, regNumberOverride = null) {
-            const regNumber = regNumberOverride || (records.length > 0 ? records[0].registrationNumber : null);
+    const regNumber = regNumberOverride || (records[0] && records[0].registrationNumber);
+    if (!regNumber) {
+        document.getElementById('summaryContent').innerHTML =
+            '<div class="error-message">Unable to determine registration number</div>';
+        return;
+    }
 
-            if (!regNumber) {
-                document.getElementById('summaryContent').innerHTML =
-                    `<div class="error-message">Unable to determine registration number</div>`;
-                return;
-            }
+    const callName = getCallNameFromDogInfo(
+        regNumber,
+        records[0] ? records[0].callName : ''
+    ) || 'Unknown';
 
-            const callName = getCallNameFromDogInfo(regNumber, records.length > 0 ? records[0].callName : null) || 'Unknown';
-            const handlerName = getHandlerNameFromDogInfo(regNumber);
+    const handlerName = getHandlerNameFromDogInfo(regNumber);
 
-            const levelSummary = {};
-
-            records.forEach(record => {
-                if (!record.level) return;
-
-                if (!levelSummary[record.level]) {
-                    levelSummary[record.level] = {
-                        totalQs: 0,
-                        judges: new Set(),
-                        records: []
-                    };
-                }
-
-                if (record.Qs > 0) {
-                    levelSummary[record.level].totalQs += record.Qs;
-                    if (record.judge) {
-                        levelSummary[record.level].judges.add(record.judge);
-                    }
-                }
-                levelSummary[record.level].records.push(record);
-            });
-
-            const validatedLevels = applyValidationRules(levelSummary);
-
-            let html = `
-                <div class="dog-info">
-                    ${handlerName ? `<p class="handler-name"><strong>Handler:</strong> ${handlerName}</p>` : ''}
-                    <h3>${callName}</h3>
-                    <p><strong>Registration:</strong> ${regNumber}</p>
-                    <p><strong>Total Trialing Records:</strong> ${records.length}</p>
-                    ${records.length === 0 ? '<p style="color: #856404; background: #fff3cd; padding: 10px; border-radius: 6px; margin-top: 10px;"><strong>📋 No trialing entries found for this dog yet</strong></p>' : ''}
-                </div>
-            `;
-
-            if (Object.keys(levelSummary).length === 0) {
-                document.getElementById('summaryContent').innerHTML = html + `
-                    <div style="text-align: center; padding: 20px; color: #6c757d;">
-                        <p>This dog has no trialing records yet. Once they compete, their results will appear here!</p>
-                    </div>
-                `;
-                return;
-            }
-
-            // Continue with the rest of displaySummary logic here...
-            getSortedLevels(levelSummary).forEach(level => {
-                const summary = levelSummary[level];
-                const isValidated = validatedLevels[level];
-                const judgeCount = summary.judges.size;
-
-                const hasTitleRequirements = summary.totalQs >= 4 && judgeCount >= 2 && isValidated;
-
-                let gamesInfo = '';
-                if (level.startsWith('Games ')) {
-                    const uniqueGames = getUniqueGames(summary.records);
-                    gamesInfo = `<div><span>Different Games:</span> <strong>${uniqueGames.size}/2</strong> (${Array.from(uniqueGames).join(', ') || 'None'})</div>`;
-                }
-
-                let titleQs = 0;
-                let aceQs = 0;
-                let titleStatus = '';
-                let titleClass = '';
-                let titleInfo = null;
-
-                let aceDatesHtml = '';
-
-                if (hasTitleRequirements) {
-                    titleInfo = calculateTitleQs(summary.records);
-                    titleQs = titleInfo.titleQs;
-                    aceQs = Math.max(0, summary.totalQs - titleQs);
-
-                    const aceEarnedDates = findAceEarnedDates(summary.records, titleQs);
-
-                    if (aceEarnedDates.length > 0) {
-                        aceDatesHtml = aceEarnedDates
-                            .map(a => {
-                                const dateText =
-                                    a.date instanceof Date && !isNaN(a.date)
-                                        ? a.date.toLocaleDateString()
-                                        : 'N/A';
-
-                                return (
-                                    '<div class="ace-info">' +
-                                    'Ace ' + a.aceNumber + ' earned: ' +
-                                    '<strong>' + dateText + '</strong>' +
-                                    '</div>'
-                                );
-                            })
-
-                            .join('');
-                    }
-                }
-
-
-
-                const officialTitle = titleAbbreviations[level] || level;
-
-                if (aceQs >= 10) {
-                    const aceCount = Math.floor(aceQs / 10);
-                    if (aceCount === 1) {
-                        titleStatus = `${officialTitle}A`;
-                    } else {
-                        titleStatus = `${officialTitle}Ax${aceCount}`;
-                    }
-                    titleClass = 'title-earned';
-                } else {
-                    // This is the normal "title earned but no Ace yet" branch
-                    titleStatus = `${officialTitle} Title Earned`;
-                    titleClass = 'title-earned';
-                }
-
-                // If you intended a "No Title Yet" branch, it must be an else-if:
-                if (!hasTitleRequirements) {
-                    titleStatus = 'No Title Yet';
-                    titleClass = 'no-title';
-                }
-
-                let certificateButtons = '';
-
-                if (hasTitleRequirements) {
-                    const officialTitle = titleAbbreviations[level] || level;
-                    const escapedLevel = escapeJs(level);
-                    const escapedRegNumber = escapeJs(regNumber);
-                    const escapedOfficialTitle = escapeJs(officialTitle);
-
-                    certificateButtons += `
-        <button class="certificate-btn" onclick="generateTitleCertificate('${escapedLevel}', '${escapedRegNumber}', '${escapedOfficialTitle}')">
-            📜 Title Certificate
-        </button>
-    `;
-
-                    if (aceQs >= 10) {
-                        const aceCount = Math.floor(aceQs / 10);
-                        for (let i = 1; i <= aceCount; i++) {
-                            const aceLabel = i === 1 ? 'Ace' : 'Ace ' + i;
-
-                            certificateButtons +=
-                                '<button class="certificate-btn" onclick="generateAceCertificate(\'' +
-                                escapedLevel + '\', \'' +
-                                escapedRegNumber + '\', ' + i + ')">' +
-                                '🏆 ' + aceLabel +
-                                '</button>';
-
-                        }
-                    }
-                }
-
-                html += `
-
-                    <div class="level-summary">
-                        <div class="level-info">
-                            <h4>${level}</h4>
-                            <div class="title-status ${titleClass}">${titleStatus}</div>
-                            
-                            <div class="Qs-breakdown">
-                                <div><span>Total Q's:</span> <strong>${summary.totalQs}</strong></div>
-                                <div><span>Judges:</span> <strong>${judgeCount}/2</strong></div>
-                                ${gamesInfo}
-                                ${hasTitleRequirements ? `
-                                    <div><span>Q's Towards Title:</span> <strong>${titleQs}</strong></div>
-                                    <div><span>Q's Towards Ace:</span> <strong class="ace-info">${aceQs}</strong></div>
-                                    ${aceDatesHtml}
-                                    ${titleInfo && titleInfo.titleDate ? `<div style="color: #28a745; font-size: 0.85rem;"><span>Title Earned:</span> <strong>${titleInfo.titleDate instanceof Date && !isNaN(titleInfo.titleDate) ? titleInfo.titleDate.toLocaleDateString() : 'N/A'}</strong></div>` : ''}
-                                    ${aceQs < 10 && aceQs >= 0 ? `<div class="ace-info"><span>Q's until next Ace:</span> <strong>${10 - (aceQs % 10)}</strong></div>` :
-                            aceQs >= 10 ? `<div class="ace-info"><span>Q's until next Ace:</span> <strong>${10 - (aceQs % 10)}</strong></div>` : ''}
-                                ` : `
-                                    <div style="color: #dc3545;">
-                                        <div><span>Need:</span> ${summary.totalQs < 4 ? `${4 - summary.totalQs} more Q's` : ''}
-                                        ${summary.totalQs < 4 && judgeCount < 2 ? ', ' : ''}
-                                        ${judgeCount < 2 ? `${2 - judgeCount} more judge${judgeCount === 0 ? 's' : ''}` : ''}
-                                        ${level.startsWith('Games ') && getUniqueGames(summary.records).size < 2 ?
-                        `${(summary.totalQs < 4 || judgeCount < 2) ? ', ' : ''}${2 - getUniqueGames(summary.records).size} more different game${getUniqueGames(summary.records).size === 0 ? 's' : ''}` : ''}</div>
-                                        ${!isValidated && !level.startsWith('Games ') ? `<div><span>Prerequisites:</span> ${getPrerequisiteText(level)}</div>` : ''}
-                                    </div>
-                                `}
-                            </div>
-                        </div>
-                        <div class="certificate-controls">
-                            <button class="details-btn" onclick="showLevelDetails('${escapeJs(level)}', '${escapeJs(callName)}')">Details</button>
-                            ${certificateButtons}
-                        </div>
-                    </div>
-                `;
-            });
-
-            document.getElementById('summaryContent').innerHTML = html || '<div class="error-message">No level data to display</div>';
+    const levelSummary = {};
+    records.forEach(r => {
+        if (!r.level) return;
+        if (!levelSummary[r.level]) {
+            levelSummary[r.level] = {
+                totalQs: 0,
+                judges: new Set(),
+                records: []
+            };
         }
+        if (r.Qs > 0) {
+            levelSummary[r.level].totalQs += r.Qs;
+            if (r.judge) levelSummary[r.level].judges.add(r.judge);
+        }
+        levelSummary[r.level].records.push(r);
+    });
+
+    const validatedLevels = applyValidationRules(levelSummary);
+
+    let html = '<div class="dog-info">';
+    if (handlerName) {
+        html += '<p class="handler-name"><strong>Handler:</strong> ' + handlerName + '</p>';
+    }
+    html += '<h3>' + callName + '</h3>';
+    html += '<p><strong>Registration:</strong> ' + regNumber + '</p>';
+    html += '<p><strong>Total Trialing Records:</strong> ' + records.length + '</p>';
+    html += '</div>';
+
+    getSortedLevels(levelSummary).forEach(level => {
+        const summary = levelSummary[level];
+        const judgeCount = summary.judges.size;
+        const hasTitle = summary.totalQs >= 4 && judgeCount >= 2 && validatedLevels[level];
+
+        let titleStatus = 'No Title Yet';
+        let titleClass = 'no-title';
+        let titleQs = 0;
+        let aceQs = 0;
+        let aceDatesHtml = '';
+        let certificateButtons = '';
+
+        if (hasTitle) {
+            const titleInfo = calculateTitleQs(summary.records);
+            titleQs = titleInfo.titleQs;
+            aceQs = Math.max(0, summary.totalQs - titleQs);
+
+            const abbrev = titleAbbreviations[level] || level;
+            if (aceQs >= 10) {
+                const aceCount = Math.floor(aceQs / 10);
+                titleStatus = aceCount === 1
+                    ? abbrev + 'A'
+                    : abbrev + 'Ax' + aceCount;
+            } else {
+                titleStatus = abbrev + ' Title Earned';
+            }
+            titleClass = 'title-earned';
+
+            const aceDates = findAceEarnedDates(summary.records, titleQs);
+            aceDates.forEach(a => {
+                const d = (a.date instanceof Date && !isNaN(a.date))
+                    ? a.date.toLocaleDateString()
+                    : 'N/A';
+                aceDatesHtml +=
+                    '<div class="ace-info">Ace ' +
+                    a.aceNumber +
+                    ' earned: <strong>' +
+                    d +
+                    '</strong></div>';
+            });
+
+            const escapedLevel = escapeJs(level);
+            const escapedReg = escapeJs(regNumber);
+            const escapedAbbrev = escapeJs(abbrev);
+
+            certificateButtons +=
+                '<button class="certificate-btn" onclick="generateTitleCertificate(\'' +
+                escapedLevel + '\', \' ' +
+                escapedReg + '\', \' ' +
+                escapedAbbrev + '\')">📜 Title Certificate</button>';
+
+            if (aceQs >= 10) {
+                const aceCount = Math.floor(aceQs / 10);
+                for (let i = 1; i <= aceCount; i++) {
+                    const label = i === 1 ? 'Ace' : 'Ace ' + i;
+                    certificateButtons +=
+                        '<button class="certificate-btn" onclick="generateAceCertificate(\'' +
+                        escapedLevel + '\', \' ' +
+                        escapedReg + '\', ' + i + ')">🏆 ' +
+                        label +
+                        '</button>';
+                }
+            }
+        }
+
+        html +=
+            '<div class="level-summary">' +
+                '<div class="level-info">' +
+                    '<h4>' + level + '</h4>' +
+                    '<div class="title-status ' + titleClass + '">' + titleStatus + '</div>' +
+                    '<div class="Qs-breakdown">' +
+                        '<div><span>Total Qs:</span> <strong>' + summary.totalQs + '</strong></div>' +
+                        '<div><span>Judges:</span> <strong>' + judgeCount + '/2</strong></div>' +
+                        (hasTitle
+                            ? '<div><span>Qs Toward Title:</span> <strong>' + titleQs + '</strong></div>' +
+                              '<div><span>Qs Toward Ace:</span> <strong class="ace-info">' + aceQs + '</strong></div>' +
+                              aceDatesHtml
+                            : ''
+                        ) +
+                    '</div>' +
+                '</div>' +
+                '<div class="certificate-controls">' +
+                    '<button class="details-btn" onclick="showLevelDetails(\'' +
+                        escapeJs(level) + '\', \' ' +
+                        escapeJs(callName) + '\')">Details</button>' +
+                    certificateButtons +
+                '</div>' +
+            '</div>';
+    });
+
+    document.getElementById('summaryContent').innerHTML = html;
+}
 
         function calculateTitleQs(records) {
             const sortedRecords = records
@@ -2165,3 +2102,4 @@
 </body>
 
 </html>
+
