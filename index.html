@@ -1086,36 +1086,30 @@
             }
         }
 
-        function findAceEarnedDates(records, titleQs) {
-            const sortedRecords = records
-                .filter(r => r.Qs > 0 && r.date instanceof Date && !isNaN(r.date))
-                .sort((a, b) => a.date - b.date);
+       function findAceEarnedDates(records, titleQs) {
+    const sorted = records
+        .filter(r => r.Qs > 0)
+        .sort((a, b) => new Date(a.date) - new Date(b.date));
 
-            let cumulativeQs = 0;
-            const aceEarnedDates = [];
+    let qsCount = 0;
+    let aceCount = 0;
+    const results = [];
 
-            for (const record of sortedRecords) {
-                const prevQs = cumulativeQs;
-                cumulativeQs += record.Qs;
-
-                if (prevQs >= titleQs && cumulativeQs > titleQs) {
-                    const prevAceQs = prevQs - titleQs;
-                    const newAceQs = cumulativeQs - titleQs;
-
-                    const prevAceCount = Math.floor(prevAceQs / 10);
-                    const newAceCount = Math.floor(newAceQs / 10);
-
-                    for (let i = prevAceCount + 1; i <= newAceCount; i++) {
-                        aceEarnedDates.push({
-                            aceNumber: i,
-                            date: record.date
-                        });
-                    }
-                }
+    sorted.forEach(r => {
+        for (let i = 0; i < r.Qs; i++) {
+            qsCount++;
+            if (qsCount > titleQs && (qsCount - titleQs) % 10 === 0) {
+                aceCount++;
+                results.push({
+                    aceNumber: aceCount,
+                    date: new Date(r.date)
+                });
             }
-
-            return aceEarnedDates;
         }
+    });
+
+    return results;
+}
 
         async function generateAceCertificate(level, regNumber, aceCount) {
             try {
@@ -1325,136 +1319,67 @@
             searchDog();
         }
 
-        function displaySummary(records, regNumberOverride = null) {
-    const regNumber = regNumberOverride || (records[0] && records[0].registrationNumber);
-    if (!regNumber) {
-        document.getElementById('summaryContent').innerHTML =
-            '<div class="error-message">Unable to determine registration number</div>';
-        return;
-    }
+        function displaySummary(records, regOverride) {
+    const reg = regOverride || (records[0] && records[0].registrationNumber);
+    if (!reg) return;
 
-    const callName = getCallNameFromDogInfo(
-        regNumber,
-        records[0] ? records[0].callName : ''
-    ) || 'Unknown';
+    const callName = getCallNameFromDogInfo(reg, records[0].callName || 'Unknown');
+    const handler = getHandlerNameFromDogInfo(reg);
 
-    const handlerName = getHandlerNameFromDogInfo(regNumber);
-
-    const levelSummary = {};
+    const levels = {};
     records.forEach(r => {
         if (!r.level) return;
-        if (!levelSummary[r.level]) {
-            levelSummary[r.level] = {
-                totalQs: 0,
-                judges: new Set(),
-                records: []
-            };
+        if (!levels[r.level]) {
+            levels[r.level] = { qs: 0, judges: {}, records: [] };
         }
         if (r.Qs > 0) {
-            levelSummary[r.level].totalQs += r.Qs;
-            if (r.judge) levelSummary[r.level].judges.add(r.judge);
+            levels[r.level].qs += r.Qs;
+            if (r.judge) levels[r.level].judges[r.judge] = true;
         }
-        levelSummary[r.level].records.push(r);
+        levels[r.level].records.push(r);
     });
 
-    const validatedLevels = applyValidationRules(levelSummary);
+    let html =
+        '<div class="dog-info">' +
+        '<h3>' + callName + '</h3>' +
+        '<p><strong>Registration:</strong> ' + reg + '</p>' +
+        (handler ? '<p><strong>Handler:</strong> ' + handler + '</p>' : '') +
+        '</div>';
 
-    let html = '<div class="dog-info">';
-    if (handlerName) {
-        html += '<p class="handler-name"><strong>Handler:</strong> ' + handlerName + '</p>';
-    }
-    html += '<h3>' + callName + '</h3>';
-    html += '<p><strong>Registration:</strong> ' + regNumber + '</p>';
-    html += '<p><strong>Total Trialing Records:</strong> ' + records.length + '</p>';
-    html += '</div>';
+    Object.keys(levels).forEach(level => {
+        const data = levels[level];
+        const judgeCount = Object.keys(data.judges).length;
+        const titleEarned = data.qs >= 4 && judgeCount >= 2;
 
-    getSortedLevels(levelSummary).forEach(level => {
-        const summary = levelSummary[level];
-        const judgeCount = summary.judges.size;
-        const hasTitle = summary.totalQs >= 4 && judgeCount >= 2 && validatedLevels[level];
+        let titleQs = titleEarned ? 4 : data.qs;
+        let aceQs = titleEarned ? Math.max(0, data.qs - 4) : 0;
 
-        let titleStatus = 'No Title Yet';
-        let titleClass = 'no-title';
-        let titleQs = 0;
-        let aceQs = 0;
         let aceDatesHtml = '';
-        let certificateButtons = '';
 
-        if (hasTitle) {
-            const titleInfo = calculateTitleQs(summary.records);
-            titleQs = titleInfo.titleQs;
-            aceQs = Math.max(0, summary.totalQs - titleQs);
-
-            const abbrev = titleAbbreviations[level] || level;
-            if (aceQs >= 10) {
-                const aceCount = Math.floor(aceQs / 10);
-                titleStatus = aceCount === 1
-                    ? abbrev + 'A'
-                    : abbrev + 'Ax' + aceCount;
-            } else {
-                titleStatus = abbrev + ' Title Earned';
-            }
-            titleClass = 'title-earned';
-
-            const aceDates = findAceEarnedDates(summary.records, titleQs);
-            aceDates.forEach(a => {
+        if (aceQs >= 10) {
+            const aceData = findAceEarnedDates(data.records, titleQs);
+            aceData.forEach(a => {
                 const d = (a.date instanceof Date && !isNaN(a.date))
                     ? a.date.toLocaleDateString()
                     : 'N/A';
+
                 aceDatesHtml +=
-                    '<div class="ace-info">Ace ' +
-                    a.aceNumber +
-                    ' earned: <strong>' +
-                    d +
-                    '</strong></div>';
+                    '<div class="ace-info">' +
+                    'Ace ' + a.aceNumber + ' earned: <strong>' + d + '</strong>' +
+                    '</div>';
             });
-
-            const escapedLevel = escapeJs(level);
-            const escapedReg = escapeJs(regNumber);
-            const escapedAbbrev = escapeJs(abbrev);
-
-            certificateButtons +=
-                '<button class="certificate-btn" onclick="generateTitleCertificate(\'' +
-                escapedLevel + '\', \' ' +
-                escapedReg + '\', \' ' +
-                escapedAbbrev + '\')">📜 Title Certificate</button>';
-
-            if (aceQs >= 10) {
-                const aceCount = Math.floor(aceQs / 10);
-                for (let i = 1; i <= aceCount; i++) {
-                    const label = i === 1 ? 'Ace' : 'Ace ' + i;
-                    certificateButtons +=
-                        '<button class="certificate-btn" onclick="generateAceCertificate(\'' +
-                        escapedLevel + '\', \' ' +
-                        escapedReg + '\', ' + i + ')">🏆 ' +
-                        label +
-                        '</button>';
-                }
-            }
         }
 
         html +=
             '<div class="level-summary">' +
-                '<div class="level-info">' +
-                    '<h4>' + level + '</h4>' +
-                    '<div class="title-status ' + titleClass + '">' + titleStatus + '</div>' +
-                    '<div class="Qs-breakdown">' +
-                        '<div><span>Total Qs:</span> <strong>' + summary.totalQs + '</strong></div>' +
-                        '<div><span>Judges:</span> <strong>' + judgeCount + '/2</strong></div>' +
-                        (hasTitle
-                            ? '<div><span>Qs Toward Title:</span> <strong>' + titleQs + '</strong></div>' +
-                              '<div><span>Qs Toward Ace:</span> <strong class="ace-info">' + aceQs + '</strong></div>' +
-                              aceDatesHtml
-                            : ''
-                        ) +
-                    '</div>' +
-                '</div>' +
-                '<div class="certificate-controls">' +
-                    '<button class="details-btn" onclick="showLevelDetails(\'' +
-                        escapeJs(level) + '\', \' ' +
-                        escapeJs(callName) + '\')">Details</button>' +
-                    certificateButtons +
-                '</div>' +
+            '<h4>' + level + '</h4>' +
+            '<div>Total Qs: <strong>' + data.qs + '</strong></div>' +
+            '<div>Judges: <strong>' + judgeCount + '/2</strong></div>' +
+            (titleEarned
+                ? '<div>Qs toward Ace: <strong>' + aceQs + '</strong></div>' +
+                  aceDatesHtml
+                : ''
+            ) +
             '</div>';
     });
 
@@ -1660,51 +1585,36 @@
             }
         }
 
-        function loadOwnerView() {
-    const container = document.getElementById('ownerView');
-    const searchView = document.getElementById('searchView');
-
-    if (!container) {
-        alert('Owner view container not found');
-        return;
-    }
-
-    searchView.style.display = 'none';
-    container.style.display = 'block';
-
+       function loadOwnerView() {
+    document.getElementById('searchView').style.display = 'none';
+    document.getElementById('ownerView').style.display = 'block';
     renderOwnerView();
 }
 
 function backToSearch() {
-    const container = document.getElementById('ownerView');
-    const searchView = document.getElementById('searchView');
-
-    container.style.display = 'none';
-    searchView.style.display = 'block';
+    document.getElementById('ownerView').style.display = 'none';
+    document.getElementById('searchView').style.display = 'block';
 }
 
 function renderOwnerView() {
     const data = window.allTrialData || [];
-
     const owners = {};
 
     data.forEach(r => {
-        const owner = (r.owner || 'Unknown').trim();
-        if (!owners[owner]) owners[owner] = [];
-        owners[owner].push(r);
+        const o = (r.owner || 'Unknown').trim();
+        if (!owners[o]) owners[o] = [];
+        owners[o].push(r);
     });
 
-    let html =
-        '<div class="owner-header">' +
-            '<h2>Owner Summary</h2>' +
-            '<div class="owner-controls">' +
-                '<button onclick="backToSearch()">⬅ Back</button>' +
-                '<button onclick="printOwnerView()">🖨 Print</button>' +
-            '</div>' +
-        '</div>';
+    let html = '<h2>Owner Summary</h2>';
 
-    Object.keys(owners).sort().forEach(owner => {
-        html += renderOwnerBlock(owner, owners[owner]);
+    Object.keys(owners).sort().forEach(o => {
+        html += '<h3>' + o + '</h3>';
+        html += '<ul>';
+        owners[o].forEach(r => {
+            html += '<li>' + r.callName + ' (' + r.registrationNumber + ')</li>';
+        });
+        html += '</ul>';
     });
 
     document.getElementById('ownerView').innerHTML = html;
@@ -1945,5 +1855,6 @@ function printOwnerView() {
 </body>
 
 </html>
+
 
 
