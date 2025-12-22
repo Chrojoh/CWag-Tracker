@@ -1467,17 +1467,7 @@
                                     <div><span>Q's Towards Title:</span> <strong>${titleQs}</strong></div>
                                     <div><span>Q's Towards Ace:</span> <strong class="ace-info">${aceQs}</strong></div>
                                     ${titleInfo && titleInfo.titleDate ? `<div style="color: #28a745; font-size: 0.85rem;"><span>Title Earned:</span> <strong>${titleInfo.titleDate instanceof Date && !isNaN(titleInfo.titleDate) ? titleInfo.titleDate.toLocaleDateString() : 'N/A'}</strong></div>` : ''}
-                                     ${aceEarnedDates.length > 0 ? `
-                                        <div style="color: #6f42c1; font-size: 0.85rem; margin-top: 8px;">
-                                            ${aceEarnedDates.map(ace => `
-                                                <div style="display: flex; justify-content: space-between; padding: 3px 0; align-items: flex-end;">
-                                                    <span style="white-space: nowrap;">Ace ${ace.aceNumber}</span>
-                                                    <span style="flex-grow: 1; border-bottom: 1px dotted #6f42c1; margin: 0 8px 3px 8px;"></span>
-                                                    <span style="white-space: nowrap;">${ace.date.toLocaleDateString()}</span>
-                                                </div>
-                                            `).join('')}
-                                        </div>
-                                    ` : ''}
+                                        ${aceEarnedDates.length > 0 ? aceEarnedDates.map(ace => `<div style="color: #6f42c1; font-size: 0.85rem; margin: 4px 0; display: block;"><span>Ace ${ace.aceNumber}</span><span style="margin: 0 8px;">............</span><span>${ace.date.toLocaleDateString()}</span></div>`).join('') : ''}
                                     ${aceQs < 10 && aceQs >= 0 ? `<div class="ace-info"><span>Q's until next Ace:</span> <strong>${10 - (aceQs % 10)}</strong></div>` : 
                                     aceQs >= 10 ? `<div class="ace-info"><span>Q's until next Ace:</span> <strong>${10 - (aceQs % 10)}</strong></div>` : ''}
                                 ` : `
@@ -2143,6 +2133,7 @@
     </script>
 </body>
 </html>
+
 
 
 
