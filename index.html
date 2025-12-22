@@ -1397,12 +1397,16 @@
                 let titleStatus = '';
                 let titleClass = '';
                 let titleInfo = null;
+                let aceEarnedDates = [];
                 
                 if (hasTitleRequirements) {
                     titleInfo = calculateTitleQs(summary.records);
                     titleQs = titleInfo.titleQs;
                     const titleDate = titleInfo.titleDate;
                     aceQs = Math.max(0, summary.totalQs - titleQs);
+                    
+                    // Get all ace earned dates
+                    aceEarnedDates = findAceEarnedDates(summary.records, titleQs);
                     
                     const officialTitle = titleAbbreviations[level] || level;
                     
@@ -1459,10 +1463,14 @@
                                 <div><span>Total Q's:</span> <strong>${summary.totalQs}</strong></div>
                                 <div><span>Judges:</span> <strong>${judgeCount}/2</strong></div>
                                 ${gamesInfo}
-                                ${hasTitleRequirements ? `
+                               ${hasTitleRequirements ? `
                                     <div><span>Q's Towards Title:</span> <strong>${titleQs}</strong></div>
                                     <div><span>Q's Towards Ace:</span> <strong class="ace-info">${aceQs}</strong></div>
                                     ${titleInfo && titleInfo.titleDate ? `<div style="color: #28a745; font-size: 0.85rem;"><span>Title Earned:</span> <strong>${titleInfo.titleDate instanceof Date && !isNaN(titleInfo.titleDate) ? titleInfo.titleDate.toLocaleDateString() : 'N/A'}</strong></div>` : ''}
+                                    ${aceEarnedDates.length > 0 ? `<div style="color: #6f42c1; font-size: 0.85rem; margin-top: 5px;">
+                                        <strong>Ace Awards Earned:</strong>
+                                        ${aceEarnedDates.map(ace => `<div style="margin-left: 10px;">• Ace ${ace.aceNumber}: ${ace.date.toLocaleDateString()}</div>`).join('')}
+                                    </div>` : ''}
                                     ${aceQs < 10 && aceQs >= 0 ? `<div class="ace-info"><span>Q's until next Ace:</span> <strong>${10 - (aceQs % 10)}</strong></div>` : 
                                     aceQs >= 10 ? `<div class="ace-info"><span>Q's until next Ace:</span> <strong>${10 - (aceQs % 10)}</strong></div>` : ''}
                                 ` : `
@@ -2128,3 +2136,4 @@
     </script>
 </body>
 </html>
+
