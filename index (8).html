@@ -1,0 +1,2149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dog Trialing Records Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .header {
+            background: linear-gradient(90deg, #2c3e50, #34495e);
+            color: white;
+            padding: 30px;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header-text {
+            text-align: center;
+            flex: 1;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .last-updated {
+            opacity: 0.8;
+            font-size: 0.95rem;
+            font-style: italic;
+        }
+
+        .logo {
+            width: 160px;
+            height: 160px;
+            background-image: url('https://raw.githubusercontent.com/cwagtracker/Tracker/main/cwags-logo.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .search-section {
+            padding: 30px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            width: 300px;
+            max-width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-btn {
+            padding: 15px 30px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .owner-view-btn {
+            padding: 15px 30px;
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .owner-view-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(40, 167, 69, 0.3);
+        }
+
+        .main-content {
+            padding: 30px;
+        }
+
+        .summary-section {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .section-header {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .section-content {
+            padding: 20px;
+        }
+
+        .dog-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .dog-info h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.4rem;
+        }
+
+        .dog-info p {
+            color: #7f8c8d;
+            margin: 5px 0;
+        }
+
+        .handler-name {
+            font-size: 1.1rem;
+            color: #6c757d;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .level-summary {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 15px;
+            align-items: start;
+        }
+
+        .level-info {
+            flex: 1;
+        }
+
+        .level-summary h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .title-status {
+            font-size: 0.9rem;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .title-earned {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .no-title {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .Qs-breakdown {
+            font-size: 0.9rem;
+            margin: 8px 0;
+        }
+
+        .Qs-breakdown div {
+            margin: 4px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .ace-info {
+            color: #6f42c1;
+            font-weight: 600;
+        }
+
+        .details-btn {
+            background: linear-gradient(45deg, #17a2b8, #20c997);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            align-self: start;
+        }
+
+        .details-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(23, 162, 184, 0.3);
+        }
+
+        .certificate-btn {
+            background: linear-gradient(45deg, #6f42c1, #8e44ad);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            align-self: start;
+            margin-top: 8px;
+        }
+
+        .certificate-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(111, 66, 193, 0.3);
+        }
+
+        .certificate-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .certificate-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-end;
+        }
+
+        .records-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .records-table th,
+        .records-table td {
+            padding: 12px 8px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+            font-size: 0.9rem;
+        }
+
+        .records-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .records-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .Qs-badge {
+            background: #28a745;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .Qs-badge.zero {
+            background: #dc3545;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .validation-rules {
+            background: #e7f3ff;
+            border: 1px solid #b8daff;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .validation-rules h4 {
+            color: #004085;
+            margin-bottom: 10px;
+        }
+
+        .validation-rules ul {
+            margin-left: 20px;
+        }
+
+        .validation-rules li {
+            color: #004085;
+            margin: 5px 0;
+            font-size: 0.9rem;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.4rem;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .close:hover {
+            opacity: 0.7;
+        }
+
+        .modal-body {
+            padding: 20px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .loading-message {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+            font-size: 1.1rem;
+        }
+
+@media print {
+    body {
+        background: white !important;
+        padding: 5px !important;
+        margin: 0 !important;
+        font-size: 10px !important;
+    }
+    
+    .container {
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        max-width: none !important;
+        width: 100% !important;
+        margin: 0 !important;
+    }
+    
+    .header {
+        background: #2c3e50 !important;
+        color: white !important;
+        padding: 10px !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    
+    .logo {
+        width: 50px !important;
+        height: 50px !important;
+    }
+    
+    .header h1 {
+        font-size: 1.2rem !important;
+        margin-bottom: 3px !important;
+    }
+    
+    .header p {
+        font-size: 0.7rem !important;
+        margin-bottom: 2px !important;
+    }
+    
+    .last-updated {
+        font-size: 0.6rem !important;
+    }
+    
+    button, 
+    .search-section,
+    .legend-print,
+    div[style*="background: linear-gradient(45deg, #667eea, #764ba2)"],
+    div[style*="text-align: center; margin-bottom: 15px;"],
+    div[style*="text-align: center; margin-top: 30px;"] {
+        display: none !important;
+    }
+    
+    .owner-view-table {
+        font-size: 8px !important;
+        width: 100% !important;
+        page-break-inside: avoid !important;
+        border-collapse: collapse !important;
+        margin-top: 10px !important;
+    }
+    
+    .owner-view-table th {
+        padding: 2px 1px !important;
+        font-size: 7px !important;
+        font-weight: bold !important;
+        background: #f8f9fa !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        border: 1px solid #ccc !important;
+    }
+    
+    .owner-view-table td {
+        padding: 2px 1px !important;
+        font-size: 7px !important;
+        text-align: center !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        border: 1px solid #ccc !important;
+    }
+    
+    .owner-view-table td[style*="background: #d4edda"] {
+        background: #d4edda !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    
+    .owner-view-table td[style*="background: #fff3cd"] {
+        background: #fff3cd !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    
+    .owner-view-table td[style*="background: linear-gradient"] {
+        background: #e8f5e8 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    
+    @page {
+        margin: 0.3in !important;
+        size: portrait !important;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <div id="leftLogo" class="logo"></div>
+                <div class="header-text">
+                    <h1>C-WAGS Tracker</h1>
+                    <p>Track your dog's trialing progress, Q's, and title eligibility</p>
+                    <div class="last-updated" id="lastUpdated">Loading data...</div>
+                </div>
+                <div id="rightLogo" class="logo"></div>
+            </div>
+        </div>
+
+        <div class="search-section">
+            <div class="search-container">
+                <input type="text" id="searchInput" class="search-input" 
+                       placeholder="Enter Registration Number (e.g., 17-1734-06)" 
+                       onkeypress="handleKeyPress(event)">
+                <button class="search-btn" onclick="searchDog()">Search Dog Records</button>
+                <button class="owner-view-btn" onclick="showOwnerView()">Owner View by ID</button>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="summary-section">
+                <div class="section-header">Q's Summary & Title Progress</div>
+                <div class="section-content" id="summaryContent">
+                    <div class="loading-message">
+                        Loading trialing data...
+                    </div>
+                    <div class="validation-rules">
+                        <h4>Title Requirements</h4>
+                        <ul>
+                            <li>Minimum 4 Q's required for each level</li>
+                            <li>Q's must come from at least 2 different judges</li>
+                            <li>Prerequisites must be met before advancing to higher levels</li>
+                            <li>Special case: "Investigator 3" requires either "Patrol 1" OR "Detective 2"</li>
+                            <li>Games levels require at least 2 different games (BJ, C, P, T, GB)</li>
+                            <li>Ace awards given every 10 Q's after title is earned</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="detailsModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modalTitle">Level Details</h2>
+                    <span class="close" onclick="closeModal()">&times;</span>
+                </div>
+                <div class="modal-body" id="modalBody">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <script src="https://unpkg.com/@pdf-lib/fontkit@1.1.1/dist/fontkit.umd.min.js" onerror="console.error('Fontkit failed to load from unpkg')"></script>
+    <script>
+        if (typeof fontkit === 'undefined') {
+            console.log('Loading fontkit from backup CDN...');
+            const script = document.createElement('script');
+            script.src = 'https://cdn.skypack.dev/@pdf-lib/fontkit@1.1.1';
+            script.onerror = () => console.error('Backup fontkit also failed');
+            document.head.appendChild(script);
+        }
+    </script>
+    <script>
+        let trialingData = [];
+        let currentDogRecords = [];
+        let dogInfoData = {};
+        let titlePlacementData = {};
+        
+        const prerequisites = {
+            "Investigator 3": ["Patrol 1", "Detective 2"],
+            "Super Sleuth 4": ["Investigator 3"],
+            "Private Inv": ["Super Sleuth 4"],
+            "Det Diversions": ["Super Sleuth 4"],
+            "Ranger 2": ["Ranger 1"],
+            "Ranger 3": ["Ranger 2"],
+            "Ranger 4": ["Ranger 3"],
+            "Ranger 5": ["Ranger 4"],
+            "Dasher 4": ["Dasher 3"],
+            "Dasher 5": ["Dasher 4"],
+            "Dasher 6": ["Dasher 5"],
+            "Obedience 4": ["Obedience 3"],
+            "Obedience 5": ["Obedience 4"]
+        };
+
+        const titleAbbreviations = {
+            "Patrol 1": "CW-SP",
+            "Detective 2": "CW-SD",
+            "Investigator 3": "CW-SI",
+            "Super Sleuth 4": "CW-SSS",
+            "Private Inv": "CW-SPI",
+            "Det Diversions": "CW-SDD",
+            "Ranger 1": "CW-ScR1",
+            "Ranger 2": "CW-ScR2",
+            "Ranger 3": "CW-ScR3",
+            "Ranger 4": "CW-ScR4",
+            "Ranger 5": "CW-ScR5",
+            "Dasher 3": "CW-SD3",
+            "Dasher 4": "CW-SD4",
+            "Dasher 5": "CW-SD5",
+            "Dasher 6": "CW-SD6",
+            "Obedience 1": "CW-Ob1",
+            "Obedience 2": "CW-Ob2",
+            "Obedience 3": "CW-Ob3",
+            "Obedience 4": "CW-Ob4",
+            "Obedience 5": "CW-OC",
+            "Starter": "CW-SR",
+            "Advanced": "CW-AR",
+            "Pro": "CW-PR",
+            "ARF": "CW-ARF",
+            "Zoom 1": "CW-ZR1",
+            "Zoom 1.5": "CW-ZR1.5",
+            "Zoom 2": "CW-ZR2",
+            "Games 1": "CW-G1",
+            "Games 2": "CW-G2",
+            "Games 3": "CW-G3",
+            "Games 4": "CW-G4"
+        };
+
+        const aceAbbreviations = {
+            "Obedience 1": { first: "CW-OAL1", nth: n => `CW-OAL1x${n}` },
+            "Obedience 2": { first: "CW-OAL2", nth: n => `CW-OAL2x${n}` },
+            "Obedience 3": { first: "CW-OAL3", nth: n => `CW-OAL3x${n}` },
+            "Obedience 4": { first: "CW-OAL4", nth: n => `CW-OAL4x${n}` },
+            "Obedience 5": { first: "CW-OCA",  nth: n => `CW-OC${n}` }
+        };
+
+        function getAceDesignation(level, aceCount) {
+            if (aceAbbreviations[level]) {
+                const spec = aceAbbreviations[level];
+                return aceCount === 1 ? spec.first : spec.nth(aceCount);
+            }
+            const abbreviation = titleAbbreviations[level] || level;
+            return aceCount === 1 ? `${abbreviation}A` : `${abbreviation}Ax${aceCount}`;
+        }
+
+        const certificateTemplateMapping = {
+            'Patrol 1': { template: 'Scent.pdf', category: 'scent' },
+            'Detective 2': { template: 'Scent.pdf', category: 'scent' },
+            'Investigator 3': { template: 'Scent.pdf', category: 'scent' },
+            'Super Sleuth 4': { template: 'Scent.pdf', category: 'scent' },
+            'Private Inv': { template: 'Scent.pdf', category: 'scent' },
+            'Det Diversions': { template: 'Scent.pdf', category: 'scent' },
+            'Ranger 1': { template: 'Scent.pdf', category: 'scent' },
+            'Ranger 2': { template: 'Scent.pdf', category: 'scent' },
+            'Ranger 3': { template: 'Scent.pdf', category: 'scent' },
+            'Ranger 4': { template: 'Scent.pdf', category: 'scent' },
+            'Ranger 5': { template: 'Scent.pdf', category: 'scent' },
+            'Dasher 3': { template: 'Scent.pdf', category: 'scent' },
+            'Dasher 4': { template: 'Scent.pdf', category: 'scent' },
+            'Dasher 5': { template: 'Scent.pdf', category: 'scent' },
+            'Dasher 6': { template: 'Scent.pdf', category: 'scent' },
+            'Obedience 1': { template: 'Obedience.pdf', category: 'obedience' },
+            'Obedience 2': { template: 'Obedience.pdf', category: 'obedience' },
+            'Obedience 3': { template: 'Obedience.pdf', category: 'obedience' },
+            'Obedience 4': { template: 'Obedience.pdf', category: 'obedience' },
+            'Obedience 5': { template: 'Obedience.pdf', category: 'obedience' },
+            'Starter': { template: 'Rally.pdf', category: 'rally' },
+            'Advanced': { template: 'Rally.pdf', category: 'rally' },
+            'Pro': { template: 'Rally.pdf', category: 'rally' },
+            'ARF': { template: 'Rally.pdf', category: 'rally' },
+            'Zoom 1': { template: 'Rally.pdf', category: 'rally' },
+            'Zoom 1.5': { template: 'Rally.pdf', category: 'rally' },
+            'Zoom 2': { template: 'Rally.pdf', category: 'rally' },
+            'Games 1': { template: 'Games.pdf', category: 'games' },
+            'Games 2': { template: 'Games.pdf', category: 'games' },
+            'Games 3': { template: 'Games.pdf', category: 'games' },
+            'Games 4': { template: 'Games.pdf', category: 'games' }
+        };
+
+        const titleCertificateConfig = {
+            registrationNumber: { x: 92, y: 330, size: 12, color: [0, 0, 0] },
+            handlerName: { x: 414, y: 350, size: 28, color: [0, 0, 0], align: 'center' },
+            dogName: { x: 414, y: 270, size: 30, color: [0, 0, 0], align: 'center' },
+            dateEarned: { x: 82, y: 215, size: 12, color: [0, 0, 0] },
+            titleAbbreviation: { x: 662, y: 155, size: 28, color: [0, 0, 0.8], align: 'right' }
+        };
+
+        const aceCertificateConfig = {
+            dateLine: { x: 448, y: 425, size: 12, color: [0, 0, 0], align: 'center' },
+            levelAbbreviation: { x: 398, y: 355, size: 28, color: [0.85, 0.65, 0.13], align: 'center' },
+            callName: { x: 398, y: 270, size: 28, color: [0, 0, 0], align: 'center' },
+            handlerName: { x: 470, y: 180, size: 28, color: [0, 0, 0], align: 'center' },
+            registrationNumber: { x: 540, y: 150, size: 12, color: [0, 0, 0], align: 'left' }
+        };
+
+        const levelOrder = [
+            "Patrol 1", "Detective 2", "Investigator 3", "Super Sleuth 4", "Private Inv", "Det Diversions",
+            "Ranger 1", "Ranger 2", "Ranger 3", "Ranger 4", "Ranger 5",
+            "Dasher 3", "Dasher 4", "Dasher 5", "Dasher 6",
+            "Obedience 1", "Obedience 2", "Obedience 3", "Obedience 4", "Obedience 5",
+            "Starter", "Advanced", "Pro", "ARF",
+            "Zoom 1", "Zoom 1.5", "Zoom 2",
+            "Games 1", "Games 2", "Games 3", "Games 4"
+        ];
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text.toString()
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+
+        function escapeJs(text) {
+            if (!text) return '';
+            return text.toString()
+                .replace(/\\/g, "\\\\")
+                .replace(/'/g, "\\'")
+                .replace(/"/g, '\\"')
+                .replace(/\n/g, "\\n")
+                .replace(/\r/g, "\\r");
+        }
+
+        async function loadDogInfoData() {
+            return new Promise((resolve) => {
+                const timeoutId = setTimeout(() => {
+                    console.warn('⏰ DogInfo loading timed out - continuing without it');
+                    resolve(false);
+                }, 2000);
+
+                fetch('DogInfo.xlsx', {
+                    method: 'GET',
+                    cache: 'no-cache'
+                })
+                .then(response => {
+                    clearTimeout(timeoutId);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.arrayBuffer();
+                })
+                .then(fileContent => {
+                    const workbook = XLSX.read(new Uint8Array(fileContent), { 
+                        cellStyles: true, 
+                        cellFormulas: true, 
+                        cellDates: true 
+                    });
+                    
+                    const sheetName = workbook.SheetNames[0];
+                    const sheet = workbook.Sheets[sheetName];
+                    const jsonData = XLSX.utils.sheet_to_json(sheet, {header: 1});
+                    
+                    let loadedCount = 0;
+                    jsonData.slice(1).forEach(row => {
+                       if (row && row[0]) {
+                            const regNumber = row[0].toString().trim();
+                            const callName = row[1] ? row[1].toString().trim() : '';
+                            const registeredName = row[2] ? row[2].toString().trim() : '';
+                            const handlerName = row[3] ? row[3].toString().trim() : '';
+                            
+                            dogInfoData[regNumber] = {
+                                callName: callName,
+                                handlerName: handlerName,
+                                registeredName: registeredName
+                            };
+                            loadedCount++;
+                        }
+                    });
+                    
+                    console.log('✅ DogInfo data loaded:', loadedCount, 'dogs');
+                    resolve(true);
+                })
+                .catch(error => {
+                    clearTimeout(timeoutId);
+                    console.warn('⚠️ Could not load DogInfo data:', error.message);
+                    console.log('💡 Continuing without DogInfo lookup');
+                    resolve(false);
+                });
+            });
+        }
+
+        function getHandlerNameFromDogInfo(regNumber) {
+            if (!regNumber || !dogInfoData[regNumber]) return '';
+            return dogInfoData[regNumber].handlerName || '';
+        }
+
+        function getRegisteredNameFromDogInfo(regNumber) {
+            if (!regNumber || !dogInfoData[regNumber]) return '';
+            return dogInfoData[regNumber].registeredName || dogInfoData[regNumber].callName || '';
+        }
+
+        function getCallNameFromDogInfo(regNumber, fallbackCallName = '') {
+            if (!regNumber || !dogInfoData[regNumber]) return fallbackCallName;
+            return dogInfoData[regNumber].callName || fallbackCallName;
+        }
+
+        function getSortedLevels(levelSummary) {
+            const availableLevels = Object.keys(levelSummary);
+            const orderedLevels = levelOrder.filter(level => availableLevels.includes(level));
+            const unorderedLevels = availableLevels.filter(level => !levelOrder.includes(level));
+            return [...orderedLevels, ...unorderedLevels.sort()];
+        }
+
+        async function loadTitlePlacementData() {
+            return new Promise((resolve) => {
+                const timeoutId = setTimeout(() => {
+                    console.warn('⏰ Title Placement loading timed out - continuing without it');
+                    resolve(false);
+                }, 2000);
+
+                fetch('Title Placement.xlsx', {
+                    method: 'GET',
+                    cache: 'no-cache'
+                })
+                .then(response => {
+                    clearTimeout(timeoutId);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.arrayBuffer();
+                })
+                .then(fileContent => {
+                    const workbook = XLSX.read(new Uint8Array(fileContent), { 
+                        cellStyles: true, 
+                        cellFormulas: true, 
+                        cellDates: true 
+                    });
+                    
+                    const sheetName = workbook.SheetNames[0];
+                    const sheet = workbook.Sheets[sheetName];
+                    const jsonData = XLSX.utils.sheet_to_json(sheet, {header: 1});
+                    
+                    let loadedCount = 0;
+                    jsonData.slice(1).forEach(row => {
+                        if (row && row[1] && row[2] && row[3]) {
+                            const className = row[1].toString().trim();
+                            const certificateName = row[2].toString().trim();
+                            const aceCertificateName = row[3].toString().trim();
+                            
+                            titlePlacementData[className] = {
+                                certificateName: certificateName,
+                                aceCertificateName: aceCertificateName
+                            };
+                            loadedCount++;
+                        }
+                    });
+                    
+                    console.log('✅ Title Placement data loaded:', loadedCount, 'classes');
+                    resolve(true);
+                })
+                .catch(error => {
+                    clearTimeout(timeoutId);
+                    console.warn('⚠️ Could not load Title Placement data:', error.message);
+                    console.log('💡 Continuing with original certificate names');
+                    resolve(false);
+                });
+            });
+        }
+
+        function getCertificateName(level) {
+            return titlePlacementData[level]?.certificateName || level;
+        }
+
+        function getAceCertificateName(level, aceCount) {
+            const aceDesignation = getAceDesignation(level, aceCount);
+
+            if (titlePlacementData[level]) {
+                let aceName = titlePlacementData[level].aceCertificateName;
+                let displayText;
+
+                if (aceCount === 1) {
+                    displayText = `${aceName} (${aceDesignation})`;
+                } else {
+                    displayText = `${aceName} x ${aceCount} (${aceDesignation})`;
+                }
+
+                return displayText;
+            }
+
+            return aceDesignation;
+        }
+
+        function calculateOptimalPDFFontSize(text, font, maxWidth, defaultSize, minSize = 8) {
+            let fontSize = defaultSize;
+            
+            while (fontSize >= minSize) {
+                const textWidth = font.widthOfTextAtSize(text, fontSize);
+                if (textWidth <= maxWidth) {
+                    return fontSize;
+                }
+                fontSize--;
+            }
+            return minSize;
+        }
+
+        function drawCenteredTextWithDynamicSize(page, text, centerX, y, font, color, maxWidth, defaultSize, minSize = 8) {
+            const optimalSize = calculateOptimalPDFFontSize(text, font, maxWidth, defaultSize, minSize);
+            const textWidth = font.widthOfTextAtSize(text, optimalSize);
+            const x = centerX - (textWidth / 2);
+            
+            page.drawText(text, {
+                x: x,
+                y: y,
+                size: optimalSize,
+                font: font,
+                color: color
+            });
+            
+            return optimalSize;
+        }
+
+        function drawTextWithAlignmentAndDynamicSize(page, text, config, font, maxWidth = null, defaultSize = null) {
+            let fontSize = defaultSize || config.size;
+            
+            if (maxWidth && fontSize) {
+                fontSize = calculateOptimalPDFFontSize(text, font, maxWidth, fontSize);
+            }
+            
+            let x = config.x;
+            if (config.align === 'center') {
+                const textWidth = font.widthOfTextAtSize(text, fontSize);
+                x = config.x - (textWidth / 2);
+            } else if (config.align === 'right') {
+                const textWidth = font.widthOfTextAtSize(text, fontSize);
+                x = config.x - textWidth;
+            }
+            
+            page.drawText(text, {
+                x: x, y: config.y, size: fontSize, font: font,
+                color: PDFLib.rgb(config.color[0], config.color[1], config.color[2])
+            });
+            
+            return fontSize;
+        }
+
+        async function generateTitleCertificate(level, regNumber, abbreviation) {
+            try {
+                const btn = event.target;
+                btn.textContent = 'Generating...';
+                btn.disabled = true;
+
+                const templateInfo = certificateTemplateMapping[level];
+                if (!templateInfo) throw new Error(`No template mapped for level: ${level}`);
+
+                const levelRecords = trialingData.filter(r => r.registrationNumber === regNumber && r.level === level);
+                if (levelRecords.length === 0) throw new Error('No records found for this level');
+
+                const titleInfo = calculateTitleQs(levelRecords);
+                const dateEarned = titleInfo.titleDate ? titleInfo.titleDate.toLocaleDateString() : new Date().toLocaleDateString();
+                const certificateName = getCertificateName(level);
+
+                const handlerName = getHandlerNameFromDogInfo(regNumber) || 'Handler Name';
+                const registeredName = getRegisteredNameFromDogInfo(regNumber) || 'Dog Name';
+
+                const templateUrl = `https://raw.githubusercontent.com/Cwagtracker/Tracker/main/templates/${templateInfo.template}`;
+                const response = await fetch(templateUrl);
+                if (!response.ok) throw new Error(`Template not found: ${templateUrl}`);
+                
+                const templateBytes = await response.arrayBuffer();
+                const pdfDoc = await PDFLib.PDFDocument.load(templateBytes);
+                const firstPage = pdfDoc.getPages()[0];
+                
+                const font = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
+                const timesBold = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRomanBold);
+                let maiandraFont = timesBold;
+
+                if (typeof fontkit !== 'undefined') {
+                    try {
+                        pdfDoc.registerFontkit(fontkit);
+                        const fontUrls = [
+                            'https://cdn.jsdelivr.net/gh/cwagtracker/Tracker@main/fonts/Maiandra%20GD.TTF',
+                            'https://raw.githubusercontent.com/cwagtracker/Tracker/main/fonts/Maiandra%20GD.TTF'
+                        ];
+                        
+                        for (const fontUrl of fontUrls) {
+                            try {
+                                const fontResponse = await fetch(fontUrl, { mode: 'cors' });
+                                if (fontResponse.ok) {
+                                    const fontBytes = await fontResponse.arrayBuffer();
+                                    maiandraFont = await pdfDoc.embedFont(fontBytes);
+                                    break;
+                                }
+                            } catch (e) { }
+                        }
+                    } catch (e) { }
+                }
+
+                const regConfig = titleCertificateConfig.registrationNumber;
+                firstPage.drawText(regNumber, {
+                    x: regConfig.x, y: regConfig.y, size: regConfig.size, font: font,
+                    color: PDFLib.rgb(regConfig.color[0], regConfig.color[1], regConfig.color[2])
+                });
+
+                const handlerMaxWidth = 710 - 72;
+                const handlerCenterX = 72 + (handlerMaxWidth / 2);
+                drawCenteredTextWithDynamicSize(
+                    firstPage, 
+                    handlerName, 
+                    handlerCenterX, 
+                    titleCertificateConfig.handlerName.y, 
+                    maiandraFont, 
+                    PDFLib.rgb(0, 0, 0), 
+                    handlerMaxWidth, 
+                    titleCertificateConfig.handlerName.size
+                );
+
+                const dogMaxWidth = 710 - 72;
+                const dogCenterX = 72 + (dogMaxWidth / 2);
+                drawCenteredTextWithDynamicSize(
+                    firstPage, 
+                    registeredName, 
+                    dogCenterX, 
+                    titleCertificateConfig.dogName.y, 
+                    maiandraFont, 
+                    PDFLib.rgb(0, 0, 0), 
+                    dogMaxWidth, 
+                    titleCertificateConfig.dogName.size
+                );
+
+                const ampersandText = "&";
+                const pageWidth = firstPage.getSize().width;
+                const pageCenterX = pageWidth / 2;
+                firstPage.drawText(ampersandText, {
+                    x: pageCenterX - (maiandraFont.widthOfTextAtSize(ampersandText, titleCertificateConfig.dogName.size) / 2),
+                    y: 310,
+                    size: titleCertificateConfig.dogName.size,
+                    font: maiandraFont,
+                    color: PDFLib.rgb(0, 0, 0)
+                });
+                
+                const dateConfig = titleCertificateConfig.dateEarned;
+                firstPage.drawText('On ', {
+                    x: dateConfig.x - 20, y: dateConfig.y, size: dateConfig.size, font: font,
+                    color: PDFLib.rgb(0, 0, 0)
+                });
+                firstPage.drawText(dateEarned, {
+                    x: dateConfig.x, y: dateConfig.y, size: dateConfig.size, font: font,
+                    color: PDFLib.rgb(0, 0, 0)
+                });
+                const dateWidth = font.widthOfTextAtSize(dateEarned, dateConfig.size);
+                firstPage.drawText(', has completed the requirements for the title of', {
+                    x: dateConfig.x + dateWidth, y: dateConfig.y, size: dateConfig.size, font: font,
+                    color: PDFLib.rgb(0, 0, 0)
+                });
+
+                const titleConfig = titleCertificateConfig.titleAbbreviation;
+                const titleText = `${certificateName} (${abbreviation})`;
+                const titleTextWidth = timesBold.widthOfTextAtSize(titleText, titleConfig.size);
+                firstPage.drawText(titleText, {
+                    x: titleConfig.x - titleTextWidth, y: titleConfig.y, size: titleConfig.size, font: maiandraFont,
+                    color: PDFLib.rgb(titleConfig.color[0], titleConfig.color[1], titleConfig.color[2])
+                });
+
+                const pdfBytes = await pdfDoc.save();
+                
+                downloadPDF(pdfBytes, `${registeredName}-${level.replace(/\s+/g, '-')}-Title-Certificate.pdf`);
+                btn.textContent = '📜 Title Certificate';
+                btn.disabled = false;
+
+            } catch (error) {
+                console.error('Certificate generation error:', error);
+                alert(`Unable to generate certificate: ${error.message}`);
+                
+                const btn = event.target;
+                btn.textContent = '📜 Title Certificate';
+                btn.disabled = false;
+            }
+        }
+
+        function findAceEarnedDates(records, titleQs) {
+            const sortedRecords = records
+                .filter(r => r.Qs > 0 && r.date instanceof Date && !isNaN(r.date))
+                .sort((a, b) => a.date - b.date);
+            
+            let cumulativeQs = 0;
+            const aceEarnedDates = [];
+            
+            for (const record of sortedRecords) {
+                const prevQs = cumulativeQs;
+                cumulativeQs += record.Qs;
+                
+                if (prevQs >= titleQs && cumulativeQs > titleQs) {
+                    const prevAceQs = prevQs - titleQs;
+                    const newAceQs = cumulativeQs - titleQs;
+                    
+                    const prevAceCount = Math.floor(prevAceQs / 10);
+                    const newAceCount = Math.floor(newAceQs / 10);
+                    
+                    for (let i = prevAceCount + 1; i <= newAceCount; i++) {
+                        aceEarnedDates.push({
+                            aceNumber: i,
+                            date: record.date
+                        });
+                    }
+                }
+            }
+            
+            return aceEarnedDates;
+        }
+
+        async function generateAceCertificate(level, regNumber, aceCount) {
+            try {
+                const btn = event.target;
+                btn.textContent = 'Generating...';
+                btn.disabled = true;
+
+                const levelRecords = trialingData.filter(r => r.registrationNumber === regNumber && r.level === level);
+                if (levelRecords.length === 0) throw new Error('No records found for this level');
+
+                const titleInfo = calculateTitleQs(levelRecords);
+                const titleQs = titleInfo.titleQs;
+
+                const aceEarnedDates = findAceEarnedDates(levelRecords, titleQs);
+                let aceEarnedDate = titleInfo.titleDate;
+
+                if (aceEarnedDates.length > 0) {
+                    const targetAce = aceEarnedDates.find(ace => ace.aceNumber === aceCount);
+                    if (targetAce) {
+                        aceEarnedDate = targetAce.date;
+                    } else {
+                        aceEarnedDate = aceEarnedDates[aceEarnedDates.length - 1].date;
+                    }
+                }
+
+                const dateEarned = aceEarnedDate ? aceEarnedDate.toLocaleDateString() : new Date().toLocaleDateString();
+                const aceCertificateName = getAceCertificateName(level, aceCount);
+
+                const handlerName = getHandlerNameFromDogInfo(regNumber) || 'Handler Name';
+                const registeredName = getRegisteredNameFromDogInfo(regNumber) || 'Dog Name';
+
+                const templateUrl = 'https://raw.githubusercontent.com/cwagtracker/Tracker/main/templates/Ace.pdf';
+                const response = await fetch(templateUrl);
+                if (!response.ok) throw new Error(`ACE template not found: ${templateUrl}`);
+                
+                const templateBytes = await response.arrayBuffer();
+                const pdfDoc = await PDFLib.PDFDocument.load(templateBytes);
+                const firstPage = pdfDoc.getPages()[0];
+                
+                const helvetica = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
+                const timesBold = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRomanBold);
+                let maiandraFont = timesBold;
+
+                if (typeof fontkit !== 'undefined') {
+                    try {
+                        pdfDoc.registerFontkit(fontkit);
+                        const fontUrls = [
+                            'https://cdn.jsdelivr.net/gh/cwagtracker/Tracker@main/fonts/Maiandra%20GD.TTF',
+                            'https://raw.githubusercontent.com/cwagtracker/Tracker/main/fonts/Maiandra%20GD.TTF'
+                        ];
+                        
+                        for (const fontUrl of fontUrls) {
+                            try {
+                                const fontResponse = await fetch(fontUrl, { mode: 'cors' });
+                                if (fontResponse.ok) {
+                                    const fontBytes = await fontResponse.arrayBuffer();
+                                    maiandraFont = await pdfDoc.embedFont(fontBytes);
+                                    break;
+                                }
+                            } catch (e) { }
+                        }
+                    } catch (e) { }
+                }
+
+                const dateLineText = `This certifies that on ${dateEarned} the requirements have been met for the title of:`;
+                drawTextWithAlignmentAndDynamicSize(firstPage, dateLineText, aceCertificateConfig.dateLine, helvetica);
+
+                const callNameMaxWidth = 710 - 72;
+                drawTextWithAlignmentAndDynamicSize(
+                    firstPage, 
+                    registeredName, 
+                    aceCertificateConfig.callName, 
+                    maiandraFont, 
+                    callNameMaxWidth, 
+                    aceCertificateConfig.callName.size
+                );
+
+                const handlerMaxWidthAce = 690 - 235;
+                drawTextWithAlignmentAndDynamicSize(
+                    firstPage, 
+                    handlerName, 
+                    aceCertificateConfig.handlerName, 
+                    maiandraFont, 
+                    handlerMaxWidthAce, 
+                    aceCertificateConfig.handlerName.size
+                );
+
+                drawTextWithAlignmentAndDynamicSize(firstPage, regNumber, aceCertificateConfig.registrationNumber, helvetica);
+                drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificateConfig.levelAbbreviation, maiandraFont);
+                
+                const pdfBytes = await pdfDoc.save();
+                downloadPDF(pdfBytes, `${registeredName}-${level.replace(/\s+/g, '-')}-ACE-Certificate.pdf`);
+
+                btn.textContent = '🏆 Ace Certificate';
+                btn.disabled = false;
+
+            } catch (error) {
+                console.error('ACE certificate generation error:', error);
+                alert(`Unable to generate ACE certificate: ${error.message}`);
+                
+                const btn = event.target;
+                btn.textContent = '🏆 Ace Certificate';
+                btn.disabled = false;
+            }
+        }
+
+        function downloadPDF(pdfBytes, filename) {
+            const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                searchDog();
+            }
+        }
+
+        function formatRegistrationNumber(input) {
+            if (!input) return '';
+            
+            let cleaned = input.replace(/[^0-9-]/g, '');
+            
+            if (cleaned.includes('-')) {
+                let parts = cleaned.split('-');
+                if (parts.length === 3) {
+                    let part1 = parts[0].padStart(2, '0').substring(0, 2);
+                    let part2 = parts[1].padStart(4, '0').substring(0, 4);
+                    let part3 = parts[2].padStart(2, '0').substring(0, 2);
+                    return `${part1}-${part2}-${part3}`;
+                }
+            }
+            
+            const digitsOnly = cleaned.replace(/-/g, '');
+            if (digitsOnly.length >= 6) {
+                const part1 = digitsOnly.substring(0, 2).padStart(2, '0');
+                const part2 = digitsOnly.substring(2, 6).padStart(4, '0');
+                const part3 = digitsOnly.substring(6, 8).padStart(2, '0');
+                return `${part1}-${part2}-${part3}`;
+            }
+            
+            if (digitsOnly.length === 4) {
+                return `XX-${digitsOnly}-XX`;
+            }
+            
+            return cleaned;
+        }
+
+        function searchDog() {
+            const searchInput = document.getElementById('searchInput').value.trim();
+            if (!searchInput) {
+                alert('Please enter a registration number');
+                return;
+            }
+
+            if (trialingData.length === 0 && Object.keys(dogInfoData).length === 0) {
+                alert('Please wait for data to load');
+                return;
+            }
+
+            const formattedSearch = formatRegistrationNumber(searchInput);
+            
+            const dogRecords = trialingData.filter(record => 
+                record.registrationNumber && 
+                record.registrationNumber.toString().toLowerCase() === formattedSearch.toLowerCase()
+            );
+
+            const dogExistsInInfo = dogInfoData[formattedSearch];
+
+            if (dogRecords.length === 0 && !dogExistsInInfo) {
+                const partialMatches = trialingData.filter(record =>
+                    record.registrationNumber && 
+                    record.registrationNumber.toString().toLowerCase().includes(formattedSearch.toLowerCase())
+                ).slice(0, 5);
+
+                let errorMessage = `No dog found with registration number: <strong>${formattedSearch}</strong>`;
+                
+                if (partialMatches.length > 0) {
+                    errorMessage += '<br><br><strong>Did you mean:</strong><ul style="text-align: left; margin: 10px 0;">';
+                    partialMatches.forEach(match => {
+                        errorMessage += `<li><a href="#" onclick="searchSpecific('${match.registrationNumber}')" style="color: #007bff; text-decoration: underline;">${match.registrationNumber} (${match.callName || 'Unknown'})</a></li>`;
+                    });
+                    errorMessage += '</ul>';
+                }
+
+                document.getElementById('summaryContent').innerHTML = 
+                    `<div class="error-message">${errorMessage}</div>`;
+                return;
+            }
+
+            if (dogRecords.length === 0 && dogExistsInInfo) {
+                currentDogRecords = [];
+                displaySummary([], formattedSearch);
+                return;
+            }
+
+            currentDogRecords = dogRecords;
+            displaySummary(dogRecords);
+        }
+
+        function searchSpecific(regNumber) {
+            document.getElementById('searchInput').value = regNumber;
+            searchDog();
+        }
+
+        function displaySummary(records, regNumberOverride = null) {
+            const regNumber = regNumberOverride || (records.length > 0 ? records[0].registrationNumber : null);
+            
+            if (!regNumber) {
+                document.getElementById('summaryContent').innerHTML = 
+                    `<div class="error-message">Unable to determine registration number</div>`;
+                return;
+            }
+            
+            const callName = getCallNameFromDogInfo(regNumber, records.length > 0 ? records[0].callName : null) || 'Unknown';
+            const handlerName = getHandlerNameFromDogInfo(regNumber);
+            
+            const levelSummary = {};
+            
+            records.forEach(record => {
+                if (!record.level) return;
+                
+                if (!levelSummary[record.level]) {
+                    levelSummary[record.level] = {
+                        totalQs: 0,
+                        judges: new Set(),
+                        records: []
+                    };
+                }
+                
+                if (record.Qs > 0) {
+                    levelSummary[record.level].totalQs += record.Qs;
+                    if (record.judge) {
+                        levelSummary[record.level].judges.add(record.judge);
+                    }
+                }
+                levelSummary[record.level].records.push(record);
+            });
+
+            const validatedLevels = applyValidationRules(levelSummary);
+
+            let html = `
+                <div class="dog-info">
+                    ${handlerName ? `<p class="handler-name"><strong>Handler:</strong> ${handlerName}</p>` : ''}
+                    <h3>${callName}</h3>
+                    <p><strong>Registration:</strong> ${regNumber}</p>
+                    <p><strong>Total Trialing Records:</strong> ${records.length}</p>
+                    ${records.length === 0 ? '<p style="color: #856404; background: #fff3cd; padding: 10px; border-radius: 6px; margin-top: 10px;"><strong>📋 No trialing entries found for this dog yet</strong></p>' : ''}
+                </div>
+            `;
+            
+            if (Object.keys(levelSummary).length === 0) {
+                document.getElementById('summaryContent').innerHTML = html + `
+                    <div style="text-align: center; padding: 20px; color: #6c757d;">
+                        <p>This dog has no trialing records yet. Once they compete, their results will appear here!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Continue with the rest of displaySummary logic here...
+            getSortedLevels(levelSummary).forEach(level => {
+                const summary = levelSummary[level];
+                const isValidated = validatedLevels[level];
+                const judgeCount = summary.judges.size;
+                
+                const hasTitleRequirements = summary.totalQs >= 4 && judgeCount >= 2 && isValidated;
+                
+                let gamesInfo = '';
+                if (level.startsWith('Games ')) {
+                    const uniqueGames = getUniqueGames(summary.records);
+                    gamesInfo = `<div><span>Different Games:</span> <strong>${uniqueGames.size}/2</strong> (${Array.from(uniqueGames).join(', ') || 'None'})</div>`;
+                }
+                
+                let titleQs = 0;
+                let aceQs = 0;
+                let titleStatus = '';
+                let titleClass = '';
+                let titleInfo = null;
+                let aceEarnedDates = [];
+                
+                if (hasTitleRequirements) {
+                    titleInfo = calculateTitleQs(summary.records);
+                    titleQs = titleInfo.titleQs;
+                    const titleDate = titleInfo.titleDate;
+                    aceQs = Math.max(0, summary.totalQs - titleQs);
+                    
+                    // Get all ace earned dates
+                    aceEarnedDates = findAceEarnedDates(summary.records, titleQs);
+                    
+                    const officialTitle = titleAbbreviations[level] || level;
+                    
+                    if (aceQs >= 10) {
+                        const aceCount = Math.floor(aceQs / 10);
+                        titleStatus = getAceDesignation(level, aceCount);
+                        titleClass = 'title-earned';
+                    } else {
+                        titleStatus = `${officialTitle} Title Earned`;
+                        titleClass = 'title-earned';
+                    }
+                } else {
+                    titleStatus = 'No Title Yet';
+                    titleClass = 'no-title';
+                }
+
+                let certificateButtons = '';
+                if (hasTitleRequirements) {
+                    const officialTitle = titleAbbreviations[level] || level;
+                    const escapedLevel = escapeJs(level);
+                    const escapedRegNumber = escapeJs(regNumber);
+                    const escapedOfficialTitle = escapeJs(officialTitle);
+                    
+                    certificateButtons += `
+                        <button class="certificate-btn" onclick="generateTitleCertificate('${escapedLevel}', '${escapedRegNumber}', '${escapedOfficialTitle}')">
+                            📜 Title Certificate
+                        </button>
+                    `;
+                    
+                    if (aceQs >= 10) {
+                        const aceCount = Math.floor(aceQs / 10);
+                        for (let i = 1; i <= aceCount; i++) {
+                            const aceLabel = i === 1 ? 'Ace' : `Ace ${i}`;
+                            certificateButtons += `
+                                <button class="certificate-btn" onclick="generateAceCertificate('${escapedLevel}', '${escapedRegNumber}', ${i})">
+                                    🏆 ${aceLabel}
+                                </button>
+                            `;
+                        }
+                    }
+                }
+                
+                html += `
+                    <div class="level-summary">
+                        <div class="level-info">
+                            <h4>${level}</h4>
+                            <div class="title-status ${titleClass}">${titleStatus}</div>
+                            
+                            <div class="Qs-breakdown">
+                                <div><span>Total Q's:</span> <strong>${summary.totalQs}</strong></div>
+                                <div><span>Judges:</span> <strong>${judgeCount}/2</strong></div>
+                                ${gamesInfo}
+                               ${hasTitleRequirements ? `
+                                    <div><span>Q's Towards Title:</span> <strong>${titleQs}</strong></div>
+                                    <div><span>Q's Towards Ace:</span> <strong class="ace-info">${aceQs}</strong></div>
+                                    ${titleInfo && titleInfo.titleDate ? `<div style="color: #28a745; font-size: 0.85rem;"><span>Title Earned:</span> <strong>${titleInfo.titleDate instanceof Date && !isNaN(titleInfo.titleDate) ? titleInfo.titleDate.toLocaleDateString() : 'N/A'}</strong></div>` : ''}
+                                        ${aceEarnedDates.length > 0 ? aceEarnedDates.map(ace => `<div style="color: #6f42c1; font-size: 0.85rem; margin: 4px 0; display: block;"><span>Ace ${ace.aceNumber}</span><span style="margin: 0 8px;">............</span><span>${ace.date.toLocaleDateString()}</span></div>`).join('') : ''}
+                                    ${aceQs < 10 && aceQs >= 0 ? `<div class="ace-info"><span>Q's until next Ace:</span> <strong>${10 - (aceQs % 10)}</strong></div>` : 
+                                    aceQs >= 10 ? `<div class="ace-info"><span>Q's until next Ace:</span> <strong>${10 - (aceQs % 10)}</strong></div>` : ''}
+                                ` : `
+                                    <div style="color: #dc3545;">
+                                        <div><span>Need:</span> ${summary.totalQs < 4 ? `${4 - summary.totalQs} more Q's` : ''}
+                                        ${summary.totalQs < 4 && judgeCount < 2 ? ', ' : ''}
+                                        ${judgeCount < 2 ? `${2 - judgeCount} more judge${judgeCount === 0 ? 's' : ''}` : ''}
+                                        ${level.startsWith('Games ') && getUniqueGames(summary.records).size < 2 ? 
+                                            `${(summary.totalQs < 4 || judgeCount < 2) ? ', ' : ''}${2 - getUniqueGames(summary.records).size} more different game${getUniqueGames(summary.records).size === 0 ? 's' : ''}` : ''}</div>
+                                        ${!isValidated && !level.startsWith('Games ') ? `<div><span>Prerequisites:</span> ${getPrerequisiteText(level)}</div>` : ''}
+                                    </div>
+                                `}
+                            </div>
+                        </div>
+                        <div class="certificate-controls">
+                            <button class="details-btn" onclick="showLevelDetails('${escapeJs(level)}', '${escapeJs(callName)}')">Details</button>
+                            ${certificateButtons}
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('summaryContent').innerHTML = html || '<div class="error-message">No level data to display</div>';
+        }
+
+        function calculateTitleQs(records) {
+            const sortedRecords = records
+                .filter(r => r.Qs > 0 && r.date instanceof Date && !isNaN(r.date))
+                .sort((a, b) => a.date - b.date);
+            
+            let cumulativeQs = 0;
+            let judges = new Set();
+            
+            for (const record of sortedRecords) {
+                const prevQs = cumulativeQs;
+                const prevJudgeCount = judges.size;
+                
+                cumulativeQs += record.Qs;
+                if (record.judge) judges.add(record.judge);
+                
+                const nowHasTitle = cumulativeQs >= 4 && judges.size >= 2;
+                const previouslyHadTitle = prevQs >= 4 && prevJudgeCount >= 2;
+                
+                if (nowHasTitle && !previouslyHadTitle) {
+                    let QsTowardTitle = record.Qs;
+                    
+                    if (prevQs >= 4 && prevJudgeCount < 2) {
+                        QsTowardTitle = 1;
+                    }
+                    else if (prevJudgeCount >= 2 && prevQs < 4) {
+                        QsTowardTitle = 4 - prevQs;
+                    }
+                    else if (prevQs < 4 && prevJudgeCount < 2) {
+                        QsTowardTitle = Math.min(record.Qs, 4 - prevQs);
+                    }
+                    
+                    return {
+                        titleQs: prevQs + QsTowardTitle,
+                        titleDate: record.date
+                    };
+                }
+            }
+            
+            return {
+                titleQs: cumulativeQs,
+                titleDate: sortedRecords[sortedRecords.length - 1]?.date
+            };
+        }
+
+        function applyValidationRules(levelSummary) {
+            const validatedLevels = {};
+            
+            Object.keys(levelSummary).forEach(level => {
+                if (!prerequisites[level] && !level.startsWith('Games ')) {
+                    validatedLevels[level] = true;
+                }
+            });
+
+            Object.keys(levelSummary).forEach(level => {
+                if (level.startsWith('Games ')) {
+                    const summary = levelSummary[level];
+                    const uniqueGames = getUniqueGames(summary.records);
+                    const hasEnoughGames = uniqueGames.size >= 2;
+                    const hasBasicRequirements = summary.totalQs >= 4 && summary.judges.size >= 2;
+                    validatedLevels[level] = hasEnoughGames && hasBasicRequirements;
+                }
+            });
+
+            Object.keys(prerequisites).forEach(level => {
+                if (!levelSummary[level]) {
+                    validatedLevels[level] = false;
+                    return;
+                }
+
+                let meetsPrereqCriteria = false;
+
+                if (level === "Investigator 3") {
+                    const patrol1Valid = checkLevelRequirements(levelSummary["Patrol 1"]);
+                    const detective2Valid = checkLevelRequirements(levelSummary["Detective 2"]);
+                    meetsPrereqCriteria = patrol1Valid || detective2Valid;
+                } else {
+                    const prereqLevel = prerequisites[level][0];
+                    meetsPrereqCriteria = checkLevelRequirements(levelSummary[prereqLevel]);
+                }
+
+                validatedLevels[level] = meetsPrereqCriteria;
+            });
+
+            return validatedLevels;
+        }
+
+        function getUniqueGames(records) {
+            const games = new Set();
+            const gamesList = ['BJ', 'C', 'P', 'T', 'GB'];
+            
+            records.forEach(record => {
+                if (record.results) {
+                    const results = record.results.toString().toUpperCase();
+                    gamesList.forEach(game => {
+                        if (results.includes(game)) {
+                            games.add(game);
+                        }
+                    });
+                }
+            });
+            
+            return games;
+        }
+
+        function checkLevelRequirements(levelData) {
+            if (!levelData) return false;
+            return levelData.totalQs >= 4 && levelData.judges.size >= 2;
+        }
+
+        function getPrerequisiteText(level) {
+            if (!prerequisites[level]) return 'None';
+            
+            if (level === "Investigator 3") {
+                return 'Either "Patrol 1" OR "Detective 2" (4+ Qs, 2+ judges each)';
+            }
+            
+            return `"${prerequisites[level][0]}" (4+ Qs, 2+ judges)`;
+        }
+
+        function showLevelDetails(level, dogName) {
+            const records = currentDogRecords.filter(r => r.level === level);
+            
+            document.getElementById('modalTitle').textContent = `${dogName} - ${level} Details`;
+            
+            let html = `
+                <table class="records-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Judge</th>
+                            <th>Results</th>
+                            <th>Q's</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            records.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            records.forEach(record => {
+                const date = record.date && record.date instanceof Date && !isNaN(record.date) 
+                    ? record.date.toLocaleDateString() 
+                    : 'N/A';
+                const QsClass = record.Qs > 0 ? 'Qs-badge' : 'Qs-badge zero';
+                
+                html += `
+                    <tr>
+                        <td>${date}</td>
+                        <td>${record.judge || 'N/A'}</td>
+                        <td>${record.results || 'N/A'}</td>
+                        <td><span class="${QsClass}">${record.Qs}</span></td>
+                    </tr>
+                `;
+            });
+
+            html += '</tbody></table>';
+            
+            document.getElementById('modalBody').innerHTML = html;
+            document.getElementById('detailsModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('detailsModal').style.display = 'none';
+        }
+
+        function showOwnerView() {
+            if (trialingData.length === 0 && Object.keys(dogInfoData).length === 0) {
+                alert('Please wait for data to load');
+                return;
+            }
+
+            document.getElementById('summaryContent').innerHTML = `
+                <div style="text-align: center; padding: 40px;">
+                    <h3 style="color: #17a2b8; margin-bottom: 20px;">👤 Owner View</h3>
+                    <p style="margin-bottom: 20px;">Enter the middle 4 digits from your registration number:</p>
+                    
+                    <div style="background: #f8f9fa; padding: 30px; border-radius: 12px; border: 2px solid #dee2e6; margin: 20px 0;">
+                        <input type="text" id="ownerIdInput" placeholder="e.g., 1734" 
+                               style="padding: 15px 20px; font-size: 1.2rem; border: 2px solid #ddd; border-radius: 10px; width: 100%; max-width: 200px; text-align: center;"
+                               onkeypress="handleOwnerKeyPress(event)" maxlength="4">
+                        <br><br>
+                        <button onclick="loadOwnerView()" style="background: #28a745; color: white; border: none; padding: 15px 30px; border-radius: 10px; cursor: pointer; font-size: 1.1rem;">
+                            📊 Load Owner View
+                        </button>
+                    </div>
+                    
+                    <button onclick="backToSearch()" style="background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 0.9rem;">
+                        ← Back to Search
+                    </button>
+                </div>
+            `;
+        }
+
+        function handleOwnerKeyPress(event) {
+            if (event.key === 'Enter') {
+                loadOwnerView();
+            }
+        }
+
+        function loadOwnerView() {
+            const ownerIdInput = document.getElementById('ownerIdInput');
+            if (!ownerIdInput) {
+                console.error('Owner ID input not found');
+                return;
+            }
+            
+            const ownerId = ownerIdInput.value.trim();
+            
+            if (!ownerId) {
+                alert('Please enter the middle 4 digits');
+                return;
+            }
+
+            if (!/^\d{4}$/.test(ownerId)) {
+                alert('Please enter exactly 4 digits');
+                return;
+            }
+
+            const matchingDogsFromTrialing = trialingData.filter(record => {
+                if (!record.registrationNumber) return false;
+                
+                const regNumber = record.registrationNumber.toString().trim();
+                
+                if (regNumber.includes('-')) {
+                    const regParts = regNumber.split('-');
+                    return regParts.length >= 2 && regParts[1] === ownerId;
+                } else if (/^\d{8}$/.test(regNumber)) {
+                    const middlePart = regNumber.substring(2, 6);
+                    return middlePart === ownerId;
+                }
+                
+                return false;
+            });
+
+            const matchingDogsFromInfo = Object.keys(dogInfoData).filter(regNumber => {
+                if (regNumber.includes('-')) {
+                    const regParts = regNumber.split('-');
+                    return regParts.length >= 2 && regParts[1] === ownerId;
+                } else if (/^\d{8}$/.test(regNumber)) {
+                    const middlePart = regNumber.substring(2, 6);
+                    return middlePart === ownerId;
+                }
+                return false;
+            });
+
+            const allMatchingRegNumbers = [...new Set([
+                ...matchingDogsFromTrialing.map(r => r.registrationNumber.toString().trim()),
+                ...matchingDogsFromInfo
+            ])];
+
+            if (allMatchingRegNumbers.length === 0) {
+                document.getElementById('summaryContent').innerHTML = `
+                    <div class="error-message">No dogs found with owner ID: <strong>${ownerId}</strong></div>
+                    <div style="text-align: center; margin-top: 20px;">
+                        <button onclick="showOwnerView()" style="background: #17a2b8; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer;">
+                            ← Try Again
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            const dogsByReg = {};
+            matchingDogsFromTrialing.forEach(record => {
+                const regNumber = record.registrationNumber.toString().trim();
+                if (!dogsByReg[regNumber]) {
+                    dogsByReg[regNumber] = [];
+                }
+                dogsByReg[regNumber].push(record);
+            });
+
+            allMatchingRegNumbers.forEach(regNumber => {
+                if (!dogsByReg[regNumber]) {
+                    dogsByReg[regNumber] = [];
+                }
+            });
+
+            const dogRegistrations = allMatchingRegNumbers;
+            const dogCount = dogRegistrations.length;
+
+            let html = `
+                <div style="background: linear-gradient(45deg, #667eea, #764ba2); color: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; text-align: center;">
+                    <h3 style="margin: 0; font-size: 1.4rem;">${dogCount} dog(s) found</h3>
+                </div>
+
+                <div style="text-align: center; margin-bottom: 15px;">
+                    <button onclick="showOwnerView()" style="background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; margin-right: 10px;">
+                        ← Change Owner ID
+                    </button>
+                    <button onclick="printOwnerView()" style="background: #6f42c1; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 0.9rem;">
+                        🖨️ Print View
+                    </button>
+                </div>
+
+                <div class="legend-print" style="margin-bottom: 15px; padding: 15px; background: #e7f3ff; border: 1px solid #b8daff; border-radius: 8px;">
+                    <h4 style="color: #004085; margin-bottom: 10px;">Legend:</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px; font-size: 0.9rem; color: #004085;">
+                        <div><span style="background: #d4edda; padding: 2px 6px; border-radius: 3px; margin-right: 8px;"><strong>Title!</strong></span> - Title earned</div>
+                        <div><span style="background: #d4edda; padding: 2px 6px; border-radius: 3px; margin-right: 8px;"><strong>Ace2</strong></span> - Has earned Ace2</div>
+                        <div><span style="background: linear-gradient(135deg, #e8f5e8, #d4edda); padding: 2px 6px; border-radius: 3px; margin-right: 8px;"><strong>3 → Ace</strong></span> - Needs 3 Q's for first Ace</div>
+                        <div><span style="background: linear-gradient(135deg, #e8f5e8, #d4edda); padding: 2px 6px; border-radius: 3px; margin-right: 8px;"><strong>7 → Ace3</strong></span> - Needs 7 Q's for next Ace level</div>
+                        <div><span style="background: #fff3cd; padding: 2px 6px; border-radius: 3px; margin-right: 8px;"><strong>3 Q's, 1 judge needed for title</strong></span> - Requirements to achieve Title</div>
+                        <div><span style="color: #666; margin-right: 8px;"><strong>-</strong></span> - No entries at this level</div>
+                    </div>
+                </div>
+            `;
+
+            const allLevels = [
+                "Patrol 1", "Detective 2", "Investigator 3", "Super Sleuth 4", "Private Inv", "Det Diversions",
+                "Ranger 1", "Ranger 2", "Ranger 3", "Ranger 4", "Ranger 5",
+                "Dasher 3", "Dasher 4", "Dasher 5", "Dasher 6",
+                "Obedience 1", "Obedience 2", "Obedience 3", "Obedience 4", "Obedience 5",
+                "Starter", "Advanced", "Pro", "ARF",
+                "Zoom 1", "Zoom 1.5", "Zoom 2",
+                "Games 1", "Games 2", "Games 3", "Games 4"
+            ];
+
+            const dogsData = dogRegistrations.map(regNumber => {
+                const dogRecords = dogsByReg[regNumber] || [];
+                
+                const callName = getCallNameFromDogInfo(
+                    regNumber, 
+                    dogRecords.length > 0 ? dogRecords[0].callName : null
+                ) || 'Unknown';
+                const handlerName = getHandlerNameFromDogInfo(regNumber);
+
+                const levelSummary = {};
+                dogRecords.forEach(record => {
+                    if (!record.level) return;
+                    
+                    if (!levelSummary[record.level]) {
+                        levelSummary[record.level] = {
+                            totalQs: 0,
+                            judges: new Set(),
+                            records: []
+                        };
+                    }
+                    
+                    if (record.Qs > 0) {
+                        levelSummary[record.level].totalQs += record.Qs;
+                        if (record.judge) {
+                            levelSummary[record.level].judges.add(record.judge);
+                        }
+                    }
+                    levelSummary[record.level].records.push(record);
+                });
+
+                return {
+                    regNumber,
+                    callName,
+                    handlerName,
+                    levelSummary,
+                    hasRecords: dogRecords.length > 0
+                };
+            });
+
+            html += `
+                <div style="overflow-x: auto; border: 1px solid #dee2e6; border-radius: 8px;">
+                    <table class="owner-view-table" style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                        <thead>
+                            <tr style="background: #f8f9fa;">
+                                <th style="padding: 12px 8px; text-align: left; border-bottom: 2px solid #dee2e6; font-weight: 600; position: sticky; left: 0; background: #f8f9fa; z-index: 10;">Level</th>`;
+
+            dogsData.forEach(dog => {
+                const escapedRegNumber = escapeJs(dog.regNumber);
+                const handlerInfo = dog.handlerName ? `<br><small style="color: #6c757d; font-weight: normal; font-size: 0.6rem;">${escapeHtml(dog.handlerName)}</small>` : '';
+                const noEntriesNote = !dog.hasRecords ? '<br><small style="color: #dc3545; font-weight: normal; font-size: 0.6rem;">(No entries)</small>' : '';
+                html += `
+                                <th style="padding: 8px 4px; text-align: center; border-bottom: 2px solid #dee2e6; font-weight: 600; width: ${75/dogsData.length}%;">
+                                    <a href="javascript:void(0)" onclick="searchSpecificDog('${escapedRegNumber}')" 
+                                       style="color: #667eea; text-decoration: none; font-weight: bold; cursor: pointer; font-size: 0.8rem;"
+                                       onmouseover="this.style.textDecoration='underline'" 
+                                       onmouseout="this.style.textDecoration='none'">
+                                        ${escapeHtml(dog.callName)}
+                                    </a>
+                                    ${handlerInfo}
+                                    ${noEntriesNote}
+                                    <br>
+                                    <small style="color: #6c757d; font-weight: normal; font-size: 0.7rem;">${escapeHtml(dog.regNumber)}</small>
+                                </th>`;
+            });
+
+            html += `
+                            </tr>
+                        </thead>
+                        <tbody>`;
+
+            allLevels.forEach(level => {
+                html += `
+                            <tr style="border-bottom: 1px solid #f0f0f0;">
+                                <td style="padding: 8px 4px; border-right: 1px solid #dee2e6; font-weight: 600; background: #f8f9fa; font-size: 0.8rem;">${level}</td>`;
+
+                dogsData.forEach(dog => {
+                    const levelData = dog.levelSummary[level];
+                    let cellContent = '-';
+                    let cellStyle = 'padding: 10px 8px; text-align: center; border-right: 1px solid #f0f0f0;';
+
+                    if (levelData) {
+                        const totalQs = levelData.totalQs;
+                        const judgeCount = levelData.judges.size;
+                        const hasTitle = totalQs >= 4 && judgeCount >= 2;
+
+                        if (hasTitle) {
+                            const titleInfo = calculateTitleQs(levelData.records);
+                            const titleQs = titleInfo.titleQs;
+                            const aceQs = Math.max(0, totalQs - titleQs);
+                            
+                            if (aceQs >= 10) {
+                                const aceCount = Math.floor(aceQs / 10);
+                                const QsToNextAce = 10 - (aceQs % 10);
+                                const nextAceNumber = aceCount + 1;
+                                
+                                if (QsToNextAce === 10) {
+                                    cellContent = `<strong style="color: #6f42c1;">Ace${aceCount}</strong>`;
+                                } else {
+                                    cellContent = `<strong style="color: #6f42c1;">${QsToNextAce} → Ace${nextAceNumber}</strong>`;
+                                }
+                                cellStyle += ' background: linear-gradient(135deg, #e8f5e8, #d4edda);';
+                            } else {
+                                const QsToFirstAce = 10 - aceQs;
+                                if (aceQs === 0) {
+                                    cellContent = `<strong style="color: #155724;">Title!</strong>`;
+                                } else {
+                                    cellContent = `<strong style="color: #155724;">${QsToFirstAce} → Ace</strong>`;
+                                }
+                                cellStyle += ' background: #d4edda;';
+                            }
+                       } else if (totalQs > 0) {
+                            const QsNeeded = Math.max(0, 4 - totalQs);
+                            const judgesNeeded = Math.max(0, 2 - judgeCount);
+                            
+                            let needMoreText = '';
+                            if (QsNeeded > 0 && judgesNeeded > 0) {
+                                const qText = QsNeeded === 1 ? '1 Q' : `${QsNeeded} Q's`;
+                                const judgeText = judgesNeeded === 1 ? '1 judge' : `${judgesNeeded} judges`;
+                                needMoreText = `${qText}, ${judgeText} needed for title`;
+                            } else if (QsNeeded > 0) {
+                                needMoreText = QsNeeded === 1 ? '1 Q needed for title' : `${QsNeeded} Q's needed for title`;
+                            } else if (judgesNeeded > 0) {
+                                needMoreText = judgesNeeded === 1 ? '1 judge needed for title' : `${judgesNeeded} judges needed for title`;
+                            }
+                            
+                            cellContent = `<span style="color: #856404;">${needMoreText}</span>`;
+                            cellStyle += ' background: #fff3cd;';
+                        }
+                    }
+
+                    html += `<td style="${cellStyle} font-size: 0.75rem;">${cellContent}</td>`;
+                });
+
+                html += `</tr>`;
+            });
+
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+
+                <div style="text-align: center; margin-top: 30px;">
+                    <button onclick="backToSearch()" style="background: #17a2b8; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 1rem;">
+                        Back to Dog Search
+                    </button>
+                </div>`;
+
+            document.getElementById('summaryContent').innerHTML = html;
+        }
+
+        function printOwnerView() {
+            window.print();
+        }
+
+        function searchSpecificDog(regNumber) {
+            document.getElementById('searchInput').value = regNumber;
+            searchDog();
+        }
+
+        function backToSearch() {
+            document.getElementById('summaryContent').innerHTML = `
+                <div class="validation-rules">
+                    <h4>Title Requirements</h4>
+                    <ul>
+                        <li>Minimum 4 Q's required for each level</li>
+                        <li>Q's must come from at least 2 different judges</li>
+                        <li>Prerequisites must be met before advancing to higher levels</li>
+                        <li>Special case: "Investigator 3" requires either "Patrol 1" OR "Detective 2"</li>
+                        <li>Games levels require at least 2 different games (BJ, C, P, T, GB)</li>
+                        <li>Ace awards given every 10 Q's after title is earned</li>
+                    </ul>
+                </div>
+            `;
+        }
+
+        function loadDataFromFile() {
+            console.log('Starting data load process...');
+            
+            const timeoutId = setTimeout(() => {
+                console.log('Load timeout - showing manual upload option');
+            }, 3000);
+
+            fetch('Data for Tracker web.xlsx')
+                .then(response => {
+                    clearTimeout(timeoutId);
+                    console.log('Fetch response status:', response.status);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    console.log('File found, reading data...');
+                    return response.arrayBuffer();
+                })
+                .then(data => {
+                    console.log('Data received, size:', data.byteLength, 'bytes');
+                    processExcelData(new Uint8Array(data));
+                    updateLastUpdatedDate();
+                    document.getElementById('summaryContent').innerHTML = `
+                        <div class="validation-rules">
+                            <h4>Title Requirements</h4>
+                            <ul>
+                                <li>Minimum 4 Q's required for each level</li>
+                                <li>Q's must come from at least 2 different judges</li>
+                                <li>Prerequisites must be met before advancing to higher levels</li>
+                                <li>Special case: "Investigator 3" requires either "Patrol 1" OR "Detective 2"</li>
+                                <li>Games levels require at least 2 different games (BJ, C, P, T, GB)</li>
+                                <li>Ace awards given every 10 Q's after title is earned</li>
+                            </ul>
+                        </div>
+                    `;
+                    console.log('Data processing complete');
+                })
+                .catch(error => {
+                    clearTimeout(timeoutId);
+                    console.error('Error loading data:', error);
+                    document.getElementById('lastUpdated').textContent = 'File not found';
+                });
+        }
+
+        function processExcelData(data) {
+            const workbook = XLSX.read(data, {type: 'array', cellDates: true});
+            
+            const dataSheet = workbook.Sheets['Data'] || workbook.Sheets[workbook.SheetNames[0]];
+            const jsonData = XLSX.utils.sheet_to_json(dataSheet, {header: 1, dateNF: 'yyyy-mm-dd'});
+            
+            trialingData = jsonData.slice(1).map(row => {
+                let processedDate = row[2];
+                
+                if (typeof processedDate === 'number') {
+                    processedDate = XLSX.SSF.parse_date_code(processedDate);
+                    processedDate = new Date(processedDate.y, processedDate.m - 1, processedDate.d);
+                } else if (typeof processedDate === 'string') {
+                    processedDate = new Date(processedDate);
+                } else if (processedDate instanceof Date) {
+                    processedDate = processedDate;
+                } else {
+                    processedDate = null;
+                }
+                
+                return {
+                    registrationNumber: row[0],
+                    callName: row[1],
+                    date: processedDate,
+                    level: row[3],
+                    results: row[4],
+                    judge: row[5],
+                    Qs: parseFloat(row[6]) || 0
+                };
+            }).filter(record => record.registrationNumber && record.level);
+            
+            console.log('Data processed:', trialingData.length, 'records');
+        }
+
+        function updateLastUpdatedDate() {
+            if (trialingData.length === 0) {
+                document.getElementById('lastUpdated').textContent = 'No data available';
+                return;
+            }
+
+            const validDates = trialingData
+                .map(record => record.date)
+                .filter(date => date instanceof Date && !isNaN(date))
+                .sort((a, b) => b - a);
+
+            if (validDates.length > 0) {
+                const mostRecentDate = validDates[0];
+                document.getElementById('lastUpdated').textContent = 
+                    `Last updated: ${mostRecentDate.toLocaleDateString()}`;
+            } else {
+                document.getElementById('lastUpdated').textContent = 'Last updated: Unknown';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 CWAGS Tracker initializing...');
+            document.getElementById('lastUpdated').textContent = 'Loading data...';
+            
+            setTimeout(() => {
+                if (typeof fontkit !== 'undefined') {
+                    console.log('✅ Fontkit library loaded successfully');
+                } else {
+                    console.warn('⚠️ Fontkit library failed to load - custom fonts will not work');
+                }
+            }, 1000);
+            
+            setTimeout(async () => {
+                try {
+                    console.log('📊 Step 1: Loading DogInfo data...');
+                    const dogInfoLoaded = await loadDogInfoData();
+                    
+                    if (dogInfoLoaded) {
+                        console.log('✅ Step 1 complete: DogInfo data ready');
+                    } else {
+                        console.log('⚠️ Step 1 skipped: DogInfo not available');
+                    }
+
+                    console.log('📊 Step 2: Loading Title Placement data...');
+                    const titlePlacementLoaded = await loadTitlePlacementData();
+                    
+                    if (titlePlacementLoaded) {
+                        console.log('✅ Step 2 complete: Title Placement data ready');
+                    } else {
+                        console.log('⚠️ Step 2 skipped: Title Placement not available');
+                    }
+                    
+                    console.log('📁 Step 3: Loading main trialing data...');
+                    loadDataFromFile();
+                    
+                } catch (error) {
+                    console.error('❌ Initialization error:', error);
+                    document.getElementById('lastUpdated').textContent = 'Initialization failed';
+                }
+            }, 200);
+        });
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('detailsModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        };
+    </script>
+</body>
+</html>
+
+
+
+
+
