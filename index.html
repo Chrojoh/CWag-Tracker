@@ -522,10 +522,6 @@
         text-align: center !important;
     }
 
-    .owner-view-table th:not(:first-child),
-    .owner-view-table td:not(:first-child) {
-        min-width: max-content !important;
-    }
 
     .owner-view-table td {
         padding: 3px 2px !important;
@@ -1939,10 +1935,10 @@
 
             html += `
                 <div style="overflow-x: auto; border: 1px solid #dee2e6; border-radius: 8px;">
-                    <table class="owner-view-table" style="width: 100%; border-collapse: collapse; font-size: 14px; table-layout: fixed;">
+                    <table class="owner-view-table" style="width: max-content; min-width: 100%; border-collapse: collapse; font-size: 14px; table-layout: auto;">
                         <thead>
                             <tr style="background: #f8f9fa;">
-                                <th style="padding: 10px 8px; text-align: center; border-bottom: 2px solid #dee2e6; font-weight: 700; position: sticky; left: 0; background: #f8f9fa; z-index: 10; width: 25%; color: #1a1a1a;">Level</th>`;
+                                <th style="padding: 10px 8px; text-align: center; border-bottom: 2px solid #dee2e6; font-weight: 700; position: sticky; left: 0; background: #f8f9fa; z-index: 10; white-space: nowrap; color: #1a1a1a;">Level</th>`;
 
             dogsData.forEach(dog => {
                 const escapedRegNumber = escapeJs(dog.regNumber);
