@@ -517,9 +517,16 @@
 
     .owner-view-table th:first-child,
     .owner-view-table td:first-child {
-        width: 1px !important;
-        white-space: nowrap !important;
+        width: 12ch !important;
+        white-space: normal !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
         text-align: center !important;
+    }
+
+    .owner-view-table th:not(:first-child),
+    .owner-view-table td:not(:first-child) {
+        min-width: max-content !important;
     }
 
     .owner-view-table td {
@@ -2097,7 +2104,39 @@
         }
 
         function printOwnerView() {
+            // Count visible rows (respect hidden dog columns but all rows exist)
+            const tableRows = document.querySelectorAll('.owner-view-table tbody tr').length;
+            const priorityRows = document.querySelectorAll('.priority-row').length;
+
+            // Estimate total content height at 18px print font on landscape letter.
+            // Usable height with 0.25in margins each side: 8in = 768px (at 96dpi).
+            const SECTION_HEADER_H = 26;  // "Q's Summary & Title Progress"
+            const TABLE_HEADER_H  = 65;   // dog-name / handler / reg-number header row
+            const ROW_H           = 28;   // each data row at 18px + padding
+            const PRI_HEADER_H    = 32;   // "Priority" heading
+            const PRI_ROW_H       = 26;   // each priority row
+            const EXTRA           = 30;   // gaps and margins between sections
+
+            const estimatedH = SECTION_HEADER_H + TABLE_HEADER_H
+                + (tableRows    * ROW_H)
+                + PRI_HEADER_H  + (priorityRows * PRI_ROW_H)
+                + EXTRA;
+
+            const pageH = 768; // landscape letter usable height in CSS px
+            const scale = Math.min(1, pageH / estimatedH);
+
+            let styleEl = document.getElementById('_print_scale_style');
+            if (!styleEl) {
+                styleEl = document.createElement('style');
+                styleEl.id = '_print_scale_style';
+                document.head.appendChild(styleEl);
+            }
+            styleEl.textContent = scale < 0.99
+                ? `@media print { #summaryContent { zoom: ${scale.toFixed(3)}; } }`
+                : '';
+
             window.print();
+            setTimeout(function () { styleEl.textContent = ''; }, 2000);
         }
 
         function searchSpecificDog(regNumber) {
