@@ -599,7 +599,7 @@
 
     @page {
         margin: 0.25in !important;
-        size: landscape !important;
+        size: portrait !important;
     }
 }
     </style>
@@ -1940,9 +1940,17 @@
                 dogsData.some(dog => dog.levelSummary[level] && dog.levelSummary[level].totalQs > 0)
             );
 
+            // Build colgroup so visibility:collapse works correctly on dog columns
+            let colgroupHtml = `<colgroup><col id="owner-col-level">`;
+            dogsData.forEach(dog => {
+                colgroupHtml += `<col id="owner-col-dog-${dog.dogIdx}">`;
+            });
+            colgroupHtml += `</colgroup>`;
+
             html += `
                 <div style="overflow-x: auto; border: 1px solid #dee2e6; border-radius: 8px;">
                     <table class="owner-view-table" style="width: max-content; min-width: 100%; border-collapse: collapse; font-size: 14px; table-layout: auto;">
+                        ${colgroupHtml}
                         <thead>
                             <tr style="background: #f8f9fa;">
                                 <th style="padding: 10px 8px; text-align: center; border-bottom: 2px solid #dee2e6; font-weight: 700; position: sticky; left: 0; background: #f8f9fa; z-index: 10; white-space: nowrap; color: #1a1a1a;">Level</th>`;
@@ -2101,8 +2109,16 @@
         }
 
         function toggleDogCol(idx, visible) {
+            // Collapse the <col> element — this is the correct way to remove a table
+            // column and have remaining columns absorb its space (no Col A bloat).
+            var col = document.getElementById('owner-col-dog-' + idx);
+            if (col) col.style.visibility = visible ? '' : 'collapse';
+
+            // Hide priority list spans for this dog (they don't use <col>)
             document.querySelectorAll('.dog-col-' + idx).forEach(function(el) {
-                el.style.display = visible ? '' : 'none';
+                if (el.tagName !== 'TH' && el.tagName !== 'TD') {
+                    el.style.display = visible ? '' : 'none';
+                }
             });
         }
 
@@ -2110,8 +2126,8 @@
             // Priority list is on its own page — only fit the TABLE on page 1.
             const tableRows = document.querySelectorAll('.owner-view-table tbody tr').length;
 
-            // Estimate table height at 18px print font on landscape letter.
-            // Usable height with 0.25in margins each side: 8in = 768px (at 96dpi).
+            // Estimate table height at 18px print font on portrait letter.
+            // Usable height with 0.25in margins each side: 10in = 960px (at 96dpi).
             const SECTION_HEADER_H = 26;  // "Q's Summary & Title Progress"
             const TABLE_HEADER_H  = 65;   // dog-name / handler / reg-number header row
             const ROW_H           = 28;   // each data row at 18px + padding
@@ -2121,7 +2137,7 @@
                 + (tableRows * ROW_H)
                 + EXTRA;
 
-            const pageH = 768; // landscape letter usable height in CSS px
+            const pageH = 960; // portrait letter usable height in CSS px
             const scale = Math.min(1, pageH / estimatedH);
 
             let styleEl = document.getElementById('_print_scale_style');
