@@ -2137,15 +2137,36 @@
             const contentH = estimatedPrintHeaderH + estimatedPrintTableH;
             const scale = Math.min(1, pageH / contentH);
 
+            // Measure Col A's true content width at print font size (18px) so it stays
+            // fixed regardless of how many dog columns are hidden.
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.font = 'bold 18px Arial, sans-serif';
+            let maxTextW = 0;
+            document.querySelectorAll('.owner-view-table td:first-child').forEach(function(td) {
+                const w = ctx.measureText(td.textContent.trim()).width;
+                if (w > maxTextW) maxTextW = w;
+            });
+            const colAFixedW = Math.ceil(maxTextW * fontRatio) + 30; // scale to print size + padding
+
             let styleEl = document.getElementById('_print_scale_style');
             if (!styleEl) {
                 styleEl = document.createElement('style');
                 styleEl.id = '_print_scale_style';
                 document.head.appendChild(styleEl);
             }
-            styleEl.textContent = scale < 0.99
+            const zoomRule = scale < 0.99
                 ? `@media print { #summaryContent { zoom: ${scale.toFixed(3)}; } }`
                 : '';
+            const colARule = `@media print {
+                .owner-view-table th:first-child,
+                .owner-view-table td:first-child {
+                    width: ${colAFixedW}px !important;
+                    min-width: ${colAFixedW}px !important;
+                    max-width: ${colAFixedW}px !important;
+                }
+            }`;
+            styleEl.textContent = zoomRule + colARule;
 
             window.print();
             setTimeout(function () { styleEl.textContent = ''; }, 2000);
