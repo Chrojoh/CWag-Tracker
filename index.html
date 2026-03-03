@@ -494,11 +494,11 @@
         page-break-inside: avoid !important;
         border-collapse: collapse !important;
         margin-top: 6px !important;
-        table-layout: auto !important;
+        table-layout: fixed !important;
     }
 
     .owner-view-table th {
-        padding: 3px 2px !important;
+        padding: 3px 4px !important;
         font-size: 18px !important;
         font-weight: bold !important;
         background: #f8f9fa !important;
@@ -515,11 +515,18 @@
         color: inherit !important;
     }
 
+    /* Col A: just wide enough for the longest level name */
     .owner-view-table th:first-child,
     .owner-view-table td:first-child {
-        width: 1px !important;
+        width: 16ch !important;
         white-space: nowrap !important;
         text-align: center !important;
+    }
+
+    /* Dog columns: override inline % widths and share remaining space equally */
+    .owner-view-table th:not(:first-child),
+    .owner-view-table td:not(:first-child) {
+        width: auto !important;
     }
 
 
