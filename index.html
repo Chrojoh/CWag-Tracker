@@ -430,6 +430,8 @@
         padding: 5px !important;
         margin: 0 !important;
         font-size: 10px !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
     }
 
     .container {
@@ -2071,7 +2073,7 @@
                             qsNeeded = qNeeded === 0 ? 1 : qNeeded;
                         }
 
-                        return { callName: dog.callName, qsNeeded, dogIdx: dog.dogIdx };
+                        return { callName: dog.callName, qsNeeded, hasTitle, dogIdx: dog.dogIdx };
                     })
                     .filter(d => d !== null);
 
@@ -2080,7 +2082,10 @@
                 dogsForLevel.sort((a, b) => a.qsNeeded - b.qsNeeded);
 
                 const dogSpans = dogsForLevel
-                    .map(d => `<span class="dog-col-${d.dogIdx}">${escapeHtml(d.callName)}\u00a0(${d.qsNeeded})</span>`)
+                    .map(d => {
+                        const numColor = d.hasTitle ? '#7b2fbe' : '#1a7a3f';
+                        return `<span class="dog-col-${d.dogIdx}">${escapeHtml(d.callName)}\u00a0<span style="color:${numColor};font-weight:700;">(${d.qsNeeded})</span></span>`;
+                    })
                     .join('\u2002');
 
                 priorityHtml += `
