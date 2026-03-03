@@ -494,7 +494,7 @@
         page-break-inside: avoid !important;
         border-collapse: collapse !important;
         margin-top: 6px !important;
-        table-layout: fixed !important;
+        table-layout: auto !important;
     }
 
     .owner-view-table th {
@@ -517,7 +517,8 @@
 
     .owner-view-table th:first-child,
     .owner-view-table td:first-child {
-        width: 25ch !important;
+        width: 1px !important;
+        white-space: nowrap !important;
         text-align: center !important;
     }
 
@@ -1934,7 +1935,7 @@
                     <table class="owner-view-table" style="width: 100%; border-collapse: collapse; font-size: 14px; table-layout: fixed;">
                         <thead>
                             <tr style="background: #f8f9fa;">
-                                <th style="padding: 10px 8px; text-align: left; border-bottom: 2px solid #dee2e6; font-weight: 700; position: sticky; left: 0; background: #f8f9fa; z-index: 10; width: 25%; color: #1a1a1a;">Level</th>`;
+                                <th style="padding: 10px 8px; text-align: center; border-bottom: 2px solid #dee2e6; font-weight: 700; position: sticky; left: 0; background: #f8f9fa; z-index: 10; width: 25%; color: #1a1a1a;">Level</th>`;
 
             dogsData.forEach(dog => {
                 const escapedRegNumber = escapeJs(dog.regNumber);
@@ -2096,38 +2097,7 @@
         }
 
         function printOwnerView() {
-            const content = document.getElementById('summaryContent');
-            if (!content) { window.print(); return; }
-
-            // Calculate zoom to fit content on one landscape page
-            // Landscape letter at 96dpi: ~1100px wide, ~816px tall minus margins (~0.5in each side)
-            const usableWidth = 1056;  // ~11in - 0.5in margins at 96dpi
-            const usableHeight = 720;  // ~7.5in usable at 96dpi
-
-            const contentW = content.scrollWidth;
-            const contentH = content.scrollHeight;
-
-            const scaleX = usableWidth / contentW;
-            const scaleY = usableHeight / contentH;
-            const scale = Math.min(scaleX, scaleY, 1);
-
-            // Inject a temporary print-scale style
-            let styleEl = document.getElementById('_print_scale_style');
-            if (!styleEl) {
-                styleEl = document.createElement('style');
-                styleEl.id = '_print_scale_style';
-                document.head.appendChild(styleEl);
-            }
-            if (scale < 0.99) {
-                styleEl.textContent = `@media print { #summaryContent { zoom: ${scale.toFixed(3)}; } }`;
-            } else {
-                styleEl.textContent = '';
-            }
-
             window.print();
-
-            // Clean up after print dialog closes
-            setTimeout(function() { styleEl.textContent = ''; }, 1000);
         }
 
         function searchSpecificDog(regNumber) {
