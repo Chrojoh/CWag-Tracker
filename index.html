@@ -2267,6 +2267,27 @@
                 </div>`;
 
             document.getElementById('summaryContent').innerHTML = html;
+
+            // Lock Col A (Level column) to its content width immediately after render.
+            // With table-layout:auto and min-width:100% on the table, the browser would
+            // otherwise give freed space from hidden dog columns back to Col A.
+            // We pin it here; the print CSS overrides with its own !important measurement.
+            (function lockColAWidth() {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                ctx.font = 'bold 14px Arial, sans-serif';
+                let maxW = 0;
+                document.querySelectorAll('.owner-view-table td:first-child').forEach(function(td) {
+                    const w = ctx.measureText(td.textContent.trim()).width;
+                    if (w > maxW) maxW = w;
+                });
+                const colAW = Math.ceil(maxW) + 20; // 10px padding each side
+                document.querySelectorAll('.owner-view-table th:first-child, .owner-view-table td:first-child').forEach(function(el) {
+                    el.style.width = colAW + 'px';
+                    el.style.minWidth = colAW + 'px';
+                    el.style.maxWidth = colAW + 'px';
+                });
+            })();
         }
 
         function toggleDogCol(idx, visible) {
