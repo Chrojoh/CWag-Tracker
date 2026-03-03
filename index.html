@@ -1902,7 +1902,7 @@
 
             html += `
                 <div style="overflow-x: auto; border: 1px solid #dee2e6; border-radius: 8px;">
-                    <table class="owner-view-table" style="width: 100%; border-collapse: collapse; font-size: 1rem; table-layout: fixed;">
+                    <table class="owner-view-table" style="width: 100%; border-collapse: collapse; font-size: 14px; table-layout: fixed;">
                         <thead>
                             <tr style="background: #f8f9fa;">
                                 <th style="padding: 10px 8px; text-align: left; border-bottom: 2px solid #dee2e6; font-weight: 700; position: sticky; left: 0; background: #f8f9fa; z-index: 10; width: 25%; color: #1a1a1a;">Level</th>`;
@@ -1917,7 +1917,7 @@
                                         <input type="checkbox" checked onchange="toggleDogCol(${dog.dogIdx}, this.checked)" style="cursor: pointer;"> Print
                                     </label>
                                     <a href="javascript:void(0)" onclick="searchSpecificDog('${escapedRegNumber}')"
-                                       style="color: #4a3f8a; text-decoration: none; font-weight: bold; cursor: pointer; font-size: 0.85rem;"
+                                       style="color: #4a3f8a; text-decoration: none; font-weight: bold; cursor: pointer; font-size: 14px;"
                                        onmouseover="this.style.textDecoration='underline'"
                                        onmouseout="this.style.textDecoration='none'">
                                         ${escapeHtml(dog.callName)}
@@ -1937,7 +1937,7 @@
             levelsWithData.forEach(level => {
                 html += `
                             <tr style="border-bottom: 1px solid #e0e0e0;">
-                                <td style="padding: 9px 8px; border-right: 1px solid #dee2e6; font-weight: 700; background: #f8f9fa; font-size: 0.85rem; color: #1a1a1a; white-space: nowrap;">${level}</td>`;
+                                <td style="padding: 9px 8px; border-right: 1px solid #dee2e6; font-weight: 700; background: #f8f9fa; font-size: 14px; color: #1a1a1a; white-space: nowrap;">${level}</td>`;
 
                 dogsData.forEach(dog => {
                     const levelData = dog.levelSummary[level];
@@ -1992,7 +1992,7 @@
                         }
                     }
 
-                    html += `<td class="dog-col-${dog.dogIdx}" style="${cellStyle} font-size: 0.82rem;">${cellContent}</td>`;
+                    html += `<td class="dog-col-${dog.dogIdx}" style="${cellStyle} font-size: 14px;">${cellContent}</td>`;
                 });
 
                 html += `</tr>`;
