@@ -2168,8 +2168,23 @@
             }`;
             styleEl.textContent = zoomRule + colARule;
 
+            // Build a descriptive PDF filename via document.title (browser uses this as the save name)
+            const ownerId = (document.getElementById('ownerIdInput') || {}).value || '';
+            const firstVisibleDogTh = Array.from(
+                document.querySelectorAll('.owner-view-table thead th')
+            ).slice(1).find(th => th.style.display !== 'none');
+            const handlerSmall = firstVisibleDogTh
+                ? Array.from(firstVisibleDogTh.querySelectorAll('small'))
+                      .find(s => !s.textContent.includes('(No entries)') && !/^\d/.test(s.textContent.trim()))
+                : null;
+            const handlerName = handlerSmall ? handlerSmall.textContent.trim() : '';
+            const originalTitle = document.title;
+            document.title = handlerName && ownerId.trim()
+                ? `Owner Report - ${handlerName} (${ownerId.trim()})`
+                : handlerName || (ownerId.trim() ? `Owner Report - ${ownerId.trim()}` : originalTitle);
+
             window.print();
-            setTimeout(function () { styleEl.textContent = ''; }, 2000);
+            setTimeout(function () { styleEl.textContent = ''; document.title = originalTitle; }, 2000);
         }
 
         function searchSpecificDog(regNumber) {
