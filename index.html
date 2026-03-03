@@ -494,7 +494,7 @@
         page-break-inside: avoid !important;
         border-collapse: collapse !important;
         margin-top: 6px !important;
-        table-layout: fixed !important;
+        table-layout: auto !important;
     }
 
     .owner-view-table th {
@@ -515,18 +515,12 @@
         color: inherit !important;
     }
 
-    /* Col A: just wide enough for the longest level name */
+    /* Col A: shrinks to content, dog columns share all remaining width */
     .owner-view-table th:first-child,
     .owner-view-table td:first-child {
-        width: 16ch !important;
+        width: 1px !important;
         white-space: nowrap !important;
         text-align: center !important;
-    }
-
-    /* Dog columns: override inline % widths and share remaining space equally */
-    .owner-view-table th:not(:first-child),
-    .owner-view-table td:not(:first-child) {
-        width: auto !important;
     }
 
 
@@ -2109,36 +2103,36 @@
         }
 
         function toggleDogCol(idx, visible) {
-            // Collapse the <col> element — this is the correct way to remove a table
-            // column and have remaining columns absorb its space (no Col A bloat).
+            // Hide/show ALL cells in this column (TH, TD, and priority spans).
+            // With table-layout:auto, hiding all cells in a column causes the browser
+            // to redistribute that column's width to remaining visible columns.
+            document.querySelectorAll('.dog-col-' + idx).forEach(function(el) {
+                el.style.display = visible ? '' : 'none';
+            });
+            // Also collapse the <col> element as belt-and-suspenders
             var col = document.getElementById('owner-col-dog-' + idx);
             if (col) col.style.visibility = visible ? '' : 'collapse';
-
-            // Hide priority list spans for this dog (they don't use <col>)
-            document.querySelectorAll('.dog-col-' + idx).forEach(function(el) {
-                if (el.tagName !== 'TH' && el.tagName !== 'TD') {
-                    el.style.display = visible ? '' : 'none';
-                }
-            });
         }
 
         function printOwnerView() {
-            // Priority list is on its own page — only fit the TABLE on page 1.
-            const tableRows = document.querySelectorAll('.owner-view-table tbody tr').length;
+            // Measure the actual rendered table height on screen, then scale it up
+            // to the print font size (18px print vs 14px screen) to estimate print height.
+            const tableEl   = document.querySelector('.owner-view-table');
+            const headerEl  = document.querySelector('.section-header');
 
-            // Estimate table height at 18px print font on portrait letter.
-            // Usable height with 0.25in margins each side: 10in = 960px (at 96dpi).
-            const SECTION_HEADER_H = 26;  // "Q's Summary & Title Progress"
-            const TABLE_HEADER_H  = 65;   // dog-name / handler / reg-number header row
-            const ROW_H           = 28;   // each data row at 18px + padding
-            const EXTRA           = 20;   // gaps / bottom margin
+            const tableScreenH  = tableEl  ? tableEl.offsetHeight  : 400;
+            const headerScreenH = headerEl ? headerEl.offsetHeight : 30;
 
-            const estimatedH = SECTION_HEADER_H + TABLE_HEADER_H
-                + (tableRows * ROW_H)
-                + EXTRA;
+            // Scale screen heights to print font size
+            const fontRatio = 18 / 14;
+            const estimatedPrintTableH  = tableScreenH  * fontRatio;
+            const estimatedPrintHeaderH = headerScreenH * fontRatio;
 
-            const pageH = 960; // portrait letter usable height in CSS px
-            const scale = Math.min(1, pageH / estimatedH);
+            // Portrait letter: 11in − 0.5in margins = 10.5in = 1008px at 96dpi
+            // Subtract app header (~50px) and a small gap buffer
+            const pageH = 1008 - 50 - 20;
+            const contentH = estimatedPrintHeaderH + estimatedPrintTableH;
+            const scale = Math.min(1, pageH / contentH);
 
             let styleEl = document.getElementById('_print_scale_style');
             if (!styleEl) {
