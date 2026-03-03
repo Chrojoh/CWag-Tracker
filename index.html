@@ -517,10 +517,8 @@
 
     .owner-view-table th:first-child,
     .owner-view-table td:first-child {
-        width: 12ch !important;
-        white-space: normal !important;
-        word-wrap: break-word !important;
-        overflow-wrap: break-word !important;
+        width: 1px !important;
+        white-space: nowrap !important;
         text-align: center !important;
     }
 
@@ -558,35 +556,37 @@
     }
 
     .priority-list {
-        font-size: 18px !important;
+        font-size: 26px !important;
         font-weight: bold !important;
         text-align: left !important;
-        margin-top: 12px !important;
-        padding: 0 !important;
+        margin-top: 0 !important;
+        padding: 10px 0 0 0 !important;
         background: none !important;
         border: none !important;
         border-radius: 0 !important;
         box-shadow: none !important;
+        page-break-before: always !important;
+        break-before: page !important;
     }
 
     .priority-list h4 {
-        font-size: 18px !important;
+        font-size: 26px !important;
         font-weight: bold !important;
-        margin-bottom: 4px !important;
+        margin-bottom: 8px !important;
         text-align: left !important;
     }
 
     .priority-list .priority-row {
-        font-size: 18px !important;
+        font-size: 26px !important;
         font-weight: bold !important;
         text-align: left !important;
-        margin-bottom: 2px !important;
+        margin-bottom: 4px !important;
         line-height: 1.4 !important;
     }
 
     .priority-list .priority-row strong,
     .priority-list .priority-row span {
-        font-size: 18px !important;
+        font-size: 26px !important;
         font-weight: bold !important;
     }
 
@@ -2043,7 +2043,7 @@
             // Build priority list: for each level with data, list dogs sorted by Q's needed
             let priorityHtml = `
                 <div class="priority-list" style="margin-top: 18px; padding: 14px 16px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px;">
-                    <h4 style="margin-bottom: 10px; color: #1a1a1a; font-size: 1rem;">Priority — Q's Needed (fewest first)</h4>`;
+                    <h4 style="margin-bottom: 10px; color: #1a1a1a; font-size: 1.25rem;">Priority — Q's Needed (fewest first)</h4>`;
 
             levelsWithData.forEach(level => {
                 const dogsForLevel = dogsData
@@ -2079,7 +2079,7 @@
                     .join('\u2002');
 
                 priorityHtml += `
-                    <div class="priority-row" style="margin-bottom: 5px; font-size: 0.88rem; color: #1a1a1a;">
+                    <div class="priority-row" style="margin-bottom: 6px; font-size: 1.1rem; color: #1a1a1a;">
                         <strong>${escapeHtml(level)}:</strong>\u2002${dogSpans}
                     </div>`;
             });
@@ -2104,22 +2104,18 @@
         }
 
         function printOwnerView() {
-            // Count visible rows (respect hidden dog columns but all rows exist)
+            // Priority list is on its own page — only fit the TABLE on page 1.
             const tableRows = document.querySelectorAll('.owner-view-table tbody tr').length;
-            const priorityRows = document.querySelectorAll('.priority-row').length;
 
-            // Estimate total content height at 18px print font on landscape letter.
+            // Estimate table height at 18px print font on landscape letter.
             // Usable height with 0.25in margins each side: 8in = 768px (at 96dpi).
             const SECTION_HEADER_H = 26;  // "Q's Summary & Title Progress"
             const TABLE_HEADER_H  = 65;   // dog-name / handler / reg-number header row
             const ROW_H           = 28;   // each data row at 18px + padding
-            const PRI_HEADER_H    = 32;   // "Priority" heading
-            const PRI_ROW_H       = 26;   // each priority row
-            const EXTRA           = 30;   // gaps and margins between sections
+            const EXTRA           = 20;   // gaps / bottom margin
 
             const estimatedH = SECTION_HEADER_H + TABLE_HEADER_H
-                + (tableRows    * ROW_H)
-                + PRI_HEADER_H  + (priorityRows * PRI_ROW_H)
+                + (tableRows * ROW_H)
                 + EXTRA;
 
             const pageH = 768; // landscape letter usable height in CSS px
