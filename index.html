@@ -658,7 +658,7 @@
         page-break-inside: avoid !important;
         border-collapse: collapse !important;
         margin-top: 6px !important;
-        table-layout: auto !important;
+        table-layout: fixed !important;
     }
 
     .owner-view-table th {
@@ -682,7 +682,9 @@
     /* Col A: shrinks to content, dog columns share all remaining width */
     .owner-view-table th:first-child,
     .owner-view-table td:first-child {
-        width: 1px !important;
+        width: auto !important;
+        min-width: 0 !important;
+        max-width: none !important;
         white-space: nowrap !important;
         text-align: center !important;
     }
