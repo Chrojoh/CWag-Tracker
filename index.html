@@ -2275,12 +2275,19 @@
         }
 
         function toggleDogCol(idx, visible) {
-            // Only use display:none on cells — do NOT touch the <col> element.
-            // Mixing both approaches causes col positions to mis-align and removes
-            // the wrong dog. With table-layout:auto, hiding all cells in a column
-            // is sufficient for the browser to redistribute that column's space.
             document.querySelectorAll('.dog-col-' + idx).forEach(function(el) {
                 el.style.display = visible ? '' : 'none';
+            });
+
+            // Recalculate widths for visible dog columns
+            const allDogThs = Array.from(document.querySelectorAll('.owner-view-table thead th')).slice(1);
+            const visibleCount = allDogThs.filter(th => th.style.display !== 'none').length;
+            const newWidth = visibleCount > 0 ? (100 / visibleCount) + '%' : 'auto';
+
+            allDogThs.forEach(function(th) {
+                if (th.style.display !== 'none') {
+                    th.style.width = newWidth;
+                }
             });
         }
 
