@@ -2325,9 +2325,12 @@
             const colARule = `@media print {
                 .owner-view-table th:first-child,
                 .owner-view-table td:first-child {
-                    width: ${colAFixedW / 2}px !important;
-                    min-width: ${colAFixedW / 2}px !important;
-                    max-width: ${colAFixedW / 2}px !important;
+                    width: 14ch !important;
+                    min-width: 14ch !important;
+                    max-width: 14ch !important;
+                    text-align: center !important;
+                    white-space: nowrap !important;
+                    overflow: hidden !important;
                 }
             }`;
             styleEl.textContent = zoomRule + colARule;
