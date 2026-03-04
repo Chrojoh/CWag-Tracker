@@ -653,7 +653,7 @@
     }
 
     .owner-view-table {
-        font-size: 18px !important;
+        font-size: 14px !important;
         width: 100% !important;
         page-break-inside: avoid !important;
         border-collapse: collapse !important;
@@ -663,7 +663,7 @@
 
     .owner-view-table th {
         padding: 3px 4px !important;
-        font-size: 18px !important;
+        font-size: 14px !important;
         font-weight: bold !important;
         background: #f8f9fa !important;
         -webkit-print-color-adjust: exact !important;
@@ -675,24 +675,27 @@
 
     .owner-view-table th a,
     .owner-view-table th small {
-        font-size: 18px !important;
+        font-size: 14px !important;
         color: inherit !important;
     }
 
-    /* Col A: shrinks to content, dog columns share all remaining width */
+    /* Col A: fixed 16ch, no padding */
     .owner-view-table th:first-child,
     .owner-view-table td:first-child {
-        width: auto !important;
-        min-width: 0 !important;
-        max-width: none !important;
+        width: 16ch !important;
+        min-width: 16ch !important;
+        max-width: 16ch !important;
         white-space: nowrap !important;
+        overflow: hidden !important;
         text-align: center !important;
+        padding: 3px 0 !important;
+        box-sizing: border-box !important;
     }
 
 
     .owner-view-table td {
         padding: 3px 2px !important;
-        font-size: 18px !important;
+        font-size: 14px !important;
         text-align: center !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
@@ -719,7 +722,7 @@
     }
 
     .priority-list {
-        font-size: 26px !important;
+        font-size: 14px !important;
         font-weight: bold !important;
         text-align: left !important;
         margin-top: 0 !important;
@@ -733,14 +736,14 @@
     }
 
     .priority-list h4 {
-        font-size: 26px !important;
+        font-size: 16px !important;
         font-weight: bold !important;
         margin-bottom: 8px !important;
         text-align: left !important;
     }
 
     .priority-list .priority-row {
-        font-size: 26px !important;
+        font-size: 14px !important;
         font-weight: bold !important;
         text-align: left !important;
         margin-bottom: 4px !important;
@@ -749,7 +752,7 @@
 
     .priority-list .priority-row strong,
     .priority-list .priority-row span {
-        font-size: 26px !important;
+        font-size: 14px !important;
         font-weight: bold !important;
     }
 
@@ -2113,7 +2116,7 @@
                         ${colgroupHtml}
                         <thead>
                             <tr style="background: #f8f9fa;">
-                                <th style="padding: 10px 8px; text-align: center; border-bottom: 2px solid #dee2e6; font-weight: 700; background: #f8f9fa; color: #1a1a1a; position: sticky; left: 0; z-index: 10; width: 60px; word-break: break-word;">Level</th>`;
+                                <th style="padding: 4px 0; text-align: center; border-bottom: 2px solid #dee2e6; font-weight: 700; background: #f8f9fa; color: #1a1a1a; position: sticky; left: 0; z-index: 10; width: 16ch; min-width: 16ch; max-width: 16ch; overflow: hidden; white-space: nowrap; box-sizing: border-box;">Level</th>`;
 
             dogsData.forEach(dog => {
                 const escapedRegNumber = escapeJs(dog.regNumber);
@@ -2145,7 +2148,7 @@
             levelsWithData.forEach(level => {
                 html += `
                             <tr style="border-bottom: 1px solid #e0e0e0;">
-                                <td style="padding: 9px 8px; border-right: 1px solid #dee2e6; font-weight: 700; background: #f8f9fa; font-size: 14px; color: #1a1a1a; white-space: nowrap; position: sticky; left: 0; z-index: 5;">${level}</td>`;
+                                <td style="padding: 4px 0; border-right: 1px solid #dee2e6; font-weight: 700; background: #f8f9fa; font-size: 14px; color: #1a1a1a; white-space: nowrap; overflow: hidden; position: sticky; left: 0; z-index: 5; width: 16ch; min-width: 16ch; max-width: 16ch; box-sizing: border-box;">${level}</td>`;
 
                 dogsData.forEach(dog => {
                     const levelData = dog.levelSummary[level];
@@ -2282,58 +2285,15 @@
         }
 
         function printOwnerView() {
-            // Measure the actual rendered table height on screen, then scale it up
-            // to the print font size (18px print vs 14px screen) to estimate print height.
-            const tableEl   = document.querySelector('.owner-view-table');
-            const headerEl  = document.querySelector('.section-header');
-
-            const tableScreenH  = tableEl  ? tableEl.offsetHeight  : 400;
-            const headerScreenH = headerEl ? headerEl.offsetHeight : 30;
-
-            // Scale screen heights to print font size
-            const fontRatio = 18 / 14;
-            const estimatedPrintTableH  = tableScreenH  * fontRatio;
-            const estimatedPrintHeaderH = headerScreenH * fontRatio;
-
-            // Portrait letter: 11in − 0.5in margins = 10.5in = 1008px at 96dpi
-            // Subtract app header (~50px) and a small gap buffer
-            const pageH = 1008 - 50 - 20;
-            const contentH = estimatedPrintHeaderH + estimatedPrintTableH;
-            const scale = Math.min(1, pageH / contentH);
-
-            // Measure Col A's true content width at print font size (18px) so it stays
-            // fixed regardless of how many dog columns are hidden.
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            ctx.font = 'bold 18px Arial, sans-serif';
-            let maxTextW = 0;
-            document.querySelectorAll('.owner-view-table td:first-child').forEach(function(td) {
-                const w = ctx.measureText(td.textContent.trim()).width;
-                if (w > maxTextW) maxTextW = w;
-            });
-            const colAFixedW = Math.ceil(maxTextW * fontRatio) + 30; // scale to print size + padding
-
             let styleEl = document.getElementById('_print_scale_style');
             if (!styleEl) {
                 styleEl = document.createElement('style');
                 styleEl.id = '_print_scale_style';
                 document.head.appendChild(styleEl);
             }
-            const zoomRule = scale < 0.99
-                ? `@media print { #summaryContent { zoom: ${scale.toFixed(3)}; } }`
-                : '';
-            const colARule = `@media print {
-                .owner-view-table th:first-child,
-                .owner-view-table td:first-child {
-                    width: 14ch !important;
-                    min-width: 14ch !important;
-                    max-width: 14ch !important;
-                    text-align: center !important;
-                    white-space: nowrap !important;
-                    overflow: hidden !important;
-                }
-            }`;
-            styleEl.textContent = zoomRule + colARule;
+            // No zoom scaling — let the browser handle page fitting naturally.
+            // Col A is already locked to 16ch via inline styles and @media print CSS.
+            styleEl.textContent = '';
 
             // Build a descriptive PDF filename via document.title (browser uses this as the save name)
             const ownerId = (document.getElementById('ownerIdInput') || {}).value || '';
@@ -2523,8 +2483,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
