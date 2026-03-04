@@ -2111,7 +2111,7 @@
                         ${colgroupHtml}
                         <thead>
                             <tr style="background: #f8f9fa;">
-                                <th style="padding: 10px 8px; text-align: center; border-bottom: 2px solid #dee2e6; font-weight: 700; background: #f8f9fa; white-space: nowrap; width: 1px; color: #1a1a1a;">Level</th>`;
+                                <th style="padding: 10px 8px; text-align: center; border-bottom: 2px solid #dee2e6; font-weight: 700; background: #f8f9fa; white-space: nowrap; color: #1a1a1a; position: sticky; left: 0; z-index: 10;">Level</th>`;
 
             dogsData.forEach(dog => {
                 const escapedRegNumber = escapeJs(dog.regNumber);
@@ -2143,7 +2143,7 @@
             levelsWithData.forEach(level => {
                 html += `
                             <tr style="border-bottom: 1px solid #e0e0e0;">
-                                <td style="padding: 9px 8px; border-right: 1px solid #dee2e6; font-weight: 700; background: #f8f9fa; font-size: 14px; color: #1a1a1a; white-space: nowrap; width: 1px;">${level}</td>`;
+                                <td style="padding: 9px 8px; border-right: 1px solid #dee2e6; font-weight: 700; background: #f8f9fa; font-size: 14px; color: #1a1a1a; white-space: nowrap; position: sticky; left: 0; z-index: 5;">${level}</td>`;
 
                 dogsData.forEach(dog => {
                     const levelData = dog.levelSummary[level];
