@@ -2272,6 +2272,16 @@
                 </div>`;
 
             document.getElementById('summaryContent').innerHTML = html;
+
+            // Set initial dog column widths on render
+            (function() {
+                const allDogThs = Array.from(document.querySelectorAll('.owner-view-table thead th')).slice(1);
+                const visibleCount = allDogThs.filter(th => th.style.display !== 'none').length;
+                const newWidth = visibleCount > 0 ? (100 / visibleCount) + '%' : 'auto';
+                allDogThs.forEach(function(th) {
+                    th.style.width = newWidth;
+                });
+            })();
         }
 
         function toggleDogCol(idx, visible) {
