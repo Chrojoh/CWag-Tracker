@@ -1044,7 +1044,7 @@
                 return aceCount === 1 ? spec.first : spec.nth(aceCount);
             }
             const abbreviation = titleAbbreviations[level] || level;
-            return aceCount === 1 ? `${abbreviation}A` : `${abbreviation}Ax${aceCount}`;
+            return aceCount === 1 ? `${abbreviation}A` : `${abbreviation}AX${aceCount}`;
         }
 
         const certificateTemplateMapping = {
@@ -1145,7 +1145,7 @@
          */
         function getMetallicDesignation(levelAbbr, metal, count) {
             const tag = metal === 'bronze' ? 'Br' : metal === 'silver' ? 'Si' : 'Gd';
-            return `${levelAbbr}-${tag}X${count}`;
+            return count === 1 ? `${levelAbbr}-${tag}` : `${levelAbbr}-${tag}X${count}`;
         }
 
         /**
@@ -1210,7 +1210,7 @@
                 const pdfBytes = await pdfDoc.save();
                 downloadPDF(pdfBytes, `${registeredName}-${level.replace(/\s+/g,'-')}-${designation}-Certificate.pdf`);
 
-                btn.textContent = `${metal === 'bronze' ? '🥉' : metal === 'silver' ? '🥈' : '🥇'} ${metal.charAt(0).toUpperCase()+metal.slice(1)} Certificate`;
+                btn.textContent = `${metal === 'bronze' ? '' : metal === 'silver' ? '' : ''} ${metal.charAt(0).toUpperCase()+metal.slice(1)} Certificate`;
                 btn.disabled = false;
             } catch (error) {
                 console.error('Metallic certificate error:', error);
@@ -2274,9 +2274,9 @@
 
                 let extras = [];
                 if (aceCount)    extras.push(`${aceCount} ace${aceCount !== 1 ? 's' : ''}`);
-                if (bronzeCount) extras.push(`${bronzeCount} 🥉`);
-                if (silverCount) extras.push(`${silverCount} 🥈`);
-                if (goldCount)   extras.push(`${goldCount} 🥇`);
+                if (bronzeCount) extras.push(`${bronzeCount} `);
+                if (silverCount) extras.push(`${silverCount} `);
+                if (goldCount)   extras.push(`${goldCount} `);
 
                 let subtitleText = titleCount === 0
                     ? 'No titles earned yet'
@@ -2412,15 +2412,15 @@
                     <h4 style="color: #004085; margin-bottom: 10px;">Legend:</h4>
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); gap: 10px; font-size: 0.9rem; color: #004085;">
                         <div><span style="background: #d4edda; padding: 2px 6px; border-radius: 3px; margin-right: 8px;"><strong>Title!</strong></span> - Title earned</div>
-                        <div><span style="background: #d4edda; padding: 2px 6px; border-radius: 3px; margin-right: 8px;"><strong>Ace2</strong></span> - Has earned Ace2</div>
-                        <div><span style="background: linear-gradient(135deg, #e8f5e8, #d4edda); padding: 2px 6px; border-radius: 3px; margin-right: 8px;"><strong>3 → Ace</strong></span> - Needs 3 Q's for first Ace</div>
-                        <div><span style="background: linear-gradient(135deg, #e8f5e8, #d4edda); padding: 2px 6px; border-radius: 3px; margin-right: 8px;"><strong>7 → Ace3</strong></span> - Needs 7 Q's for next Ace level</div>
+                        <div><span style="background: #d4edda; padding: 2px 6px; border-radius: 3px; margin-right: 8px;"><strong>3→Ace</strong></span> - Needs 3 Q's for first Ace</div>
+                        <div><span style="background: linear-gradient(135deg, #e8f5e8, #d4edda); padding: 2px 6px; border-radius: 3px; margin-right: 8px;"><strong>Ace</strong></span> - First Ace earned</div>
+                        <div><span style="background: linear-gradient(135deg, #e8f5e8, #d4edda); padding: 2px 6px; border-radius: 3px; margin-right: 8px;"><strong>7→AceX2</strong></span> - Needs 7 Q's for AceX2</div>
                         <div><span style="background: #fff3cd; padding: 2px 6px; border-radius: 3px; margin-right: 8px;"><strong>3Q+1J → Title</strong></span> - Requirements to achieve Title</div>
                         <div><span style="color: #666; margin-right: 8px;"><strong>-</strong></span> - No entries at this level</div>
-                        <div><span style="color: #7a4210; font-weight: 700; margin-right: 8px;">🥉BrX1</span> - Bronze X1 earned (scent only)</div>
-                        <div><span style="color: #7a4210; font-weight: 700; margin-right: 8px;">🥉5→BrX1</span> - 5 Br Q's needed for Bronze X1 (open once title earned)</div>
-                        <div><span style="color: #4a5568; font-weight: 700; margin-right: 8px;">🥈SiX1</span> - Silver X1 earned (requires BrX1)</div>
-                        <div><span style="color: #856404; font-weight: 700; margin-right: 8px;">🥇GdX1</span> - Gold X1 earned (requires SiX1)</div>
+                        <div><span style="color: #7a4210; font-weight: 700; margin-right: 8px;">10→Br</span> - 10 Br Q's needed for Bronze (open once title earned)</div>
+                        <div><span style="color: #7a4210; font-weight: 700; margin-right: 8px;">Br</span> - Bronze earned · <span style="color: #7a4210; font-weight: 700;">BrX2</span> - second Bronze</div>
+                        <div><span style="color: #4a5568; font-weight: 700; margin-right: 8px;">Si / SiX2</span> - Silver (requires Br)</div>
+                        <div><span style="color: #856404; font-weight: 700; margin-right: 8px;">Gd / GdX2</span> - Gold (requires Si)</div>
                     </div>
                 </div>
             `;
@@ -2552,11 +2552,12 @@
                             if (aceQs >= 10) {
                                 const aceCount = Math.floor(aceQs / 10);
                                 const QsToNextAce = 10 - (aceQs % 10);
-                                const nextAceNumber = aceCount + 1;
+                                const nextAceLabel = aceCount + 1 === 1 ? 'Ace' : `AceX${aceCount + 1}`;
+                                const currAceLabel = aceCount === 1 ? 'Ace' : `AceX${aceCount}`;
                                 if (QsToNextAce === 10) {
-                                    lines.push(`<span style="color:#4b2d8f;font-weight:700;">Ace${aceCount}</span>`);
+                                    lines.push(`<span style="color:#4b2d8f;font-weight:700;">${currAceLabel}</span>`);
                                 } else {
-                                    lines.push(`<span style="color:#4b2d8f;font-weight:700;">${QsToNextAce}→Ace${nextAceNumber}</span>`);
+                                    lines.push(`<span style="color:#4b2d8f;font-weight:700;">${QsToNextAce}→${nextAceLabel}</span>`);
                                 }
                                 cellStyle += ' background: linear-gradient(135deg, #e8f5e8, #d4edda);';
                             } else {
@@ -2577,11 +2578,13 @@
                                 if (bronzeQs >= 10) {
                                     const brCount = Math.floor(bronzeQs / 10);
                                     const brRem = 10 - (bronzeQs % 10);
+                                    const currBr = brCount === 1 ? 'Br' : `BrX${brCount}`;
+                                    const nextBr = brCount + 1 === 1 ? 'Br' : `BrX${brCount+1}`;
                                     lines.push(brRem === 10
-                                        ? `<span style="color:#7a4210;font-weight:700;">🥉BrX${brCount}</span>`
-                                        : `<span style="color:#7a4210;font-weight:700;">🥉${brRem}→BrX${brCount+1}</span>`);
+                                        ? `<span style="color:#7a4210;font-weight:700;">${currBr}</span>`
+                                        : `<span style="color:#7a4210;font-weight:700;">${brRem}→${nextBr}</span>`);
                                 } else {
-                                    lines.push(`<span style="color:#7a4210;font-weight:700;">🥉${10-bronzeQs}→BrX1</span>`);
+                                    lines.push(`<span style="color:#7a4210;font-weight:700;">${10-bronzeQs}→Br</span>`);
                                 }
 
                                 // Silver — only shown once Bronze X1 is earned
@@ -2589,11 +2592,13 @@
                                     if (silverQs >= 10) {
                                         const siCount = Math.floor(silverQs / 10);
                                         const siRem = 10 - (silverQs % 10);
+                                        const currSi = siCount === 1 ? 'Si' : `SiX${siCount}`;
+                                        const nextSi = siCount + 1 === 1 ? 'Si' : `SiX${siCount+1}`;
                                         lines.push(siRem === 10
-                                            ? `<span style="color:#4a5568;font-weight:700;">🥈SiX${siCount}</span>`
-                                            : `<span style="color:#4a5568;font-weight:700;">🥈${siRem}→SiX${siCount+1}</span>`);
+                                            ? `<span style="color:#4a5568;font-weight:700;">${currSi}</span>`
+                                            : `<span style="color:#4a5568;font-weight:700;">${siRem}→${nextSi}</span>`);
                                     } else {
-                                        lines.push(`<span style="color:#4a5568;font-weight:700;">🥈${10-silverQs}→SiX1</span>`);
+                                        lines.push(`<span style="color:#4a5568;font-weight:700;">${10-silverQs}→Si</span>`);
                                     }
                                 }
 
@@ -2602,11 +2607,13 @@
                                     if (goldQs >= 10) {
                                         const gdCount = Math.floor(goldQs / 10);
                                         const gdRem = 10 - (goldQs % 10);
+                                        const currGd = gdCount === 1 ? 'Gd' : `GdX${gdCount}`;
+                                        const nextGd = gdCount + 1 === 1 ? 'Gd' : `GdX${gdCount+1}`;
                                         lines.push(gdRem === 10
-                                            ? `<span style="color:#856404;font-weight:700;">🥇GdX${gdCount}</span>`
-                                            : `<span style="color:#856404;font-weight:700;">🥇${gdRem}→GdX${gdCount+1}</span>`);
+                                            ? `<span style="color:#856404;font-weight:700;">${currGd}</span>`
+                                            : `<span style="color:#856404;font-weight:700;">${gdRem}→${nextGd}</span>`);
                                     } else {
-                                        lines.push(`<span style="color:#856404;font-weight:700;">🥇${10-goldQs}→GdX1</span>`);
+                                        lines.push(`<span style="color:#856404;font-weight:700;">${10-goldQs}→Gd</span>`);
                                     }
                                 }
                             }
@@ -2666,24 +2673,33 @@
                             const aceQs = Math.max(0, totalQs - titleInfo.titleQs);
                             const rem = aceQs % 10;
                             qsNeeded = rem === 0 ? 10 : 10 - rem;
-                            trackLabel = 'Ace';
+                            const nextAceCount = Math.floor(aceQs / 10) + 1;
+                            trackLabel = nextAceCount === 1 ? 'Ace' : `AceX${nextAceCount}`;
 
                             // For scent levels also find the lowest metallic need
                             if (isScent) {
                                 const { bronzeQs, silverQs, goldQs } = computeMetallicQs(levelData.records);
+                                const brNextCount = Math.floor(bronzeQs / 10) + 1;
                                 const brNeed = bronzeQs >= 10 ? (10 - bronzeQs % 10 === 10 ? 10 : 10 - bronzeQs % 10) : (10 - bronzeQs);
+                                const brLabel = brNextCount === 1 ? 'Br' : `BrX${brNextCount}`;
+
+                                const siNextCount = Math.floor(silverQs / 10) + 1;
                                 const siNeed = bronzeQs >= 10
                                     ? (silverQs >= 10 ? (10 - silverQs % 10 === 10 ? 10 : 10 - silverQs % 10) : (10 - silverQs))
                                     : null;
+                                const siLabel = siNextCount === 1 ? 'Si' : `SiX${siNextCount}`;
+
+                                const gdNextCount = Math.floor(goldQs / 10) + 1;
                                 const gdNeed = silverQs >= 10
                                     ? (goldQs >= 10 ? (10 - goldQs % 10 === 10 ? 10 : 10 - goldQs % 10) : (10 - goldQs))
                                     : null;
+                                const gdLabel = gdNextCount === 1 ? 'Gd' : `GdX${gdNextCount}`;
 
                                 const candidates = [
-                                    { need: qsNeeded, label: 'Ace' },
-                                    { need: brNeed,   label: '🥉Br' },
-                                    ...(siNeed !== null ? [{ need: siNeed, label: '🥈Si' }] : []),
-                                    ...(gdNeed !== null ? [{ need: gdNeed, label: '🥇Gd' }] : [])
+                                    { need: qsNeeded, label: trackLabel },
+                                    { need: brNeed,   label: `${brLabel}` },
+                                    ...(siNeed !== null ? [{ need: siNeed, label: `${siLabel}` }] : []),
+                                    ...(gdNeed !== null ? [{ need: gdNeed, label: `${gdLabel}` }] : [])
                                 ];
                                 candidates.sort((a, b) => a.need - b.need);
                                 qsNeeded  = candidates[0].need;
