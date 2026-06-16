@@ -1349,7 +1349,7 @@
         async function loadTitlePlacementData() {
             for (let attempt = 1; attempt <= 3; attempt++) {
                 try {
-                    const response = await fetch('Title Placement.xlsx', { method: 'GET', cache: 'no-cache' });
+                    const response = await fetch('Title_Placement.xlsx', { method: 'GET', cache: 'no-cache' });
                     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
                     const fileContent = await response.arrayBuffer();
