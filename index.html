@@ -1434,30 +1434,30 @@
             return titlePlacementData[level]?.certificateName || level;
         }
 
-       function getMetallicCertificateName(level, metal, count) {
-    const placementKey = metal === 'bronze' ? 'bronzeCertificateName'
-                       : metal === 'silver' ? 'silverCertificateName'
-                       : 'goldCertificateName';
-    const levelAbbr = titleAbbreviations[level] || level;
-    const designation = getMetallicDesignation(levelAbbr, metal, count);
-    const metalUpper = metal.toUpperCase();
+        function getMetallicCertificateName(level, metal, count) {
+            const placementKey = metal === 'bronze' ? 'bronzeCertificateName'
+                               : metal === 'silver' ? 'silverCertificateName'
+                               : 'goldCertificateName';
+            const levelAbbr = titleAbbreviations[level] || level;
+            const designation = getMetallicDesignation(levelAbbr, metal, count);
+            const metalUpper = metal.toUpperCase();
 
-    if (titlePlacementData[level]) {
-        // Priority 1: dedicated column (col E/F/G from updated spreadsheet)
-        let metalName = titlePlacementData[level][placementKey];
-        // Priority 2: derive from ace name — same data source getAceCertificateName uses
-        if (!metalName && titlePlacementData[level].aceCertificateName) {
-            metalName = titlePlacementData[level].aceCertificateName.replace(/\bACE\b/g, metalUpper);
-        }
-        if (metalName) {
-            return count === 1
-                ? `${metalName} (${designation})`
-                : `${metalName} x ${count} (${designation})`;
-        }
-    }
+            if (titlePlacementData[level]) {
+                // Priority 1: dedicated column (col E/F/G from updated spreadsheet)
+                let metalName = titlePlacementData[level][placementKey];
+                // Priority 2: derive from ace name — same data source getAceCertificateName uses
+                if (!metalName && titlePlacementData[level].aceCertificateName) {
+                    metalName = titlePlacementData[level].aceCertificateName.replace(/\bACE\b/g, metalUpper);
+                }
+                if (metalName) {
+                    return count === 1
+                        ? `${metalName} (${designation})`
+                        : `${metalName} x ${count} (${designation})`;
+                }
+            }
 
-    return designation;
-}
+            return designation;
+        }
 
         function getAceCertificateName(level, aceCount) {
             const aceDesignation = getAceDesignation(level, aceCount);
