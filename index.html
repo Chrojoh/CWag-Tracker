@@ -1198,13 +1198,16 @@
                 const designation = getMetallicDesignation(levelAbbr, metal, count);
 
                 // Build the full certificate name: "SCENT PATROL BRONZE (CW-SP-Br)"
-                // or "SCENT PATROL BRONZE x 2 (CW-SP-BrX2)" for subsequent increments
                 const placementKey = metal === 'bronze' ? 'bronzeCertificateName'
                                    : metal === 'silver' ? 'silverCertificateName'
                                    : 'goldCertificateName';
                 const metalUpper = metal.toUpperCase();
-                const baseName = titlePlacementData[level]?.[placementKey]
-                               || `${(titleAbbreviations[level] || level)} ${metalUpper}`;
+                // Try placement data first, then derive from ace name, then derive from certificate name
+                const placement = titlePlacementData[level];
+                const baseName = placement?.[placementKey]
+                               || (placement?.aceCertificateName ? placement.aceCertificateName.replace(/\bACE\b/g, metalUpper) : null)
+                               || (placement?.certificateName ? `${placement.certificateName.toUpperCase()} ${metalUpper}` : null)
+                               || `${level} ${metalUpper}`;
                 const fullMetallicName = count === 1
                     ? `${baseName} (${designation})`
                     : `${baseName} x ${count} (${designation})`;
