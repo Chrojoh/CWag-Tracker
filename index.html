@@ -1291,7 +1291,7 @@
                 const timeoutId = setTimeout(() => {
                     console.warn('⏰ DogInfo loading timed out - continuing without it');
                     resolve(false);
-                }, 2000);
+                }, 8000);
 
                 fetch('DogInfo.xlsx', {
                     method: 'GET',
@@ -1370,7 +1370,7 @@
                 const timeoutId = setTimeout(() => {
                     console.warn('⏰ Title Placement loading timed out - continuing without it');
                     resolve(false);
-                }, 2000);
+                }, 8000);
 
                 fetch('Title Placement.xlsx', {
                     method: 'GET',
