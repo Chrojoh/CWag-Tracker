@@ -2545,7 +2545,7 @@
 // Builds a portable card using only exact DogInfo values, including dogs without trial results.
 function registrationCardDocument(dogs, logoUrl) {
     const groups = new Map();
-    dogs.forEach(dog => {
+    [...dogs].sort((a, b) => a.regNumber.localeCompare(b.regNumber, undefined, {numeric: true})).forEach(dog => {
         const handler = dog.handlerName || 'Handler not recorded in DogInfo';
         if (!groups.has(handler)) groups.set(handler, []);
         groups.get(handler).push(dog);
