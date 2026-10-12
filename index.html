@@ -2552,57 +2552,14 @@ function registrationCardDocument(dogs, logoUrl) {
     });
     const sections = Array.from(groups, ([handler, entries]) => `<section><p class="label">HANDLER</p><h2>${escapeHtml(handler)}</h2><table><thead><tr><th>Dog call name</th><th>Registration number</th></tr></thead><tbody>${entries.map(dog => `<tr><td>${escapeHtml(dog.callName || 'Call name not recorded')}</td><td class="number">${escapeHtml(dog.regNumber)}</td></tr>`).join('')}</tbody></table></section>`).join('');
     return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>C-WAGS Registration Card</title><style>
-    *{box-sizing:border-box}body{margin:0;padding:24px 16px;background:#eef2f6;color:#24374b;font-family:Arial,sans-serif}.card{max-width:600px;margin:auto;background:white;border:1px solid #ccd6e0;border-radius:18px;overflow:hidden}header{display:flex;align-items:center;gap:18px;padding:24px;border-bottom:5px solid #7562ad}header img{width:88px;height:88px;object-fit:contain}h1{font-size:24px;margin:0 0 8px}header p{margin:0;color:#52657a;font-size:14px}section{padding:24px}.label{font-size:11px;letter-spacing:2px;color:#627488;margin:0 0 7px}h2{font-size:24px;margin:0 0 22px;overflow-wrap:anywhere}table{width:100%;border-collapse:collapse;table-layout:fixed}th{text-align:left;font-size:12px;color:#627488;padding:0 0 12px}th:last-child{width:55%;text-align:right}td{padding:16px 0;border-top:1px solid #e3e9ef;overflow-wrap:anywhere}td:first-child{padding-right:12px;font-weight:bold}.number{text-align:right;font:600 17px monospace}footer{padding:16px 24px;background:#f5f7fa;font-size:12px;color:#52657a;line-height:1.6}.controls{max-width:600px;margin:20px auto;display:flex;gap:10px;flex-wrap:wrap}button{background:#34495e;color:white;border:0;border-radius:8px;padding:13px 16px;font-size:14px;cursor:pointer}button:disabled{opacity:.5}.help{max-width:600px;margin:12px auto;font-size:14px;line-height:1.6;color:#52657a}#status{max-width:600px;margin:auto;font-size:14px}@media(max-width:380px){header{padding:16px;gap:12px}header img{width:64px;height:64px}section{padding:18px}.number{font-size:14px}}@media print{@page{margin:15mm}body{background:white;padding:0}.controls,.help,#status,#phoneImagePanel{display:none}.card{border-radius:0;max-width:160mm}tr,header,h2{break-inside:avoid}thead{display:table-header-group}}
-    </style></head><body><article class="card" id="card"><header><img id="cardLogo" src="${escapeHtml(logoUrl)}" alt="C-WAGS logo"><div><h1>Registration Card</h1><p>C-WAGS · Trial entry reference</p></div></header>${sections}<footer>For consistency and accuracy, please enter your dog in trials using the name shown on this registration card.<br>Saved ${escapeHtml(new Date().toLocaleDateString())} · Create a new card after registration details change.</footer></article><div class="controls"><button onclick="window.print()">Print / Save as PDF</button><button id="imageButton" onclick="saveImage()">View card image</button><button id="htmlButton" onclick="saveCard()">Save offline card</button></div><div class="help"><p><strong>Keep your card handy:</strong> save it in a Dog Registration album or folder. You can also take a screenshot of the card and crop it.</p><details><summary>Saving on Android</summary><p>Touch and hold the card image below and choose Download image or the saving option your browser provides. You can find downloads in Chrome → Downloads or Files → Downloads. Gallery or Photos may also show it under Downloads.</p></details><details><summary>Saving on iPhone</summary><p>Touch and hold the card image below and look for Save to Photos or Add to Photos. If using Share image, look for Save Image. Download image saves a file; check Files → Downloads.</p></details><p>A photo widget may let you select your saved image, depending on the phone and widget. This card does not install a widget.</p></div><section id="phoneImagePanel" hidden style="max-width:600px;margin:20px auto;padding:0"><h2 style="font-size:20px;margin-bottom:12px">Your card image</h2><p class="help">Touch and hold the image for saving options. For a screenshot, scroll until the image fills your screen.</p><img id="phoneCardImage" alt="Registration card with handler names, dog call names and registration numbers" style="display:block;width:100%;height:auto;background:white"><div class="controls"><button onclick="downloadImage()">Download image</button><button onclick="shareImage()">Share image</button></div></section><p id="status" role="status"></p><script>
-    function download(blob, name){const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),60000)}
-    function saveCard(){download(new Blob(['<!DOCTYPE html>'+document.documentElement.outerHTML],{type:'text/html'}),'cwags-registration-card.html')}
-    let preparedImage = null;
-    function downloadImage(){
-        if(!preparedImage)return;
-        download(preparedImage,'cwags-registration-card.png');
-        document.getElementById('status').textContent='Downloaded as cwags-registration-card.png. On Android, look in Chrome → Downloads or Files → Downloads. On iPhone, look in Files → Downloads. Move it to a Dog Registration folder or album for easy access.';
-    }
-    async function shareImage(){
-        if(!preparedImage)return;
-        try{
-            const file=new File([preparedImage],'cwags-registration-card.png',{type:'image/png'});
-            if(navigator.canShare&&navigator.canShare({files:[file]}))await navigator.share({files:[file],title:'C-WAGS Registration Card'});
-            else document.getElementById('status').textContent='Sharing is unavailable in this browser. Touch and hold the card image to save it, or use Download image.';
-        }catch(error){document.getElementById('status').textContent=error.name==='AbortError'?'Sharing cancelled. Your card image is still here.':'Could not share. Use Download image or touch and hold the card image.'}
-    }
-    async function saveImage(){
-        const button=document.getElementById('imageButton');button.disabled=true;
-        try{
-            const card=document.getElementById('card');const canvas=document.createElement('canvas');canvas.width=1200;
-            const sections=Array.from(card.querySelectorAll('section'));
-            const layout=document.createElement('canvas').getContext('2d');
-            function lines(value,width,font){layout.font=font;const result=[];let line='';for(const char of value){if(layout.measureText(line+char).width>width&&line){result.push(line);line=''}line+=char}result.push(line);return result}
-            let height=270;
-            const entries=sections.map(section=>{const heading=lines(section.querySelector('h2').textContent,1060,'bold 44px Arial');const rows=Array.from(section.querySelectorAll('tbody tr')).map(row=>({name:lines(row.cells[0].textContent,450,'bold 32px Arial'),number:lines(row.cells[1].textContent,540,'bold 32px monospace')}));height+=heading.length*54+110+rows.reduce((n,row)=>n+Math.max(row.name.length,row.number.length)*42+38,0);return {heading,rows}});
-            const foot=lines(card.querySelector('footer').textContent,1060,'24px Arial');canvas.height=height+foot.length*34+60;
-            const c=canvas.getContext('2d');c.fillStyle='white';c.fillRect(0,0,1200,canvas.height);c.fillStyle='#24374b';
-            const logo=document.getElementById('cardLogo');if(logo.complete&&logo.naturalWidth)c.drawImage(logo,60,40,160,160);
-            c.font='bold 48px Arial';c.fillText('Registration Card',260,112);c.font='28px Arial';c.fillText('C-WAGS · Trial entry reference',260,158);c.fillStyle='#7562ad';c.fillRect(0,230,1200,8);let y=285;
-            for(const entry of entries){c.fillStyle='#627488';c.font='22px Arial';c.fillText('HANDLER',60,y);y+=55;c.fillStyle='#24374b';c.font='bold 44px Arial';for(const line of entry.heading){c.fillText(line,60,y);y+=54}y+=20;c.font='24px Arial';c.fillText('Dog call name',60,y);c.textAlign='right';c.fillText('Registration number',1140,y);c.textAlign='left';y+=25;
-            for(const row of entry.rows){c.strokeStyle='#e3e9ef';c.beginPath();c.moveTo(60,y);c.lineTo(1140,y);c.stroke();y+=43;c.font='bold 32px Arial';row.name.forEach((line,i)=>c.fillText(line,60,y+i*42));c.font='bold 32px monospace';c.textAlign='right';row.number.forEach((line,i)=>c.fillText(line,1140,y+i*42));c.textAlign='left';y+=Math.max(row.name.length,row.number.length)*42-5}y+=35}
-            c.fillStyle='#52657a';c.font='24px Arial';for(const line of foot){c.fillText(line,60,y);y+=34}
-            const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));if(!blob)throw new Error('Image creation failed');
-            preparedImage=blob;
-            document.getElementById('phoneCardImage').src=canvas.toDataURL('image/png');
-            document.getElementById('phoneImagePanel').hidden=false;
-            document.getElementById('phoneImagePanel').scrollIntoView({behavior:'smooth',block:'start'});
-            document.getElementById('status').textContent='Your image is ready. Touch and hold it to see your phone’s saving options, or use Download image. Sharing is optional.';
-        }catch(error){document.getElementById('status').textContent=error.name==='AbortError'?'Save cancelled.':'Could not save an image. Use Print / Save as PDF or Save offline card.'}finally{button.disabled=false}
-    }
-    // Restore an image saved inside an offline card without needing the tracker.
-    if(document.getElementById('phoneCardImage').getAttribute('src')){
-        fetch(document.getElementById('phoneCardImage').src).then(response=>response.blob()).then(blob=>{preparedImage=blob});
-    }
-    <\/script></body></html>`;
+    *{box-sizing:border-box}body{margin:0;padding:24px 16px;background:#eef2f6;color:#24374b;font-family:Arial,sans-serif}.card{max-width:600px;margin:auto;background:white;border:1px solid #ccd6e0;border-radius:18px;overflow:hidden}header{display:flex;align-items:center;gap:18px;padding:24px;border-bottom:5px solid #7562ad}header img{width:88px;height:88px;object-fit:contain}h1{font-size:24px;margin:0 0 8px}header p{margin:0;color:#52657a;font-size:14px}section{padding:24px}.label{font-size:11px;letter-spacing:2px;color:#627488;margin:0 0 7px}h2{font-size:24px;margin:0 0 22px;overflow-wrap:anywhere}table{width:100%;border-collapse:collapse;table-layout:fixed}th{text-align:left;font-size:12px;color:#627488;padding:0 0 12px}th:last-child{width:55%;text-align:right}td{padding:16px 0;border-top:1px solid #e3e9ef;overflow-wrap:anywhere}td:first-child{padding-right:12px;font-weight:bold}.number{text-align:right;font:600 17px monospace}footer{padding:16px 24px;background:#f5f7fa;font-size:16px;color:#52657a;line-height:1.6;text-align:center;word-break:normal;overflow-wrap:normal;hyphens:none;break-inside:avoid}footer p{margin:0 0 10px}footer p:last-child{margin-bottom:0}.controls{max-width:600px;margin:20px auto;display:flex;gap:10px;flex-wrap:wrap}button{background:#34495e;color:white;border:0;border-radius:8px;padding:13px 16px;font-size:14px;cursor:pointer}button:disabled{opacity:.5}.help{max-width:600px;margin:12px auto;font-size:14px;line-height:1.6;color:#52657a}#status{max-width:600px;margin:auto;font-size:14px}@media(max-width:380px){header{padding:16px;gap:12px}header img{width:64px;height:64px}section{padding:18px}.number{font-size:14px}}@media print{@page{margin:15mm}body{background:white;padding:0}.controls,.help,#status,#phoneImagePanel{display:none}.card{border-radius:0;max-width:160mm}tr,header,h2{break-inside:avoid}thead{display:table-header-group}}
+    </style></head><body><article class="card" id="card"><header><img id="cardLogo" src="${escapeHtml(logoUrl)}" alt="C-WAGS logo"><div><h1>Registration Card</h1><p>C-WAGS · Trial entry reference</p></div></header>${sections}<footer><p>For consistency and accuracy, please enter your dog in trials using the name shown on this registration card.</p><p>Create a new card after registration details change.</p><p>Created ${escapeHtml(new Date().toLocaleDateString())}</p></footer></article><div class="controls"><button id="printCardButton" onclick="window.print()">Print / Save as PDF</button></div><p class="help">Use your device’s print menu to print or choose Save as PDF. You can also take a screenshot of this card.</p><p id="status" role="status"></p></body></html>`;
 }
 
 async function showRegistrationCard() {
-    const dogs = currentOwnerDogsData.map(dog => ({regNumber: dog.regNumber, ...dogInfoData[dog.regNumber]}));
+    const selectedDogs = currentOwnerDogsData.filter(dog => ownerViewDogVisibility[dog.dogIdx] !== false);
+    if (!selectedDogs.length) { alert("Tick at least one dog in Owner View to create a registration card."); return; }
+    const dogs = selectedDogs.map(dog => ({regNumber: dog.regNumber, ...dogInfoData[dog.regNumber]}));
     if (!dogs.length || dogs.some(dog => !dogInfoData[dog.regNumber])) {
         alert('The complete DogInfo records are needed to create an accurate card. Reload the tracker after DogInfo.xlsx is available.');
         return;
@@ -2613,9 +2570,8 @@ async function showRegistrationCard() {
     cardWindow.document.write(registrationCardDocument(dogs, logoUrl));
     cardWindow.document.close();
     const doc = cardWindow.document;
-    doc.getElementById('imageButton').disabled = true;
-    doc.getElementById('htmlButton').disabled = true;
-    doc.getElementById('status').textContent = 'Preparing logo for offline saving…';
+    doc.getElementById('printCardButton').disabled = true;
+    doc.getElementById('status').textContent = 'Preparing logo for printing…';
     try {
         const response = await fetch(logoUrl, {signal: AbortSignal.timeout(15000)});
         if (!response.ok) throw new Error('Logo unavailable');
@@ -2624,13 +2580,11 @@ async function showRegistrationCard() {
         const logo = doc.getElementById('cardLogo');
         logo.src = dataUrl;
         await logo.decode();
-        doc.getElementById('status').textContent = 'Ready to save with the tracker logo.';
-        doc.getElementById('imageButton').disabled = false;
-        doc.getElementById('htmlButton').disabled = false;
-        // Prepare and display the image without opening a share sheet or downloading a file.
-        await cardWindow.saveImage();
+        doc.getElementById('status').textContent = '';
+        doc.getElementById('printCardButton').disabled = false;
     } catch (error) {
-        doc.getElementById('status').textContent = 'The logo could not be prepared for offline saving. Close this card and try again when connected, or print the card now.';
+        doc.getElementById('status').textContent = 'The logo could not be loaded. Close this card and try again when connected, or print the card now.';
+        doc.getElementById('printCardButton').disabled = false;
     }
 }
 
