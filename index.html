@@ -1151,8 +1151,10 @@
                     const jsonData = XLSX.utils.sheet_to_json(sheet, {header: 1});
                     
                     let loadedCount = 0;
-                    jsonData.slice(1).forEach(row => {
-                       if (row && row[0]) {
+                    // DogInfo can be supplied with or without a heading row.
+                    // Identify records by their registration number so the first dog is retained.
+                    jsonData.forEach(row => {
+                       if (row && row[0] && /^(?:\d{2}-\d{4}-\d{2}|\d{8})$/.test(row[0].toString().trim())) {
                             const regNumber = row[0].toString().trim();
                             const callName = row[1] ? row[1].toString().trim() : '';
                             const registeredName = row[2] ? row[2].toString().trim() : '';
