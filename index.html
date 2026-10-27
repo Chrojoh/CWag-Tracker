@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dog Trialing Records Tracker</title>
+    <link rel="manifest" href="./manifest.webmanifest">
+    <meta name="theme-color" content="#34495e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="C-WAGS Beta">
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+    <link rel="stylesheet" href="./pwa.css">
     <style>
         * {
             margin: 0;
@@ -67,7 +73,7 @@
         .logo {
             width: 160px;
             height: 160px;
-            background-image: url('https://raw.githubusercontent.com/cwagtracker/Tracker/main/cwags-logo.png');
+            background-image: url('./cwags-logo.png');
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
@@ -909,10 +915,26 @@
             </div>
         </div>
 
+        <aside class="app-tools" aria-label="App installation and saved records">
+          <strong>C-WAGS Tracker · Installable beta</strong>
+          <div class="app-tools-actions">
+            <button id="installTracker" type="button" hidden>Install tracker</button>
+            <button id="checkUpdates" type="button">Check for updates</button>
+            <button id="reloadTracker" type="button" hidden>Load updated records</button>
+            <button id="updateApp" type="button" hidden>Update app</button>
+          </div>
+          <p id="offlineStatus" role="status" aria-live="polite">Preparing saved records…</p>
+          <small id="offlineDetails">Stay connected until the app says ready for offline use.</small>
+          <details><summary>Install on your phone</summary>
+            <p><strong>Android:</strong> tap Install tracker if shown, or use Chrome’s menu → Add to Home screen / Install app.</p>
+            <p><strong>iPhone:</strong> open this website in Safari, tap Share → Add to Home Screen, enable Open as Web App if offered, then Add.</p>
+            <p>After installation, open the home-screen icon and wait for Ready for offline use before disconnecting. Printing requires your phone’s print/PDF support.</p>
+          </details>
+        </aside>
         <div class="search-section">
             <div class="search-container">
-                <input type="text" id="searchInput" class="search-input" 
-                       placeholder="Enter Registration Number (e.g., 17-1734-06)" 
+                <input type="text" id="searchInput" class="search-input"
+                       placeholder="Enter Registration Number (e.g., 17-1734-06)"
                        onkeypress="handleKeyPress(event)">
                 <button class="search-btn" onclick="searchDog()">Search Dog Records</button>
                 <button class="owner-view-btn" onclick="showOwnerView()">Owner View by ID</button>
@@ -953,14 +975,15 @@
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
-    <script src="https://unpkg.com/@pdf-lib/fontkit@1.1.1/dist/fontkit.umd.min.js" onerror="console.error('Fontkit failed to load from unpkg')"></script>
+    <script src="./pwa.js"></script>
+    <script src="./vendor/xlsx.full.min.js"></script>
+    <script src="./vendor/pdf-lib.min.js"></script>
+    <script src="./vendor/fontkit.umd.min.js" onerror="console.error('Fontkit failed to load from unpkg')"></script>
     <script>
         if (typeof fontkit === 'undefined') {
             console.log('Loading fontkit from backup CDN...');
             const script = document.createElement('script');
-            script.src = 'https://cdn.skypack.dev/@pdf-lib/fontkit@1.1.1';
+            script.src = './vendor/fontkit.umd.min.js';
             script.onerror = () => console.error('Backup fontkit also failed');
             document.head.appendChild(script);
         }
@@ -970,7 +993,7 @@
         let currentDogRecords = [];
         let dogInfoData = {};
         let titlePlacementData = {};
-        
+
         // Track which dog columns are currently visible in owner view
         let ownerViewDogVisibility = {};
 
@@ -1140,16 +1163,16 @@
                     return response.arrayBuffer();
                 })
                 .then(fileContent => {
-                    const workbook = XLSX.read(new Uint8Array(fileContent), { 
-                        cellStyles: true, 
-                        cellFormulas: true, 
-                        cellDates: true 
+                    const workbook = XLSX.read(new Uint8Array(fileContent), {
+                        cellStyles: true,
+                        cellFormulas: true,
+                        cellDates: true
                     });
-                    
+
                     const sheetName = workbook.SheetNames[0];
                     const sheet = workbook.Sheets[sheetName];
                     const jsonData = XLSX.utils.sheet_to_json(sheet, {header: 1});
-                    
+
                     let loadedCount = 0;
                     // DogInfo can be supplied with or without a heading row.
                     // Identify records by their registration number so the first dog is retained.
@@ -1159,7 +1182,7 @@
                             const callName = row[1] ? row[1].toString().trim() : '';
                             const registeredName = row[2] ? row[2].toString().trim() : '';
                             const handlerName = row[3] ? row[3].toString().trim() : '';
-                            
+
                             dogInfoData[regNumber] = {
                                 callName: callName,
                                 handlerName: handlerName,
@@ -1168,7 +1191,7 @@
                             loadedCount++;
                         }
                     });
-                    
+
                     console.log('✅ DogInfo data loaded:', loadedCount, 'dogs');
                     resolve(true);
                 })
@@ -1221,23 +1244,23 @@
                     return response.arrayBuffer();
                 })
                 .then(fileContent => {
-                    const workbook = XLSX.read(new Uint8Array(fileContent), { 
-                        cellStyles: true, 
-                        cellFormulas: true, 
-                        cellDates: true 
+                    const workbook = XLSX.read(new Uint8Array(fileContent), {
+                        cellStyles: true,
+                        cellFormulas: true,
+                        cellDates: true
                     });
-                    
+
                     const sheetName = workbook.SheetNames[0];
                     const sheet = workbook.Sheets[sheetName];
                     const jsonData = XLSX.utils.sheet_to_json(sheet, {header: 1});
-                    
+
                     let loadedCount = 0;
                     jsonData.slice(1).forEach(row => {
                         if (row && row[1] && row[2] && row[3]) {
                             const className = row[1].toString().trim();
                             const certificateName = row[2].toString().trim();
                             const aceCertificateName = row[3].toString().trim();
-                            
+
                             titlePlacementData[className] = {
                                 certificateName: certificateName,
                                 aceCertificateName: aceCertificateName
@@ -1245,7 +1268,7 @@
                             loadedCount++;
                         }
                     });
-                    
+
                     console.log('✅ Title Placement data loaded:', loadedCount, 'classes');
                     resolve(true);
                 })
@@ -1282,7 +1305,7 @@
 
         function calculateOptimalPDFFontSize(text, font, maxWidth, defaultSize, minSize = 8) {
             let fontSize = defaultSize;
-            
+
             while (fontSize >= minSize) {
                 const textWidth = font.widthOfTextAtSize(text, fontSize);
                 if (textWidth <= maxWidth) {
@@ -1297,7 +1320,7 @@
             const optimalSize = calculateOptimalPDFFontSize(text, font, maxWidth, defaultSize, minSize);
             const textWidth = font.widthOfTextAtSize(text, optimalSize);
             const x = centerX - (textWidth / 2);
-            
+
             page.drawText(text, {
                 x: x,
                 y: y,
@@ -1305,17 +1328,17 @@
                 font: font,
                 color: color
             });
-            
+
             return optimalSize;
         }
 
         function drawTextWithAlignmentAndDynamicSize(page, text, config, font, maxWidth = null, defaultSize = null) {
             let fontSize = defaultSize || config.size;
-            
+
             if (maxWidth && fontSize) {
                 fontSize = calculateOptimalPDFFontSize(text, font, maxWidth, fontSize);
             }
-            
+
             let x = config.x;
             if (config.align === 'center') {
                 const textWidth = font.widthOfTextAtSize(text, fontSize);
@@ -1324,12 +1347,12 @@
                 const textWidth = font.widthOfTextAtSize(text, fontSize);
                 x = config.x - textWidth;
             }
-            
+
             page.drawText(text, {
                 x: x, y: config.y, size: fontSize, font: font,
                 color: PDFLib.rgb(config.color[0], config.color[1], config.color[2])
             });
-            
+
             return fontSize;
         }
 
@@ -1352,14 +1375,14 @@
                 const handlerName = getHandlerNameFromDogInfo(regNumber) || 'Handler Name';
                 const registeredName = getRegisteredNameFromDogInfo(regNumber) || 'Dog Name';
 
-                const templateUrl = `https://raw.githubusercontent.com/Cwagtracker/Tracker/main/templates/${templateInfo.template}`;
+                const templateUrl = `./templates/${templateInfo.template}`;
                 const response = await fetch(templateUrl);
                 if (!response.ok) throw new Error(`Template not found: ${templateUrl}`);
-                
+
                 const templateBytes = await response.arrayBuffer();
                 const pdfDoc = await PDFLib.PDFDocument.load(templateBytes);
                 const firstPage = pdfDoc.getPages()[0];
-                
+
                 const font = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
                 const timesBold = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRomanBold);
                 let maiandraFont = timesBold;
@@ -1368,10 +1391,10 @@
                     try {
                         pdfDoc.registerFontkit(fontkit);
                         const fontUrls = [
-                            'https://cdn.jsdelivr.net/gh/cwagtracker/Tracker@main/fonts/Maiandra%20GD.TTF',
-                            'https://raw.githubusercontent.com/cwagtracker/Tracker/main/fonts/Maiandra%20GD.TTF'
+                            './fonts/Maiandra%20GD.TTF',
+                            './fonts/Maiandra%20GD.TTF'
                         ];
-                        
+
                         for (const fontUrl of fontUrls) {
                             try {
                                 const fontResponse = await fetch(fontUrl, { mode: 'cors' });
@@ -1394,26 +1417,26 @@
                 const handlerMaxWidth = 710 - 72;
                 const handlerCenterX = 72 + (handlerMaxWidth / 2);
                 drawCenteredTextWithDynamicSize(
-                    firstPage, 
-                    handlerName, 
-                    handlerCenterX, 
-                    titleCertificateConfig.handlerName.y, 
-                    maiandraFont, 
-                    PDFLib.rgb(0, 0, 0), 
-                    handlerMaxWidth, 
+                    firstPage,
+                    handlerName,
+                    handlerCenterX,
+                    titleCertificateConfig.handlerName.y,
+                    maiandraFont,
+                    PDFLib.rgb(0, 0, 0),
+                    handlerMaxWidth,
                     titleCertificateConfig.handlerName.size
                 );
 
                 const dogMaxWidth = 710 - 72;
                 const dogCenterX = 72 + (dogMaxWidth / 2);
                 drawCenteredTextWithDynamicSize(
-                    firstPage, 
-                    registeredName, 
-                    dogCenterX, 
-                    titleCertificateConfig.dogName.y, 
-                    maiandraFont, 
-                    PDFLib.rgb(0, 0, 0), 
-                    dogMaxWidth, 
+                    firstPage,
+                    registeredName,
+                    dogCenterX,
+                    titleCertificateConfig.dogName.y,
+                    maiandraFont,
+                    PDFLib.rgb(0, 0, 0),
+                    dogMaxWidth,
                     titleCertificateConfig.dogName.size
                 );
 
@@ -1427,7 +1450,7 @@
                     font: maiandraFont,
                     color: PDFLib.rgb(0, 0, 0)
                 });
-                
+
                 const dateConfig = titleCertificateConfig.dateEarned;
                 firstPage.drawText('On ', {
                     x: dateConfig.x - 20, y: dateConfig.y, size: dateConfig.size, font: font,
@@ -1452,7 +1475,7 @@
                 });
 
                 const pdfBytes = await pdfDoc.save();
-                
+
                 downloadPDF(pdfBytes, `${registeredName}-${level.replace(/\s+/g, '-')}-Title-Certificate.pdf`);
                 btn.textContent = '📜 Title Certificate';
                 btn.disabled = false;
@@ -1460,7 +1483,7 @@
             } catch (error) {
                 console.error('Certificate generation error:', error);
                 alert(`Unable to generate certificate: ${error.message}`);
-                
+
                 const btn = event.target;
                 btn.textContent = '📜 Title Certificate';
                 btn.disabled = false;
@@ -1471,21 +1494,21 @@
             const sortedRecords = records
                 .filter(r => r.Qs > 0 && r.date instanceof Date && !isNaN(r.date))
                 .sort((a, b) => a.date - b.date);
-            
+
             let cumulativeQs = 0;
             const aceEarnedDates = [];
-            
+
             for (const record of sortedRecords) {
                 const prevQs = cumulativeQs;
                 cumulativeQs += record.Qs;
-                
+
                 if (prevQs >= titleQs && cumulativeQs > titleQs) {
                     const prevAceQs = prevQs - titleQs;
                     const newAceQs = cumulativeQs - titleQs;
-                    
+
                     const prevAceCount = Math.floor(prevAceQs / 10);
                     const newAceCount = Math.floor(newAceQs / 10);
-                    
+
                     for (let i = prevAceCount + 1; i <= newAceCount; i++) {
                         aceEarnedDates.push({
                             aceNumber: i,
@@ -1494,7 +1517,7 @@
                     }
                 }
             }
-            
+
             return aceEarnedDates;
         }
 
@@ -1528,14 +1551,14 @@
                 const handlerName = getHandlerNameFromDogInfo(regNumber) || 'Handler Name';
                 const registeredName = getRegisteredNameFromDogInfo(regNumber) || 'Dog Name';
 
-                const templateUrl = 'https://raw.githubusercontent.com/cwagtracker/Tracker/main/templates/Ace.pdf';
+                const templateUrl = './templates/Ace.pdf';
                 const response = await fetch(templateUrl);
                 if (!response.ok) throw new Error(`ACE template not found: ${templateUrl}`);
-                
+
                 const templateBytes = await response.arrayBuffer();
                 const pdfDoc = await PDFLib.PDFDocument.load(templateBytes);
                 const firstPage = pdfDoc.getPages()[0];
-                
+
                 const helvetica = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
                 const timesBold = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRomanBold);
                 let maiandraFont = timesBold;
@@ -1544,10 +1567,10 @@
                     try {
                         pdfDoc.registerFontkit(fontkit);
                         const fontUrls = [
-                            'https://cdn.jsdelivr.net/gh/cwagtracker/Tracker@main/fonts/Maiandra%20GD.TTF',
-                            'https://raw.githubusercontent.com/cwagtracker/Tracker/main/fonts/Maiandra%20GD.TTF'
+                            './fonts/Maiandra%20GD.TTF',
+                            './fonts/Maiandra%20GD.TTF'
                         ];
-                        
+
                         for (const fontUrl of fontUrls) {
                             try {
                                 const fontResponse = await fetch(fontUrl, { mode: 'cors' });
@@ -1566,27 +1589,27 @@
 
                 const callNameMaxWidth = 710 - 72;
                 drawTextWithAlignmentAndDynamicSize(
-                    firstPage, 
-                    registeredName, 
-                    aceCertificateConfig.callName, 
-                    maiandraFont, 
-                    callNameMaxWidth, 
+                    firstPage,
+                    registeredName,
+                    aceCertificateConfig.callName,
+                    maiandraFont,
+                    callNameMaxWidth,
                     aceCertificateConfig.callName.size
                 );
 
                 const handlerMaxWidthAce = 690 - 235;
                 drawTextWithAlignmentAndDynamicSize(
-                    firstPage, 
-                    handlerName, 
-                    aceCertificateConfig.handlerName, 
-                    maiandraFont, 
-                    handlerMaxWidthAce, 
+                    firstPage,
+                    handlerName,
+                    aceCertificateConfig.handlerName,
+                    maiandraFont,
+                    handlerMaxWidthAce,
                     aceCertificateConfig.handlerName.size
                 );
 
                 drawTextWithAlignmentAndDynamicSize(firstPage, regNumber, aceCertificateConfig.registrationNumber, helvetica);
                 drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificateConfig.levelAbbreviation, maiandraFont);
-                
+
                 const pdfBytes = await pdfDoc.save();
                 downloadPDF(pdfBytes, `${registeredName}-${level.replace(/\s+/g, '-')}-ACE-Certificate.pdf`);
 
@@ -1596,7 +1619,7 @@
             } catch (error) {
                 console.error('ACE certificate generation error:', error);
                 alert(`Unable to generate ACE certificate: ${error.message}`);
-                
+
                 const btn = event.target;
                 btn.textContent = '🏆 Ace Certificate';
                 btn.disabled = false;
@@ -1621,9 +1644,9 @@
 
         function formatRegistrationNumber(input) {
             if (!input) return '';
-            
+
             let cleaned = input.replace(/[^0-9-]/g, '');
-            
+
             if (cleaned.includes('-')) {
                 let parts = cleaned.split('-');
                 if (parts.length === 3) {
@@ -1633,7 +1656,7 @@
                     return `${part1}-${part2}-${part3}`;
                 }
             }
-            
+
             const digitsOnly = cleaned.replace(/-/g, '');
             if (digitsOnly.length >= 6) {
                 const part1 = digitsOnly.substring(0, 2).padStart(2, '0');
@@ -1641,11 +1664,11 @@
                 const part3 = digitsOnly.substring(6, 8).padStart(2, '0');
                 return `${part1}-${part2}-${part3}`;
             }
-            
+
             if (digitsOnly.length === 4) {
                 return `XX-${digitsOnly}-XX`;
             }
-            
+
             return cleaned;
         }
 
@@ -1662,9 +1685,9 @@
             }
 
             const formattedSearch = formatRegistrationNumber(searchInput);
-            
-            const dogRecords = trialingData.filter(record => 
-                record.registrationNumber && 
+
+            const dogRecords = trialingData.filter(record =>
+                record.registrationNumber &&
                 record.registrationNumber.toString().toLowerCase() === formattedSearch.toLowerCase()
             );
 
@@ -1672,12 +1695,12 @@
 
             if (dogRecords.length === 0 && !dogExistsInInfo) {
                 const partialMatches = trialingData.filter(record =>
-                    record.registrationNumber && 
+                    record.registrationNumber &&
                     record.registrationNumber.toString().toLowerCase().includes(formattedSearch.toLowerCase())
                 ).slice(0, 5);
 
                 let errorMessage = `No dog found with registration number: <strong>${formattedSearch}</strong>`;
-                
+
                 if (partialMatches.length > 0) {
                     errorMessage += '<br><br><strong>Did you mean:</strong><ul style="text-align: left; margin: 10px 0;">';
                     partialMatches.forEach(match => {
@@ -1686,7 +1709,7 @@
                     errorMessage += '</ul>';
                 }
 
-                document.getElementById('summaryContent').innerHTML = 
+                document.getElementById('summaryContent').innerHTML =
                     `<div class="error-message">${errorMessage}</div>`;
                 return;
             }
@@ -1708,21 +1731,21 @@
 
         function displaySummary(records, regNumberOverride = null) {
             const regNumber = regNumberOverride || (records.length > 0 ? records[0].registrationNumber : null);
-            
+
             if (!regNumber) {
-                document.getElementById('summaryContent').innerHTML = 
+                document.getElementById('summaryContent').innerHTML =
                     `<div class="error-message">Unable to determine registration number</div>`;
                 return;
             }
-            
+
             const callName = getCallNameFromDogInfo(regNumber, records.length > 0 ? records[0].callName : null) || 'Unknown';
             const handlerName = getHandlerNameFromDogInfo(regNumber);
-            
+
             const levelSummary = {};
-            
+
             records.forEach(record => {
                 if (!record.level) return;
-                
+
                 if (!levelSummary[record.level]) {
                     levelSummary[record.level] = {
                         totalQs: 0,
@@ -1730,7 +1753,7 @@
                         records: []
                     };
                 }
-                
+
                 if (record.Qs > 0) {
                     levelSummary[record.level].totalQs += record.Qs;
                     if (record.judge) {
@@ -1751,7 +1774,7 @@
                     ${records.length === 0 ? '<p style="color: #856404; background: #fff3cd; padding: 10px; border-radius: 6px; margin-top: 10px;"><strong>📋 No trialing entries found for this dog yet</strong></p>' : ''}
                 </div>
             `;
-            
+
             if (Object.keys(levelSummary).length === 0) {
                 document.getElementById('summaryContent').innerHTML = html + `
                     <div style="text-align: center; padding: 20px; color: #6c757d;">
@@ -1760,37 +1783,37 @@
                 `;
                 return;
             }
-            
+
             getSortedLevels(levelSummary).forEach(level => {
                 const summary = levelSummary[level];
                 const isValidated = validatedLevels[level];
                 const judgeCount = summary.judges.size;
-                
+
                 const hasTitleRequirements = summary.totalQs >= 4 && judgeCount >= 2 && isValidated;
-                
+
                 let gamesInfo = '';
                 if (level.startsWith('Games ')) {
                     const uniqueGames = getUniqueGames(summary.records);
                     gamesInfo = `<div><span>Different Games:</span> <strong>${uniqueGames.size}/2</strong> (${Array.from(uniqueGames).join(', ') || 'None'})</div>`;
                 }
-                
+
                 let titleQs = 0;
                 let aceQs = 0;
                 let titleStatus = '';
                 let titleClass = '';
                 let titleInfo = null;
                 let aceEarnedDates = [];
-                
+
                 if (hasTitleRequirements) {
                     titleInfo = calculateTitleQs(summary.records);
                     titleQs = titleInfo.titleQs;
                     const titleDate = titleInfo.titleDate;
                     aceQs = Math.max(0, summary.totalQs - titleQs);
-                    
+
                     aceEarnedDates = findAceEarnedDates(summary.records, titleQs);
-                    
+
                     const officialTitle = titleAbbreviations[level] || level;
-                    
+
                     if (aceQs >= 10) {
                         const aceCount = Math.floor(aceQs / 10);
                         titleStatus = getAceDesignation(level, aceCount);
@@ -1810,13 +1833,13 @@
                     const escapedLevel = escapeJs(level);
                     const escapedRegNumber = escapeJs(regNumber);
                     const escapedOfficialTitle = escapeJs(officialTitle);
-                    
+
                     certificateButtons += `
                         <button class="certificate-btn" onclick="generateTitleCertificate('${escapedLevel}', '${escapedRegNumber}', '${escapedOfficialTitle}')">
                             📜 Title Certificate
                         </button>
                     `;
-                    
+
                     if (aceQs >= 10) {
                         const aceCount = Math.floor(aceQs / 10);
                         for (let i = 1; i <= aceCount; i++) {
@@ -1829,13 +1852,13 @@
                         }
                     }
                 }
-                
+
                 html += `
                     <div class="level-summary">
                         <div class="level-info">
                             <h4>${level}</h4>
                             <div class="title-status ${titleClass}">${titleStatus}</div>
-                            
+
                             <div class="Qs-breakdown">
                                 <div><span>Total Q's:</span> <strong>${summary.totalQs}</strong></div>
                                 <div><span>Judges:</span> <strong>${judgeCount}/2</strong></div>
@@ -1845,14 +1868,14 @@
                                     <div><span>Q's Towards Ace:</span> <strong class="ace-info">${aceQs}</strong></div>
                                     ${titleInfo && titleInfo.titleDate ? `<div style="color: #28a745; font-size: 0.85rem;"><span>Title Earned:</span> <strong>${titleInfo.titleDate instanceof Date && !isNaN(titleInfo.titleDate) ? titleInfo.titleDate.toLocaleDateString() : 'N/A'}</strong></div>` : ''}
                                         ${aceEarnedDates.length > 0 ? aceEarnedDates.map(ace => `<div style="color: #6f42c1; font-size: 0.85rem; margin: 4px 0; display: block;"><span>Ace ${ace.aceNumber}</span><span style="margin: 0 8px;">............</span><span>${ace.date.toLocaleDateString()}</span></div>`).join('') : ''}
-                                    ${aceQs < 10 && aceQs >= 0 ? `<div class="ace-info"><span>Q's until next Ace:</span> <strong>${10 - (aceQs % 10)}</strong></div>` : 
+                                    ${aceQs < 10 && aceQs >= 0 ? `<div class="ace-info"><span>Q's until next Ace:</span> <strong>${10 - (aceQs % 10)}</strong></div>` :
                                     aceQs >= 10 ? `<div class="ace-info"><span>Q's until next Ace:</span> <strong>${10 - (aceQs % 10)}</strong></div>` : ''}
                                 ` : `
                                     <div style="color: #dc3545;">
                                         <div><span>Need:</span> ${summary.totalQs < 4 ? `${4 - summary.totalQs} more Q's` : ''}
                                         ${summary.totalQs < 4 && judgeCount < 2 ? ', ' : ''}
                                         ${judgeCount < 2 ? `${2 - judgeCount} more judge${judgeCount === 0 ? 's' : ''}` : ''}
-                                        ${level.startsWith('Games ') && getUniqueGames(summary.records).size < 2 ? 
+                                        ${level.startsWith('Games ') && getUniqueGames(summary.records).size < 2 ?
                                             `${(summary.totalQs < 4 || judgeCount < 2) ? ', ' : ''}${2 - getUniqueGames(summary.records).size} more different game${getUniqueGames(summary.records).size === 0 ? 's' : ''}` : ''}</div>
                                         ${!isValidated && !level.startsWith('Games ') ? `<div><span>Prerequisites:</span> ${getPrerequisiteText(level)}</div>` : ''}
                                     </div>
@@ -1874,23 +1897,23 @@
             const sortedRecords = records
                 .filter(r => r.Qs > 0 && r.date instanceof Date && !isNaN(r.date))
                 .sort((a, b) => a.date - b.date);
-            
+
             let cumulativeQs = 0;
             let judges = new Set();
-            
+
             for (const record of sortedRecords) {
                 const prevQs = cumulativeQs;
                 const prevJudgeCount = judges.size;
-                
+
                 cumulativeQs += record.Qs;
                 if (record.judge) judges.add(record.judge);
-                
+
                 const nowHasTitle = cumulativeQs >= 4 && judges.size >= 2;
                 const previouslyHadTitle = prevQs >= 4 && prevJudgeCount >= 2;
-                
+
                 if (nowHasTitle && !previouslyHadTitle) {
                     let QsTowardTitle = record.Qs;
-                    
+
                     if (prevQs >= 4 && prevJudgeCount < 2) {
                         QsTowardTitle = 1;
                     }
@@ -1900,14 +1923,14 @@
                     else if (prevQs < 4 && prevJudgeCount < 2) {
                         QsTowardTitle = Math.min(record.Qs, 4 - prevQs);
                     }
-                    
+
                     return {
                         titleQs: prevQs + QsTowardTitle,
                         titleDate: record.date
                     };
                 }
             }
-            
+
             return {
                 titleQs: cumulativeQs,
                 titleDate: sortedRecords[sortedRecords.length - 1]?.date
@@ -1916,7 +1939,7 @@
 
         function applyValidationRules(levelSummary) {
             const validatedLevels = {};
-            
+
             Object.keys(levelSummary).forEach(level => {
                 if (!prerequisites[level] && !level.startsWith('Games ')) {
                     validatedLevels[level] = true;
@@ -1959,7 +1982,7 @@
         function getUniqueGames(records) {
             const games = new Set();
             const gamesList = ['BJ', 'C', 'P', 'T', 'GB'];
-            
+
             records.forEach(record => {
                 if (record.results) {
                     const results = record.results.toString().toUpperCase();
@@ -1970,7 +1993,7 @@
                     });
                 }
             });
-            
+
             return games;
         }
 
@@ -1981,19 +2004,19 @@
 
         function getPrerequisiteText(level) {
             if (!prerequisites[level]) return 'None';
-            
+
             if (level === "Investigator 3") {
                 return 'Either "Patrol 1" OR "Detective 2" (4+ Qs, 2+ judges each)';
             }
-            
+
             return `"${prerequisites[level][0]}" (4+ Qs, 2+ judges)`;
         }
 
         function showLevelDetails(level, dogName) {
             const records = currentDogRecords.filter(r => r.level === level);
-            
+
             document.getElementById('modalTitle').textContent = `${dogName} - ${level} Details`;
-            
+
             let html = `
                 <table class="records-table">
                     <thead>
@@ -2010,11 +2033,11 @@
             records.sort((a, b) => new Date(a.date) - new Date(b.date));
 
             records.forEach(record => {
-                const date = record.date && record.date instanceof Date && !isNaN(record.date) 
-                    ? record.date.toLocaleDateString() 
+                const date = record.date && record.date instanceof Date && !isNaN(record.date)
+                    ? record.date.toLocaleDateString()
                     : 'N/A';
                 const QsClass = record.Qs > 0 ? 'Qs-badge' : 'Qs-badge zero';
-                
+
                 html += `
                     <tr>
                         <td>${date}</td>
@@ -2026,7 +2049,7 @@
             });
 
             html += '</tbody></table>';
-            
+
             document.getElementById('modalBody').innerHTML = html;
             document.getElementById('detailsModal').style.display = 'block';
         }
@@ -2061,8 +2084,12 @@
                     </button>
                 </div>
             `;
+            restoreOwnerId();
         }
 
+        function restoreOwnerId() {
+            try { const input=document.getElementById('ownerIdInput'); if(input) input.value=localStorage.getItem('cwags-last-owner') || ''; } catch (_) {}
+        }
         function handleOwnerKeyPress(event) {
             if (event.key === 'Enter') {
                 loadOwnerView();
@@ -2156,6 +2183,7 @@
 
         // Store dogsData for the current owner view so toggleDogCol can refresh the panel
         let currentOwnerDogsData = [];
+        let currentOwnerId = '';
 
         function loadOwnerView() {
             const ownerIdInput = document.getElementById('ownerIdInput');
@@ -2163,9 +2191,10 @@
                 console.error('Owner ID input not found');
                 return;
             }
-            
+
             const ownerId = ownerIdInput.value.trim();
-            
+            try { localStorage.setItem('cwags-last-owner', ownerId); } catch (_) {}
+
             if (!ownerId) {
                 alert('Please enter the middle 4 digits');
                 return;
@@ -2178,9 +2207,9 @@
 
             const matchingDogsFromTrialing = trialingData.filter(record => {
                 if (!record.registrationNumber) return false;
-                
+
                 const regNumber = record.registrationNumber.toString().trim();
-                
+
                 if (regNumber.includes('-')) {
                     const regParts = regNumber.split('-');
                     return regParts.length >= 2 && regParts[1] === ownerId;
@@ -2188,7 +2217,7 @@
                     const middlePart = regNumber.substring(2, 6);
                     return middlePart === ownerId;
                 }
-                
+
                 return false;
             });
 
@@ -2315,10 +2344,11 @@
                 };
             });
 
-            // Initialise visibility tracking — all visible by default
+            // Initialise visibility; restore saved choices after the table has rendered.
             ownerViewDogVisibility = {};
             dogsData.forEach(dog => { ownerViewDogVisibility[dog.dogIdx] = true; });
             currentOwnerDogsData = dogsData;
+            currentOwnerId = ownerId;
 
             // Only show levels where at least one dog has Q's
             const levelsWithData = allLevels.filter(level =>
@@ -2346,7 +2376,7 @@
                 html += `
                                 <th class="dog-col-${dog.dogIdx}" style="padding: 8px 4px; text-align: center; border-bottom: 2px solid #dee2e6; font-weight: 700; width: ${75/dogsData.length}%; color: #1a1a1a;">
                                     <label class="print-hide" style="display: block; margin-bottom: 3px; cursor: pointer; font-size: 0.8rem; font-weight: normal; color: #2d3748;">
-                                        <input type="checkbox" checked onchange="toggleDogCol(${dog.dogIdx}, this.checked)" style="cursor: pointer; width: 16px; height: 16px;"> Print
+                                        <input type="checkbox" data-dog-index="${dog.dogIdx}" checked onchange="toggleDogCol(${dog.dogIdx}, this.checked)" style="cursor: pointer; width: 16px; height: 16px;"> Print
                                     </label>
                                     <a href="javascript:void(0)" onclick="searchSpecificDog('${escapedRegNumber}')"
                                        style="color: #4a3f8a; text-decoration: none; font-weight: bold; cursor: pointer; font-size: 15px;"
@@ -2518,10 +2548,28 @@
 
             // Populate the titles earned panel
             refreshTitlesEarnedPanel(dogsData);
+            try {
+                const saved = JSON.parse(localStorage.getItem('cwags-dogs-' + ownerId) || '{}');
+                dogsData.forEach(dog => {
+                    if (saved[dog.regNumber] === false) {
+                        const box = document.querySelector('input[data-dog-index="' + dog.dogIdx + '"]');
+                        if (box) box.checked = false;
+                        toggleDogCol(dog.dogIdx, false);
+                    }
+                });
+            } catch (_) {}
         }
 
         function toggleDogCol(idx, visible) {
             ownerViewDogVisibility[idx] = visible;
+            try {
+                const ownerId = currentOwnerId;
+                if (ownerId) {
+                    const saved = {};
+                    currentOwnerDogsData.forEach(dog => { saved[dog.regNumber] = ownerViewDogVisibility[dog.dogIdx] !== false; });
+                    localStorage.setItem('cwags-dogs-' + ownerId, JSON.stringify(saved));
+                }
+            } catch (_) {}
 
             document.querySelectorAll('.dog-col-' + idx).forEach(function(el) {
                 el.style.display = visible ? '' : 'none';
@@ -2592,7 +2640,7 @@ async function showRegistrationCard() {
     }
     const cardWindow = window.open('', '_blank');
     if (!cardWindow) { alert('Allow pop-ups for this tracker to open your registration card.'); return; }
-    const logoUrl = new URL('cwags-logo.png', 'https://raw.githubusercontent.com/cwagtracker/Tracker/main/').href;
+    const logoUrl = new URL('./cwags-logo.png', document.baseURI).href;
     cardWindow.document.write(registrationCardDocument(dogs, logoUrl));
     cardWindow.document.close();
     const doc = cardWindow.document;
@@ -2664,7 +2712,7 @@ async function showRegistrationCard() {
 
         function loadDataFromFile() {
             console.log('Starting data load process...');
-            
+
             const timeoutId = setTimeout(() => {
                 console.log('Load timeout - showing manual upload option');
             }, 3000);
@@ -2707,13 +2755,13 @@ async function showRegistrationCard() {
 
         function processExcelData(data) {
             const workbook = XLSX.read(data, {type: 'array', cellDates: true});
-            
+
             const dataSheet = workbook.Sheets['Data'] || workbook.Sheets[workbook.SheetNames[0]];
             const jsonData = XLSX.utils.sheet_to_json(dataSheet, {header: 1, dateNF: 'yyyy-mm-dd'});
-            
+
             trialingData = jsonData.slice(1).map(row => {
                 let processedDate = row[2];
-                
+
                 if (typeof processedDate === 'number') {
                     processedDate = XLSX.SSF.parse_date_code(processedDate);
                     processedDate = new Date(processedDate.y, processedDate.m - 1, processedDate.d);
@@ -2724,7 +2772,7 @@ async function showRegistrationCard() {
                 } else {
                     processedDate = null;
                 }
-                
+
                 return {
                     registrationNumber: row[0],
                     callName: row[1],
@@ -2735,7 +2783,7 @@ async function showRegistrationCard() {
                     Qs: parseFloat(row[6]) || 0
                 };
             }).filter(record => record.registrationNumber && record.level);
-            
+
             console.log('Data processed:', trialingData.length, 'records');
         }
 
@@ -2752,17 +2800,18 @@ async function showRegistrationCard() {
 
             if (validDates.length > 0) {
                 const mostRecentDate = validDates[0];
-                document.getElementById('lastUpdated').textContent = 
+                document.getElementById('lastUpdated').textContent =
                     `Last updated: ${mostRecentDate.toLocaleDateString()}`;
             } else {
                 document.getElementById('lastUpdated').textContent = 'Last updated: Unknown';
             }
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
+            await window.trackerOfflineReady;
             console.log('🚀 CWAGS Tracker initializing...');
             document.getElementById('lastUpdated').textContent = 'Loading data...';
-            
+
             setTimeout(() => {
                 if (typeof fontkit !== 'undefined') {
                     console.log('✅ Fontkit library loaded successfully');
@@ -2770,12 +2819,12 @@ async function showRegistrationCard() {
                     console.warn('⚠️ Fontkit library failed to load - custom fonts will not work');
                 }
             }, 1000);
-            
+
             setTimeout(async () => {
                 try {
                     console.log('📊 Step 1: Loading DogInfo data...');
                     const dogInfoLoaded = await loadDogInfoData();
-                    
+
                     if (dogInfoLoaded) {
                         console.log('✅ Step 1 complete: DogInfo data ready');
                     } else {
@@ -2784,16 +2833,16 @@ async function showRegistrationCard() {
 
                     console.log('📊 Step 2: Loading Title Placement data...');
                     const titlePlacementLoaded = await loadTitlePlacementData();
-                    
+
                     if (titlePlacementLoaded) {
                         console.log('✅ Step 2 complete: Title Placement data ready');
                     } else {
                         console.log('⚠️ Step 2 skipped: Title Placement not available');
                     }
-                    
+
                     console.log('📁 Step 3: Loading main trialing data...');
                     loadDataFromFile();
-                    
+
                 } catch (error) {
                     console.error('❌ Initialization error:', error);
                     document.getElementById('lastUpdated').textContent = 'Initialization failed';
