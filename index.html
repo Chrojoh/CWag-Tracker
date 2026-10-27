@@ -42,7 +42,9 @@
 
         .header-content {
             display: flex;
+            flex-direction: column;
             align-items: center;
+            gap: 8px;
             justify-content: space-between;
             max-width: 1200px;
             margin: 0 auto;
@@ -52,6 +54,8 @@
             text-align: center;
             flex: 1;
         }
+
+        #rightLogo { display: none; }
 
         .header h1 {
             font-size: 2.5rem;
@@ -897,7 +901,7 @@
     #summaryContent {
         transform-origin: top left !important;
     }
-    .header-content { flex-direction: row !important; }
+    .header-content { flex-direction: column !important; align-items: center !important; }
     .summary-section, .owner-table-scroll { overflow: visible !important; }
     .owner-view-table thead { display: table-header-group; }
     .owner-view-table tr { break-inside: avoid; page-break-inside: avoid; }
@@ -2290,6 +2294,7 @@
                     <button onclick="showOwnerView()" style="background: #6c757d; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-size: 0.95rem;">
                         ← Change Owner ID
                     </button>
+                    <button onclick="showAllOwnerDogs()" style="background: #287c46; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-size: 0.95rem;">Show all dogs</button>
                     <button onclick="showRegistrationCard()" style="background: #34495e; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-size: 0.95rem;">Registration Card</button><button onclick="printOwnerView()" style="background: #6f42c1; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-size: 0.95rem;">
                         🖨️ Print View
                     </button>
@@ -2572,6 +2577,14 @@
                     }
                 });
             } catch (_) {}
+        }
+
+        function showAllOwnerDogs() {
+            currentOwnerDogsData.forEach(dog => {
+                const checkbox = document.querySelector('input[data-dog-index="' + dog.dogIdx + '"]');
+                if (checkbox) checkbox.checked = true;
+                toggleDogCol(dog.dogIdx, true);
+            });
         }
 
         function toggleDogCol(idx, visible) {
