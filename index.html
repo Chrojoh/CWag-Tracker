@@ -691,6 +691,7 @@
         background: white !important;
         padding: 5px !important;
         margin: 0 !important;
+        overflow: visible !important;
         font-size: 10px !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
@@ -755,7 +756,8 @@
     .owner-view-table {
         font-size: 14px !important;
         width: 100% !important;
-        page-break-inside: avoid !important;
+        page-break-inside: auto !important;
+        break-inside: auto !important;
         border-collapse: collapse !important;
         margin-top: 6px !important;
         table-layout: fixed !important;
@@ -829,8 +831,8 @@
         border: none !important;
         border-radius: 0 !important;
         box-shadow: none !important;
-        page-break-before: always !important;
-        break-before: page !important;
+        page-break-before: auto !important;
+        break-before: auto !important;
     }
 
     .priority-list h4 {
@@ -876,6 +878,8 @@
 
     .titles-earned-dog-card {
         padding: 8px 10px !important;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
     }
 
     .titles-earned-dog-name {
@@ -893,6 +897,15 @@
     #summaryContent {
         transform-origin: top left !important;
     }
+    .header-content { flex-direction: row !important; }
+    .summary-section, .owner-table-scroll { overflow: visible !important; }
+    .owner-view-table thead { display: table-header-group; }
+    .owner-view-table tr { break-inside: avoid; page-break-inside: avoid; }
+    .owner-view-table td:not(:first-child), .owner-view-table td:not(:first-child) * {
+        white-space: normal !important;
+        overflow-wrap: anywhere !important;
+    }
+    .priority-list h4, .titles-earned-header { break-after: avoid; }
 
     @page {
         margin: 0.25in !important;
@@ -979,6 +992,7 @@
     <script src="./vendor/xlsx.full.min.js"></script>
     <script src="./vendor/pdf-lib.min.js"></script>
     <script src="./vendor/fontkit.umd.min.js" onerror="console.error('Fontkit failed to load from unpkg')"></script>
+    <script src="./registration-pdf.js"></script>
     <script>
         if (typeof fontkit === 'undefined') {
             console.log('Loading fontkit from backup CDN...');
@@ -2362,7 +2376,7 @@
             colgroupHtml += `</colgroup>`;
 
             html += `
-                <div style="overflow-x: auto; border: 1px solid #dee2e6; border-radius: 8px;">
+                <div class="owner-table-scroll" style="overflow-x: auto; border: 1px solid #dee2e6; border-radius: 8px;">
                     <table class="owner-view-table" style="width: max-content; min-width: 100%; border-collapse: collapse; font-size: 14px; table-layout: auto;">
                         ${colgroupHtml}
                         <thead>
@@ -2603,9 +2617,9 @@ function registrationCardDocument(dogs, logoUrl) {
     const sections = Array.from(groups, ([handler, entries]) => `<section><p class="label">HANDLER</p><h2>${escapeHtml(handler)}</h2><table><thead><tr><th>Dog call name</th><th>Registration number</th></tr></thead><tbody>${entries.map(dog => `<tr><td>${escapeHtml(dog.callName || 'Call name not recorded')}</td><td class="number">${escapeHtml(dog.regNumber)}</td></tr>`).join('')}</tbody></table></section>`).join('');
     return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(cardTitle)}</title><style>
     *{box-sizing:border-box}body{margin:0;padding:24px 16px;background:#eef2f6;color:#24374b;font-family:Arial,sans-serif}.card{max-width:600px;margin:auto;background:white;border:1px solid #ccd6e0;border-radius:18px;overflow:hidden}header{display:flex;align-items:center;gap:18px;padding:24px;border-bottom:5px solid #7562ad}header img{width:88px;height:88px;object-fit:contain}h1{font-size:24px;margin:0 0 8px}header p{margin:0;color:#52657a;font-size:14px}section{padding:24px}.label{font-size:11px;letter-spacing:2px;color:#627488;margin:0 0 7px}h2{font-size:24px;margin:0 0 22px;overflow-wrap:anywhere}table{width:100%;border-collapse:collapse;table-layout:fixed}th{text-align:left;font-size:12px;color:#627488;padding:0 0 12px}th:last-child{width:55%;text-align:right}td{padding:16px 0;border-top:1px solid #e3e9ef;overflow-wrap:anywhere}td:first-child{padding-right:12px;font-weight:bold}.number{text-align:right;font:600 17px monospace}footer{padding:16px 24px;background:#f5f7fa;font-size:16px;color:#52657a;line-height:1.6;text-align:center;word-break:normal;overflow-wrap:normal;hyphens:none;break-inside:avoid}footer p{margin:0 0 10px}footer p:last-child{margin-bottom:0}.controls{max-width:600px;margin:20px auto;display:flex;gap:10px;flex-wrap:wrap}button{background:#34495e;color:white;border:0;border-radius:8px;padding:13px 16px;font-size:14px;cursor:pointer}button:disabled{opacity:.5}.help{max-width:600px;margin:12px auto;font-size:14px;line-height:1.6;color:#52657a}#status{max-width:600px;margin:auto;font-size:14px}@media(max-width:380px){header{padding:16px;gap:12px}header img{width:64px;height:64px}section{padding:18px}.number{font-size:14px}}
-    #printSheet{display:none}.wallet-card{position:relative;width:85.6mm;max-width:none;margin:0;border:0.25mm dashed #888;border-radius:0;overflow:visible;background:white;break-inside:avoid}.wallet-card header{padding:3mm;gap:3mm;border-bottom:0.7mm solid #7562ad}.wallet-card header img{width:13mm;height:13mm}.wallet-card h1{font-size:12pt;margin:0 0 1mm}.wallet-card header p{font-size:8pt}.wallet-card section{padding:3mm}.wallet-card .label{font-size:7pt;margin-bottom:1mm;letter-spacing:1px}.wallet-card h2{font-size:12pt;margin:0 0 3mm}.wallet-card th{font-size:8pt;padding:0 0 2mm}.wallet-card td{padding:2mm 0;font-size:10pt;word-break:normal;overflow-wrap:break-word}.wallet-card td:first-child{padding-right:2mm}.wallet-card .number{font-size:10pt;white-space:nowrap}.wallet-card footer{padding:3mm;font-size:10pt;line-height:1.35}.wallet-card footer p{margin:0 0 2mm}.print-note{font-size:9pt;color:#444;margin:0 0 4mm}.print-grid{display:grid;grid-template-columns:85.6mm 85.6mm;gap:6mm;align-items:start;justify-content:center}@media print{@page{size:letter landscape;margin:10mm}body{background:white;padding:0}body>#card,.controls,.help,#status{display:none!important}#printSheet{display:block}tr,header,h2,footer{break-inside:avoid}thead{display:table-header-group}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+    #printSheet{display:none}.wallet-card{position:relative;width:85.6mm;max-width:none;margin:0;border:0.25mm dashed #888;border-radius:0;overflow:visible;background:white;break-inside:avoid}.wallet-card header{padding:3mm;gap:3mm;border-bottom:0.7mm solid #7562ad}.wallet-card header img{width:13mm;height:13mm}.wallet-card h1{font-size:12pt;margin:0 0 1mm}.wallet-card header p{font-size:8pt}.wallet-card section{padding:3mm}.wallet-card .label{font-size:7pt;margin-bottom:1mm;letter-spacing:1px}.wallet-card h2{font-size:12pt;margin:0 0 3mm}.wallet-card th{font-size:8pt;padding:0 0 2mm}.wallet-card td{padding:2mm 0;font-size:10pt;word-break:normal;overflow-wrap:break-word}.wallet-card td:first-child{padding-right:2mm}.wallet-card .number{font-size:10pt;white-space:nowrap}.wallet-card footer{padding:3mm;font-size:10pt;line-height:1.35}.wallet-card footer p{margin:0 0 2mm}.print-note{font-size:9pt;color:#444;margin:0 0 4mm}.print-grid{display:grid;grid-template-columns:85.6mm 85.6mm;gap:6mm;align-items:start;justify-content:center}@media print{@page{size:11in 8.5in;margin:10mm}body{background:white;padding:0}body>#card,.controls,.help,#status{display:none!important}#printSheet{display:block}tr,header,h2,footer{break-inside:avoid}thead{display:table-header-group}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 
-    </style></head><body><article class="card" id="card"><header><img id="cardLogo" src="${escapeHtml(logoUrl)}" alt="C-WAGS logo"><div><h1>Registration Card</h1><p>C-WAGS · Trial entry reference</p></div></header>${sections}<footer><p>For consistency and accuracy, please enter your dog in trials using the name shown on this registration card.</p><p>Create a new card after registration details change.</p><p>Created ${escapeHtml(new Date().toLocaleDateString())}</p></footer></article><div class="controls"><button id="printCardButton" onclick="prepareWalletSheet();window.print()">Print / Save as PDF</button></div><p class="help">The printed sheet repeats your card with cut guides. The page prints in landscape. Cards stay wallet-width and grow in height to keep all selected dogs together. Print on Letter paper in landscape at 100% / Actual size with browser headers and footers off. You can also take a screenshot of the single card shown here.</p><p id="status" role="status"></p><div id="printSheet"></div><script>
+    </style></head><body><article class="card" id="card"><header><img id="cardLogo" src="${escapeHtml(logoUrl)}" alt="C-WAGS logo"><div><h1>Registration Card</h1><p>C-WAGS · Trial entry reference</p></div></header>${sections}<footer><p>For consistency and accuracy, please enter your dog in trials using the name shown on this registration card.</p><p>Create a new card after registration details change.</p><p>Created ${escapeHtml(new Date().toLocaleDateString())}</p></footer></article><div class="controls"><button id="printCardButton" onclick="prepareWalletSheet();window.print()">Print / Save as PDF</button></div><p class="help">Print / Save as PDF creates an 11 × 8½-inch landscape PDF with two larger copies and outside cut guides. Open the saved PDF to print at Actual size. You can also take a screenshot of the single card shown here.</p><p id="status" role="status"></p><div id="printSheet"></div><script>
 function walletLayout(height){
     const cardHeight=Math.max(53.98,height);
     const copies=Math.max(1,Math.floor((181.9+6)/(cardHeight+6)))*2;
@@ -2644,6 +2658,7 @@ async function showRegistrationCard() {
     cardWindow.document.write(registrationCardDocument(dogs, logoUrl));
     cardWindow.document.close();
     const doc = cardWindow.document;
+    doc.getElementById('printCardButton').onclick = () => saveRegistrationPdf(dogs, cardWindow);
     doc.getElementById('printCardButton').disabled = true;
     doc.getElementById('status').textContent = 'Preparing logo for printing…';
     try {
