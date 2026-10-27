@@ -4,12 +4,26 @@
   let lastState;
   const $ = id => document.getElementById(id);
   const say = message => { if ($('offlineStatus')) $('offlineStatus').textContent=message; };
+  function setupPanel() {
+    const panel=document.querySelector('.app-tools');
+    const details=document.createElement('details');
+    details.id='appToolsDetails';details.open=true;
+    const summary=document.createElement('summary');summary.textContent='App options';
+    const content=document.createElement('div');content.className='app-tools-content';
+    while(panel.firstChild)content.appendChild(panel.firstChild);
+    details.append(summary,content);panel.appendChild(details);
+  }
+  function showPanel() { if($('appToolsDetails'))$('appToolsDetails').open=true; }
+  function settlePanel(state) {
+    if($('appToolsDetails'))$('appToolsDetails').open=!state?.ready || !$('reloadTracker').hidden || !$('updateApp').hidden;
+  }
   function describe(state) {
     lastState=state;
-    if (!state?.ready) { say('Offline preparation is incomplete. Stay connected and choose Check for updates.'); return; }
+    if (!state?.ready) { say('Offline preparation is incomplete. Stay connected and choose Check for updates.'); showPanel();return; }
     const when = new Date(state.savedAt).toLocaleString();
     say((navigator.onLine ? 'Ready for offline use. ' : 'Offline — using saved records. ') + 'Files saved: '+when+'.');
     $('offlineDetails').textContent='Saved data: '+(Object.values(state.files).reduce((sum,file)=>sum+file.bytes,0)/1e6).toFixed(1)+' MB. Your existing records remain available if an update fails. Saved files may be removed if browser storage is cleared.';
+    settlePanel(state);
   }
   function message(type) {
     return new Promise((resolve,reject)=>{
@@ -29,17 +43,19 @@
       say('Checking and saving tracker files. Keep this page open until it says ready for offline use…');
       const result=await message('SYNC');
       describe(result.state);
-      if(!result.ok) say((result.state?.ready?'Using your previously saved records. ':'Offline preparation is incomplete. ')+ 'Update failed: '+result.error);
+      if(!result.ok) {say((result.state?.ready?'Using your previously saved records. ':'Offline preparation is incomplete. ')+ 'Update failed: '+result.error);showPanel();}
       else if(manual && result.state.changed) {
         say('Updated records are saved. Choose Load updated records to use them.');
         $('reloadTracker').hidden=false;
+        showPanel();
       } else if(manual) say('Your saved records are up to date. Ready for offline use.');
-    } catch(error) { say('Could not check for updates. '+error.message); }
+    } catch(error) { say('Could not check for updates. '+error.message);showPanel(); }
     finally {busy=false;$('checkUpdates').disabled=false;}
   }
   function offerUpdate() {
     if(registration.waiting) {
       $('updateApp').hidden=false;
+      showPanel();
       $('updateApp').onclick=()=>{
         navigator.serviceWorker.addEventListener('controllerchange',()=>location.reload(),{once:true});
         registration.waiting.postMessage({type:'SKIP_WAITING'});
@@ -54,6 +70,7 @@
   window.addEventListener('offline',()=>{if(lastState)describe(lastState);});
   window.addEventListener('online',()=>{if(lastState)describe(lastState);});
   window.trackerOfflineReady=new Promise(resolve=>document.addEventListener('DOMContentLoaded',async()=>{
+    setupPanel();
     $('installTracker').hidden=!installPrompt;
     $('installTracker').onclick=async()=>{if(installPrompt){await installPrompt.prompt();await installPrompt.userChoice;installPrompt=null;$('installTracker').hidden=true;}};
     $('reloadTracker').onclick=()=>location.reload();

@@ -1,6 +1,6 @@
 /* Bump VERSION when changing application files, libraries, templates, or icons.
    Spreadsheet uploads need no version change: SYNC checks them independently. */
-const VERSION = '2026-10-27.2';
+const VERSION = '2026-10-27.3';
 const PREFIX = 'cwags-beta-' + new URL(self.registration.scope).pathname.replace(/[^a-z0-9]/gi, '-') + '-';
 const SHELL = PREFIX + 'app-' + VERSION;
 const META = PREFIX + 'metadata';
