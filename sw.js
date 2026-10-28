@@ -1,6 +1,6 @@
 /* Bump VERSION when changing application files, libraries, templates, or icons.
    Spreadsheet uploads need no version change: SYNC checks them independently. */
-const VERSION = '2026-10-28.2';
+const VERSION = '2026-10-28.1';
 const PREFIX = 'cwags-beta-' + new URL(self.registration.scope).pathname.replace(/[^a-z0-9]/gi, '-') + '-';
 const SHELL = PREFIX + 'app-' + VERSION;
 const META = PREFIX + 'metadata';
@@ -9,7 +9,7 @@ const url = path => new URL(path, ROOT).href;
 const CURRENT = url('_offline/current');
 const DATA = ['DogInfo.xlsx', 'Data for Tracker web.xlsx', 'Title Placement.xlsx'];
 const STATIC = ['index.html', 'pwa.js', 'pwa.css', 'registration-pdf.js', 'manifest.webmanifest',
-  'icons/icon-192-v3.png', 'icons/icon-512-v3.png', 'icons/apple-touch-icon-v3.png', 'cwags-logo.png',
+  'icons/icon-192-v2.png', 'icons/icon-512-v2.png', 'icons/apple-touch-icon-v2.png', 'cwags-logo.png',
   'vendor/xlsx.full.min.js', 'vendor/pdf-lib.min.js', 'vendor/fontkit.umd.min.js',
   'fonts/Maiandra GD.TTF', 'templates/Scent.pdf', 'templates/Obedience.pdf',
   'templates/Rally.pdf', 'templates/Games.pdf', 'templates/Ace.pdf'];
