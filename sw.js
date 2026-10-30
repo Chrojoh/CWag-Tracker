@@ -1,6 +1,6 @@
 /* Bump VERSION when changing application files, libraries, templates, or icons.
    Spreadsheet uploads need no version change: SYNC checks them independently. */
-const VERSION = '2026-10-28.4';
+const VERSION = '2026-10-30.1';
 const PREFIX = 'cwags-beta-' + new URL(self.registration.scope).pathname.replace(/[^a-z0-9]/gi, '-') + '-';
 const SHELL = PREFIX + 'app-' + VERSION;
 const META = PREFIX + 'metadata';
@@ -10,11 +10,11 @@ const CURRENT = url('_offline/current');
 const DATA = ['DogInfo.xlsx', 'Data for Tracker web.xlsx', 'Title Placement.xlsx'];
 const STATIC = ['index.html', 'pwa.js', 'pwa.css', 'registration-pdf.js', 'manifest.webmanifest',
   'icons/icon-192-v5.png', 'icons/icon-512-v5.png', 'icons/apple-touch-icon-v5.png', 'cwags-logo.png',
-  'vendor/xlsx.full.min.js', 'vendor/pdf-lib.min.js', 'vendor/fontkit.umd.min.js',
+  'vendor/xlsx-0.20.3.full.min.js', 'vendor/pdf-lib.min.js', 'vendor/fontkit.umd.min.js',
   'fonts/Maiandra GD.TTF', 'templates/Scent.pdf', 'templates/Obedience.pdf',
   'templates/Rally.pdf', 'templates/Games.pdf', 'templates/Ace.pdf'];
 const STATIC_URLS = new Set(STATIC.map(url));
-importScripts('./vendor/xlsx.full.min.js');
+importScripts('./vendor/xlsx-0.20.3.full.min.js');
 
 async function download(path, previous) {
   const headers = {};

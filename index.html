@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-src 'none'">
+    <meta name="referrer" content="no-referrer">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dog Trialing Records Tracker</title>
     <link rel="manifest" href="./manifest.webmanifest">
@@ -993,7 +995,7 @@
     </div>
 
     <script src="./pwa.js"></script>
-    <script src="./vendor/xlsx.full.min.js"></script>
+    <script src="./vendor/xlsx-0.20.3.full.min.js"></script>
     <script src="./vendor/pdf-lib.min.js"></script>
     <script src="./vendor/fontkit.umd.min.js" onerror="console.error('Fontkit failed to load from unpkg')"></script>
     <script src="./registration-pdf.js"></script>
@@ -1009,7 +1011,7 @@
     <script>
         let trialingData = [];
         let currentDogRecords = [];
-        let dogInfoData = {};
+        let dogInfoData = Object.create(null);
         let titlePlacementData = {};
 
         // Track which dog columns are currently visible in owner view
@@ -1153,13 +1155,7 @@
         }
 
         function escapeJs(text) {
-            if (!text) return '';
-            return text.toString()
-                .replace(/\\/g, "\\\\")
-                .replace(/'/g, "\\'")
-                .replace(/"/g, '\\"')
-                .replace(/\n/g, "\\n")
-                .replace(/\r/g, "\\r");
+            return escapeHtml(String(text ?? '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029'));
         }
 
         async function loadDogInfoData() {
@@ -1717,12 +1713,12 @@
                     record.registrationNumber.toString().toLowerCase().includes(formattedSearch.toLowerCase())
                 ).slice(0, 5);
 
-                let errorMessage = `No dog found with registration number: <strong>${formattedSearch}</strong>`;
+                let errorMessage = `No dog found with registration number: <strong>${escapeHtml(formattedSearch)}</strong>`;
 
                 if (partialMatches.length > 0) {
                     errorMessage += '<br><br><strong>Did you mean:</strong><ul style="text-align: left; margin: 10px 0;">';
                     partialMatches.forEach(match => {
-                        errorMessage += `<li><a href="#" onclick="searchSpecific('${match.registrationNumber}')" style="color: #007bff; text-decoration: underline;">${match.registrationNumber} (${match.callName || 'Unknown'})</a></li>`;
+                        errorMessage += `<li><a href="#" onclick="searchSpecific('${escapeJs(match.registrationNumber)}')" style="color: #007bff; text-decoration: underline;">${escapeHtml(match.registrationNumber)} (${escapeHtml(match.callName || 'Unknown')})</a></li>`;
                     });
                     errorMessage += '</ul>';
                 }
@@ -1759,7 +1755,7 @@
             const callName = getCallNameFromDogInfo(regNumber, records.length > 0 ? records[0].callName : null) || 'Unknown';
             const handlerName = getHandlerNameFromDogInfo(regNumber);
 
-            const levelSummary = {};
+            const levelSummary = Object.create(null);
 
             records.forEach(record => {
                 if (!record.level) return;
@@ -1785,9 +1781,9 @@
 
             let html = `
                 <div class="dog-info">
-                    ${handlerName ? `<p class="handler-name"><strong>Handler:</strong> ${handlerName}</p>` : ''}
-                    <h3>${callName}</h3>
-                    <p><strong>Registration:</strong> ${regNumber}</p>
+                    ${handlerName ? `<p class="handler-name"><strong>Handler:</strong> ${escapeHtml(handlerName)}</p>` : ''}
+                    <h3>${escapeHtml(callName)}</h3>
+                    <p><strong>Registration:</strong> ${escapeHtml(regNumber)}</p>
                     <p><strong>Total Trialing Records:</strong> ${records.length}</p>
                     ${records.length === 0 ? '<p style="color: #856404; background: #fff3cd; padding: 10px; border-radius: 6px; margin-top: 10px;"><strong>📋 No trialing entries found for this dog yet</strong></p>' : ''}
                 </div>
@@ -1874,8 +1870,8 @@
                 html += `
                     <div class="level-summary">
                         <div class="level-info">
-                            <h4>${level}</h4>
-                            <div class="title-status ${titleClass}">${titleStatus}</div>
+                            <h4>${escapeHtml(level)}</h4>
+                            <div class="title-status ${titleClass}">${escapeHtml(titleStatus)}</div>
 
                             <div class="Qs-breakdown">
                                 <div><span>Total Q's:</span> <strong>${summary.totalQs}</strong></div>
@@ -1895,7 +1891,7 @@
                                         ${judgeCount < 2 ? `${2 - judgeCount} more judge${judgeCount === 0 ? 's' : ''}` : ''}
                                         ${level.startsWith('Games ') && getUniqueGames(summary.records).size < 2 ?
                                             `${(summary.totalQs < 4 || judgeCount < 2) ? ', ' : ''}${2 - getUniqueGames(summary.records).size} more different game${getUniqueGames(summary.records).size === 0 ? 's' : ''}` : ''}</div>
-                                        ${!isValidated && !level.startsWith('Games ') ? `<div><span>Prerequisites:</span> ${getPrerequisiteText(level)}</div>` : ''}
+                                        ${!isValidated && !level.startsWith('Games ') ? `<div><span>Prerequisites:</span> ${escapeHtml(getPrerequisiteText(level))}</div>` : ''}
                                     </div>
                                 `}
                             </div>
@@ -2059,9 +2055,9 @@
                 html += `
                     <tr>
                         <td>${date}</td>
-                        <td>${record.judge || 'N/A'}</td>
-                        <td>${record.results || 'N/A'}</td>
-                        <td><span class="${QsClass}">${record.Qs}</span></td>
+                        <td>${escapeHtml(record.judge || 'N/A')}</td>
+                        <td>${escapeHtml(record.results || 'N/A')}</td>
+                        <td><span class="${QsClass}">${escapeHtml(record.Qs)}</span></td>
                     </tr>
                 `;
             });
@@ -2257,7 +2253,7 @@
 
             if (allMatchingRegNumbers.length === 0) {
                 document.getElementById('summaryContent').innerHTML = `
-                    <div class="error-message">No dogs found with owner ID: <strong>${ownerId}</strong></div>
+                    <div class="error-message">No dogs found with owner ID: <strong>${escapeHtml(ownerId)}</strong></div>
                     <div style="text-align: center; margin-top: 20px;">
                         <button onclick="showOwnerView()" style="background: #17a2b8; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer;">
                             ← Try Again
@@ -2332,7 +2328,7 @@
                 ) || 'Unknown';
                 const handlerName = getHandlerNameFromDogInfo(regNumber);
 
-                const levelSummary = {};
+                const levelSummary = Object.create(null);
                 dogRecords.forEach(record => {
                     if (!record.level) return;
 
@@ -2418,7 +2414,7 @@
             levelsWithData.forEach(level => {
                 html += `
                             <tr style="border-bottom: 1px solid #e0e0e0;">
-                                <td style="padding: 4px 0; border-right: 1px solid #dee2e6; font-weight: 700; background: #f8f9fa; font-size: 14px; color: #1a1a1a; white-space: nowrap; overflow: hidden; position: sticky; left: 0; z-index: 5; width: 16ch; min-width: 16ch; max-width: 16ch; box-sizing: border-box;">${level}</td>`;
+                                <td style="padding: 4px 0; border-right: 1px solid #dee2e6; font-weight: 700; background: #f8f9fa; font-size: 14px; color: #1a1a1a; white-space: nowrap; overflow: hidden; position: sticky; left: 0; z-index: 5; width: 16ch; min-width: 16ch; max-width: 16ch; box-sizing: border-box;">${escapeHtml(level)}</td>`;
 
                 dogsData.forEach(dog => {
                     const levelData = dog.levelSummary[level];
