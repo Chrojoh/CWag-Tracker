@@ -2144,7 +2144,7 @@
 
                 gridHtml += `
                     <div class="titles-earned-dog-card">
-                        <div class="titles-earned-dog-name">${escapeHtml(dog.callName)}</div>
+                        <div class="titles-earned-dog-name">${escapeHtml(dog.callName)}${dog.handlerId ? ` <small style="color:#4a3f8a;font-size:0.78em;font-weight:700;">(${escapeHtml(dog.handlerId)})</small>` : ''}</div>
                         <div class="titles-earned-count">${escapeHtml(subtitleText)}</div>
                         ${listHtml}
                     </div>
@@ -2361,8 +2361,6 @@
                                     ${handlerInfo}
                                     ${noEntriesNote}
                                     <br>
-                                    <small style="color: #4a3f8a; font-weight: 700; font-size: 0.8rem;">Handler ${escapeHtml(dog.handlerId || '')}</small>
-                                    <br>
                                     <small style="color: #4a5568; font-weight: normal; font-size: 0.8rem;">${escapeHtml(dog.regNumber)}</small>
                                 </th>`;
             });
@@ -2467,7 +2465,7 @@
                             qsNeeded = qNeeded === 0 ? 1 : qNeeded;
                         }
 
-                        return { callName: dog.callName, qsNeeded, hasTitle, dogIdx: dog.dogIdx };
+                        return { callName: dog.callName, handlerId: dog.handlerId, qsNeeded, hasTitle, dogIdx: dog.dogIdx };
                     })
                     .filter(d => d !== null);
 
@@ -2478,7 +2476,8 @@
                 const dogSpans = dogsForLevel
                     .map(d => {
                         const numColor = d.hasTitle ? '#7b2fbe' : '#1a7a3f';
-                        return `<span class="dog-col-${d.dogIdx}">${escapeHtml(d.callName)}\u00a0<span style="color:${numColor};font-weight:700;">(${d.qsNeeded})</span></span>`;
+                        const handlerMarker = d.handlerId ? ` <small style="color:#4a3f8a;font-size:0.78em;font-weight:700;">(${escapeHtml(d.handlerId)})</small>` : '';
+                        return `<span class="dog-col-${d.dogIdx}">${escapeHtml(d.callName)}${handlerMarker}\u00a0<span style="color:${numColor};font-weight:700;">(${d.qsNeeded})</span></span>`;
                     })
                     .join('\u2002');
 
