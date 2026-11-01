@@ -2,16 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-src 'none'">
-    <meta name="referrer" content="no-referrer">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dog Trialing Records Tracker</title>
-    <link rel="manifest" href="./manifest.webmanifest">
-    <meta name="theme-color" content="#34495e">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-title" content="C-WAGS Beta">
-    <link rel="apple-touch-icon" href="./icons/apple-touch-icon-v5.png">
-    <link rel="stylesheet" href="./pwa.css">
     <style>
         * {
             margin: 0;
@@ -44,9 +36,7 @@
 
         .header-content {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            gap: 8px;
             justify-content: space-between;
             max-width: 1200px;
             margin: 0 auto;
@@ -56,8 +46,6 @@
             text-align: center;
             flex: 1;
         }
-
-        #rightLogo { display: none; }
 
         .header h1 {
             font-size: 2.5rem;
@@ -79,7 +67,7 @@
         .logo {
             width: 160px;
             height: 160px;
-            background-image: url('./cwags-logo.png');
+            background-image: url('https://raw.githubusercontent.com/cwagtracker/Tracker/main/cwags-logo.png');
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
@@ -697,7 +685,6 @@
         background: white !important;
         padding: 5px !important;
         margin: 0 !important;
-        overflow: visible !important;
         font-size: 10px !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
@@ -762,8 +749,7 @@
     .owner-view-table {
         font-size: 14px !important;
         width: 100% !important;
-        page-break-inside: auto !important;
-        break-inside: auto !important;
+        page-break-inside: avoid !important;
         border-collapse: collapse !important;
         margin-top: 6px !important;
         table-layout: fixed !important;
@@ -837,8 +823,8 @@
         border: none !important;
         border-radius: 0 !important;
         box-shadow: none !important;
-        page-break-before: auto !important;
-        break-before: auto !important;
+        page-break-before: always !important;
+        break-before: page !important;
     }
 
     .priority-list h4 {
@@ -884,8 +870,6 @@
 
     .titles-earned-dog-card {
         padding: 8px 10px !important;
-        break-inside: avoid !important;
-        page-break-inside: avoid !important;
     }
 
     .titles-earned-dog-name {
@@ -903,15 +887,6 @@
     #summaryContent {
         transform-origin: top left !important;
     }
-    .header-content { flex-direction: column !important; align-items: center !important; }
-    .summary-section, .owner-table-scroll { overflow: visible !important; }
-    .owner-view-table thead { display: table-header-group; }
-    .owner-view-table tr { break-inside: avoid; page-break-inside: avoid; }
-    .owner-view-table td:not(:first-child), .owner-view-table td:not(:first-child) * {
-        white-space: normal !important;
-        overflow-wrap: anywhere !important;
-    }
-    .priority-list h4, .titles-earned-header { break-after: avoid; }
 
     @page {
         margin: 0.25in !important;
@@ -934,26 +909,10 @@
             </div>
         </div>
 
-        <aside class="app-tools" aria-label="App installation and saved records">
-          <strong>C-WAGS Tracker · Installable beta</strong>
-          <div class="app-tools-actions">
-            <button id="installTracker" type="button" hidden>Install tracker</button>
-            <button id="checkUpdates" type="button">Check for updates</button>
-            <button id="reloadTracker" type="button" hidden>Load updated records</button>
-            <button id="updateApp" type="button" hidden>Update app</button>
-          </div>
-          <p id="offlineStatus" role="status" aria-live="polite">Preparing saved records…</p>
-          <small id="offlineDetails">Stay connected until the app says ready for offline use.</small>
-          <details><summary>Phone installation instructions</summary>
-            <p><strong>Android:</strong> tap Install tracker if shown, or use Chrome’s menu → Add to Home screen / Install app.</p>
-            <p><strong>iPhone:</strong> open this website in Safari, tap Share → Add to Home Screen, enable Open as Web App if offered, then Add.</p>
-            <p>After installation, open the home-screen icon and wait for Ready for offline use before disconnecting. Printing requires your phone’s print/PDF support.</p>
-          </details>
-        </aside>
         <div class="search-section">
             <div class="search-container">
-                <input type="text" id="searchInput" class="search-input"
-                       placeholder="Enter Registration Number (e.g., 17-1734-06)"
+                <input type="text" id="searchInput" class="search-input" 
+                       placeholder="Enter Registration Number (e.g., 17-1734-06)" 
                        onkeypress="handleKeyPress(event)">
                 <button class="search-btn" onclick="searchDog()">Search Dog Records</button>
                 <button class="owner-view-btn" onclick="showOwnerView()">Owner View by ID</button>
@@ -994,16 +953,14 @@
         </div>
     </div>
 
-    <script src="./pwa.js"></script>
-    <script src="./vendor/xlsx-0.20.3.full.min.js"></script>
-    <script src="./vendor/pdf-lib.min.js"></script>
-    <script src="./vendor/fontkit.umd.min.js" onerror="console.error('Fontkit failed to load from unpkg')"></script>
-    <script src="./registration-pdf.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <script src="https://unpkg.com/@pdf-lib/fontkit@1.1.1/dist/fontkit.umd.min.js" onerror="console.error('Fontkit failed to load from unpkg')"></script>
     <script>
         if (typeof fontkit === 'undefined') {
             console.log('Loading fontkit from backup CDN...');
             const script = document.createElement('script');
-            script.src = './vendor/fontkit.umd.min.js';
+            script.src = 'https://cdn.skypack.dev/@pdf-lib/fontkit@1.1.1';
             script.onerror = () => console.error('Backup fontkit also failed');
             document.head.appendChild(script);
         }
@@ -1011,9 +968,9 @@
     <script>
         let trialingData = [];
         let currentDogRecords = [];
-        let dogInfoData = Object.create(null);
+        let dogInfoData = {};
         let titlePlacementData = {};
-
+        
         // Track which dog columns are currently visible in owner view
         let ownerViewDogVisibility = {};
 
@@ -1155,7 +1112,13 @@
         }
 
         function escapeJs(text) {
-            return escapeHtml(String(text ?? '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029'));
+            if (!text) return '';
+            return text.toString()
+                .replace(/\\/g, "\\\\")
+                .replace(/'/g, "\\'")
+                .replace(/"/g, '\\"')
+                .replace(/\n/g, "\\n")
+                .replace(/\r/g, "\\r");
         }
 
         async function loadDogInfoData() {
@@ -1177,16 +1140,16 @@
                     return response.arrayBuffer();
                 })
                 .then(fileContent => {
-                    const workbook = XLSX.read(new Uint8Array(fileContent), {
-                        cellStyles: true,
-                        cellFormulas: true,
-                        cellDates: true
+                    const workbook = XLSX.read(new Uint8Array(fileContent), { 
+                        cellStyles: true, 
+                        cellFormulas: true, 
+                        cellDates: true 
                     });
-
+                    
                     const sheetName = workbook.SheetNames[0];
                     const sheet = workbook.Sheets[sheetName];
                     const jsonData = XLSX.utils.sheet_to_json(sheet, {header: 1});
-
+                    
                     let loadedCount = 0;
                     // DogInfo can be supplied with or without a heading row.
                     // Identify records by their registration number so the first dog is retained.
@@ -1196,7 +1159,7 @@
                             const callName = row[1] ? row[1].toString().trim() : '';
                             const registeredName = row[2] ? row[2].toString().trim() : '';
                             const handlerName = row[3] ? row[3].toString().trim() : '';
-
+                            
                             dogInfoData[regNumber] = {
                                 callName: callName,
                                 handlerName: handlerName,
@@ -1205,7 +1168,7 @@
                             loadedCount++;
                         }
                     });
-
+                    
                     console.log('✅ DogInfo data loaded:', loadedCount, 'dogs');
                     resolve(true);
                 })
@@ -1258,23 +1221,23 @@
                     return response.arrayBuffer();
                 })
                 .then(fileContent => {
-                    const workbook = XLSX.read(new Uint8Array(fileContent), {
-                        cellStyles: true,
-                        cellFormulas: true,
-                        cellDates: true
+                    const workbook = XLSX.read(new Uint8Array(fileContent), { 
+                        cellStyles: true, 
+                        cellFormulas: true, 
+                        cellDates: true 
                     });
-
+                    
                     const sheetName = workbook.SheetNames[0];
                     const sheet = workbook.Sheets[sheetName];
                     const jsonData = XLSX.utils.sheet_to_json(sheet, {header: 1});
-
+                    
                     let loadedCount = 0;
                     jsonData.slice(1).forEach(row => {
                         if (row && row[1] && row[2] && row[3]) {
                             const className = row[1].toString().trim();
                             const certificateName = row[2].toString().trim();
                             const aceCertificateName = row[3].toString().trim();
-
+                            
                             titlePlacementData[className] = {
                                 certificateName: certificateName,
                                 aceCertificateName: aceCertificateName
@@ -1282,7 +1245,7 @@
                             loadedCount++;
                         }
                     });
-
+                    
                     console.log('✅ Title Placement data loaded:', loadedCount, 'classes');
                     resolve(true);
                 })
@@ -1319,7 +1282,7 @@
 
         function calculateOptimalPDFFontSize(text, font, maxWidth, defaultSize, minSize = 8) {
             let fontSize = defaultSize;
-
+            
             while (fontSize >= minSize) {
                 const textWidth = font.widthOfTextAtSize(text, fontSize);
                 if (textWidth <= maxWidth) {
@@ -1334,7 +1297,7 @@
             const optimalSize = calculateOptimalPDFFontSize(text, font, maxWidth, defaultSize, minSize);
             const textWidth = font.widthOfTextAtSize(text, optimalSize);
             const x = centerX - (textWidth / 2);
-
+            
             page.drawText(text, {
                 x: x,
                 y: y,
@@ -1342,17 +1305,17 @@
                 font: font,
                 color: color
             });
-
+            
             return optimalSize;
         }
 
         function drawTextWithAlignmentAndDynamicSize(page, text, config, font, maxWidth = null, defaultSize = null) {
             let fontSize = defaultSize || config.size;
-
+            
             if (maxWidth && fontSize) {
                 fontSize = calculateOptimalPDFFontSize(text, font, maxWidth, fontSize);
             }
-
+            
             let x = config.x;
             if (config.align === 'center') {
                 const textWidth = font.widthOfTextAtSize(text, fontSize);
@@ -1361,12 +1324,12 @@
                 const textWidth = font.widthOfTextAtSize(text, fontSize);
                 x = config.x - textWidth;
             }
-
+            
             page.drawText(text, {
                 x: x, y: config.y, size: fontSize, font: font,
                 color: PDFLib.rgb(config.color[0], config.color[1], config.color[2])
             });
-
+            
             return fontSize;
         }
 
@@ -1389,14 +1352,14 @@
                 const handlerName = getHandlerNameFromDogInfo(regNumber) || 'Handler Name';
                 const registeredName = getRegisteredNameFromDogInfo(regNumber) || 'Dog Name';
 
-                const templateUrl = `./templates/${templateInfo.template}`;
+                const templateUrl = `https://raw.githubusercontent.com/Cwagtracker/Tracker/main/templates/${templateInfo.template}`;
                 const response = await fetch(templateUrl);
                 if (!response.ok) throw new Error(`Template not found: ${templateUrl}`);
-
+                
                 const templateBytes = await response.arrayBuffer();
                 const pdfDoc = await PDFLib.PDFDocument.load(templateBytes);
                 const firstPage = pdfDoc.getPages()[0];
-
+                
                 const font = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
                 const timesBold = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRomanBold);
                 let maiandraFont = timesBold;
@@ -1405,10 +1368,10 @@
                     try {
                         pdfDoc.registerFontkit(fontkit);
                         const fontUrls = [
-                            './fonts/Maiandra%20GD.TTF',
-                            './fonts/Maiandra%20GD.TTF'
+                            'https://cdn.jsdelivr.net/gh/cwagtracker/Tracker@main/fonts/Maiandra%20GD.TTF',
+                            'https://raw.githubusercontent.com/cwagtracker/Tracker/main/fonts/Maiandra%20GD.TTF'
                         ];
-
+                        
                         for (const fontUrl of fontUrls) {
                             try {
                                 const fontResponse = await fetch(fontUrl, { mode: 'cors' });
@@ -1431,26 +1394,26 @@
                 const handlerMaxWidth = 710 - 72;
                 const handlerCenterX = 72 + (handlerMaxWidth / 2);
                 drawCenteredTextWithDynamicSize(
-                    firstPage,
-                    handlerName,
-                    handlerCenterX,
-                    titleCertificateConfig.handlerName.y,
-                    maiandraFont,
-                    PDFLib.rgb(0, 0, 0),
-                    handlerMaxWidth,
+                    firstPage, 
+                    handlerName, 
+                    handlerCenterX, 
+                    titleCertificateConfig.handlerName.y, 
+                    maiandraFont, 
+                    PDFLib.rgb(0, 0, 0), 
+                    handlerMaxWidth, 
                     titleCertificateConfig.handlerName.size
                 );
 
                 const dogMaxWidth = 710 - 72;
                 const dogCenterX = 72 + (dogMaxWidth / 2);
                 drawCenteredTextWithDynamicSize(
-                    firstPage,
-                    registeredName,
-                    dogCenterX,
-                    titleCertificateConfig.dogName.y,
-                    maiandraFont,
-                    PDFLib.rgb(0, 0, 0),
-                    dogMaxWidth,
+                    firstPage, 
+                    registeredName, 
+                    dogCenterX, 
+                    titleCertificateConfig.dogName.y, 
+                    maiandraFont, 
+                    PDFLib.rgb(0, 0, 0), 
+                    dogMaxWidth, 
                     titleCertificateConfig.dogName.size
                 );
 
@@ -1464,7 +1427,7 @@
                     font: maiandraFont,
                     color: PDFLib.rgb(0, 0, 0)
                 });
-
+                
                 const dateConfig = titleCertificateConfig.dateEarned;
                 firstPage.drawText('On ', {
                     x: dateConfig.x - 20, y: dateConfig.y, size: dateConfig.size, font: font,
@@ -1489,7 +1452,7 @@
                 });
 
                 const pdfBytes = await pdfDoc.save();
-
+                
                 downloadPDF(pdfBytes, `${registeredName}-${level.replace(/\s+/g, '-')}-Title-Certificate.pdf`);
                 btn.textContent = '📜 Title Certificate';
                 btn.disabled = false;
@@ -1497,7 +1460,7 @@
             } catch (error) {
                 console.error('Certificate generation error:', error);
                 alert(`Unable to generate certificate: ${error.message}`);
-
+                
                 const btn = event.target;
                 btn.textContent = '📜 Title Certificate';
                 btn.disabled = false;
@@ -1508,21 +1471,21 @@
             const sortedRecords = records
                 .filter(r => r.Qs > 0 && r.date instanceof Date && !isNaN(r.date))
                 .sort((a, b) => a.date - b.date);
-
+            
             let cumulativeQs = 0;
             const aceEarnedDates = [];
-
+            
             for (const record of sortedRecords) {
                 const prevQs = cumulativeQs;
                 cumulativeQs += record.Qs;
-
+                
                 if (prevQs >= titleQs && cumulativeQs > titleQs) {
                     const prevAceQs = prevQs - titleQs;
                     const newAceQs = cumulativeQs - titleQs;
-
+                    
                     const prevAceCount = Math.floor(prevAceQs / 10);
                     const newAceCount = Math.floor(newAceQs / 10);
-
+                    
                     for (let i = prevAceCount + 1; i <= newAceCount; i++) {
                         aceEarnedDates.push({
                             aceNumber: i,
@@ -1531,7 +1494,7 @@
                     }
                 }
             }
-
+            
             return aceEarnedDates;
         }
 
@@ -1565,14 +1528,14 @@
                 const handlerName = getHandlerNameFromDogInfo(regNumber) || 'Handler Name';
                 const registeredName = getRegisteredNameFromDogInfo(regNumber) || 'Dog Name';
 
-                const templateUrl = './templates/Ace.pdf';
+                const templateUrl = 'https://raw.githubusercontent.com/cwagtracker/Tracker/main/templates/Ace.pdf';
                 const response = await fetch(templateUrl);
                 if (!response.ok) throw new Error(`ACE template not found: ${templateUrl}`);
-
+                
                 const templateBytes = await response.arrayBuffer();
                 const pdfDoc = await PDFLib.PDFDocument.load(templateBytes);
                 const firstPage = pdfDoc.getPages()[0];
-
+                
                 const helvetica = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
                 const timesBold = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRomanBold);
                 let maiandraFont = timesBold;
@@ -1581,10 +1544,10 @@
                     try {
                         pdfDoc.registerFontkit(fontkit);
                         const fontUrls = [
-                            './fonts/Maiandra%20GD.TTF',
-                            './fonts/Maiandra%20GD.TTF'
+                            'https://cdn.jsdelivr.net/gh/cwagtracker/Tracker@main/fonts/Maiandra%20GD.TTF',
+                            'https://raw.githubusercontent.com/cwagtracker/Tracker/main/fonts/Maiandra%20GD.TTF'
                         ];
-
+                        
                         for (const fontUrl of fontUrls) {
                             try {
                                 const fontResponse = await fetch(fontUrl, { mode: 'cors' });
@@ -1603,27 +1566,27 @@
 
                 const callNameMaxWidth = 710 - 72;
                 drawTextWithAlignmentAndDynamicSize(
-                    firstPage,
-                    registeredName,
-                    aceCertificateConfig.callName,
-                    maiandraFont,
-                    callNameMaxWidth,
+                    firstPage, 
+                    registeredName, 
+                    aceCertificateConfig.callName, 
+                    maiandraFont, 
+                    callNameMaxWidth, 
                     aceCertificateConfig.callName.size
                 );
 
                 const handlerMaxWidthAce = 690 - 235;
                 drawTextWithAlignmentAndDynamicSize(
-                    firstPage,
-                    handlerName,
-                    aceCertificateConfig.handlerName,
-                    maiandraFont,
-                    handlerMaxWidthAce,
+                    firstPage, 
+                    handlerName, 
+                    aceCertificateConfig.handlerName, 
+                    maiandraFont, 
+                    handlerMaxWidthAce, 
                     aceCertificateConfig.handlerName.size
                 );
 
                 drawTextWithAlignmentAndDynamicSize(firstPage, regNumber, aceCertificateConfig.registrationNumber, helvetica);
                 drawTextWithAlignmentAndDynamicSize(firstPage, aceCertificateName, aceCertificateConfig.levelAbbreviation, maiandraFont);
-
+                
                 const pdfBytes = await pdfDoc.save();
                 downloadPDF(pdfBytes, `${registeredName}-${level.replace(/\s+/g, '-')}-ACE-Certificate.pdf`);
 
@@ -1633,7 +1596,7 @@
             } catch (error) {
                 console.error('ACE certificate generation error:', error);
                 alert(`Unable to generate ACE certificate: ${error.message}`);
-
+                
                 const btn = event.target;
                 btn.textContent = '🏆 Ace Certificate';
                 btn.disabled = false;
@@ -1658,9 +1621,9 @@
 
         function formatRegistrationNumber(input) {
             if (!input) return '';
-
+            
             let cleaned = input.replace(/[^0-9-]/g, '');
-
+            
             if (cleaned.includes('-')) {
                 let parts = cleaned.split('-');
                 if (parts.length === 3) {
@@ -1670,7 +1633,7 @@
                     return `${part1}-${part2}-${part3}`;
                 }
             }
-
+            
             const digitsOnly = cleaned.replace(/-/g, '');
             if (digitsOnly.length >= 6) {
                 const part1 = digitsOnly.substring(0, 2).padStart(2, '0');
@@ -1678,11 +1641,11 @@
                 const part3 = digitsOnly.substring(6, 8).padStart(2, '0');
                 return `${part1}-${part2}-${part3}`;
             }
-
+            
             if (digitsOnly.length === 4) {
                 return `XX-${digitsOnly}-XX`;
             }
-
+            
             return cleaned;
         }
 
@@ -1699,9 +1662,9 @@
             }
 
             const formattedSearch = formatRegistrationNumber(searchInput);
-
-            const dogRecords = trialingData.filter(record =>
-                record.registrationNumber &&
+            
+            const dogRecords = trialingData.filter(record => 
+                record.registrationNumber && 
                 record.registrationNumber.toString().toLowerCase() === formattedSearch.toLowerCase()
             );
 
@@ -1709,21 +1672,21 @@
 
             if (dogRecords.length === 0 && !dogExistsInInfo) {
                 const partialMatches = trialingData.filter(record =>
-                    record.registrationNumber &&
+                    record.registrationNumber && 
                     record.registrationNumber.toString().toLowerCase().includes(formattedSearch.toLowerCase())
                 ).slice(0, 5);
 
-                let errorMessage = `No dog found with registration number: <strong>${escapeHtml(formattedSearch)}</strong>`;
-
+                let errorMessage = `No dog found with registration number: <strong>${formattedSearch}</strong>`;
+                
                 if (partialMatches.length > 0) {
                     errorMessage += '<br><br><strong>Did you mean:</strong><ul style="text-align: left; margin: 10px 0;">';
                     partialMatches.forEach(match => {
-                        errorMessage += `<li><a href="#" onclick="searchSpecific('${escapeJs(match.registrationNumber)}')" style="color: #007bff; text-decoration: underline;">${escapeHtml(match.registrationNumber)} (${escapeHtml(match.callName || 'Unknown')})</a></li>`;
+                        errorMessage += `<li><a href="#" onclick="searchSpecific('${match.registrationNumber}')" style="color: #007bff; text-decoration: underline;">${match.registrationNumber} (${match.callName || 'Unknown'})</a></li>`;
                     });
                     errorMessage += '</ul>';
                 }
 
-                document.getElementById('summaryContent').innerHTML =
+                document.getElementById('summaryContent').innerHTML = 
                     `<div class="error-message">${errorMessage}</div>`;
                 return;
             }
@@ -1745,21 +1708,21 @@
 
         function displaySummary(records, regNumberOverride = null) {
             const regNumber = regNumberOverride || (records.length > 0 ? records[0].registrationNumber : null);
-
+            
             if (!regNumber) {
-                document.getElementById('summaryContent').innerHTML =
+                document.getElementById('summaryContent').innerHTML = 
                     `<div class="error-message">Unable to determine registration number</div>`;
                 return;
             }
-
+            
             const callName = getCallNameFromDogInfo(regNumber, records.length > 0 ? records[0].callName : null) || 'Unknown';
             const handlerName = getHandlerNameFromDogInfo(regNumber);
-
-            const levelSummary = Object.create(null);
-
+            
+            const levelSummary = {};
+            
             records.forEach(record => {
                 if (!record.level) return;
-
+                
                 if (!levelSummary[record.level]) {
                     levelSummary[record.level] = {
                         totalQs: 0,
@@ -1767,7 +1730,7 @@
                         records: []
                     };
                 }
-
+                
                 if (record.Qs > 0) {
                     levelSummary[record.level].totalQs += record.Qs;
                     if (record.judge) {
@@ -1781,14 +1744,14 @@
 
             let html = `
                 <div class="dog-info">
-                    ${handlerName ? `<p class="handler-name"><strong>Handler:</strong> ${escapeHtml(handlerName)}</p>` : ''}
-                    <h3>${escapeHtml(callName)}</h3>
-                    <p><strong>Registration:</strong> ${escapeHtml(regNumber)}</p>
+                    ${handlerName ? `<p class="handler-name"><strong>Handler:</strong> ${handlerName}</p>` : ''}
+                    <h3>${callName}</h3>
+                    <p><strong>Registration:</strong> ${regNumber}</p>
                     <p><strong>Total Trialing Records:</strong> ${records.length}</p>
                     ${records.length === 0 ? '<p style="color: #856404; background: #fff3cd; padding: 10px; border-radius: 6px; margin-top: 10px;"><strong>📋 No trialing entries found for this dog yet</strong></p>' : ''}
                 </div>
             `;
-
+            
             if (Object.keys(levelSummary).length === 0) {
                 document.getElementById('summaryContent').innerHTML = html + `
                     <div style="text-align: center; padding: 20px; color: #6c757d;">
@@ -1797,37 +1760,37 @@
                 `;
                 return;
             }
-
+            
             getSortedLevels(levelSummary).forEach(level => {
                 const summary = levelSummary[level];
                 const isValidated = validatedLevels[level];
                 const judgeCount = summary.judges.size;
-
+                
                 const hasTitleRequirements = summary.totalQs >= 4 && judgeCount >= 2 && isValidated;
-
+                
                 let gamesInfo = '';
                 if (level.startsWith('Games ')) {
                     const uniqueGames = getUniqueGames(summary.records);
                     gamesInfo = `<div><span>Different Games:</span> <strong>${uniqueGames.size}/2</strong> (${Array.from(uniqueGames).join(', ') || 'None'})</div>`;
                 }
-
+                
                 let titleQs = 0;
                 let aceQs = 0;
                 let titleStatus = '';
                 let titleClass = '';
                 let titleInfo = null;
                 let aceEarnedDates = [];
-
+                
                 if (hasTitleRequirements) {
                     titleInfo = calculateTitleQs(summary.records);
                     titleQs = titleInfo.titleQs;
                     const titleDate = titleInfo.titleDate;
                     aceQs = Math.max(0, summary.totalQs - titleQs);
-
+                    
                     aceEarnedDates = findAceEarnedDates(summary.records, titleQs);
-
+                    
                     const officialTitle = titleAbbreviations[level] || level;
-
+                    
                     if (aceQs >= 10) {
                         const aceCount = Math.floor(aceQs / 10);
                         titleStatus = getAceDesignation(level, aceCount);
@@ -1847,13 +1810,13 @@
                     const escapedLevel = escapeJs(level);
                     const escapedRegNumber = escapeJs(regNumber);
                     const escapedOfficialTitle = escapeJs(officialTitle);
-
+                    
                     certificateButtons += `
                         <button class="certificate-btn" onclick="generateTitleCertificate('${escapedLevel}', '${escapedRegNumber}', '${escapedOfficialTitle}')">
                             📜 Title Certificate
                         </button>
                     `;
-
+                    
                     if (aceQs >= 10) {
                         const aceCount = Math.floor(aceQs / 10);
                         for (let i = 1; i <= aceCount; i++) {
@@ -1866,13 +1829,13 @@
                         }
                     }
                 }
-
+                
                 html += `
                     <div class="level-summary">
                         <div class="level-info">
-                            <h4>${escapeHtml(level)}</h4>
-                            <div class="title-status ${titleClass}">${escapeHtml(titleStatus)}</div>
-
+                            <h4>${level}</h4>
+                            <div class="title-status ${titleClass}">${titleStatus}</div>
+                            
                             <div class="Qs-breakdown">
                                 <div><span>Total Q's:</span> <strong>${summary.totalQs}</strong></div>
                                 <div><span>Judges:</span> <strong>${judgeCount}/2</strong></div>
@@ -1882,16 +1845,16 @@
                                     <div><span>Q's Towards Ace:</span> <strong class="ace-info">${aceQs}</strong></div>
                                     ${titleInfo && titleInfo.titleDate ? `<div style="color: #28a745; font-size: 0.85rem;"><span>Title Earned:</span> <strong>${titleInfo.titleDate instanceof Date && !isNaN(titleInfo.titleDate) ? titleInfo.titleDate.toLocaleDateString() : 'N/A'}</strong></div>` : ''}
                                         ${aceEarnedDates.length > 0 ? aceEarnedDates.map(ace => `<div style="color: #6f42c1; font-size: 0.85rem; margin: 4px 0; display: block;"><span>Ace ${ace.aceNumber}</span><span style="margin: 0 8px;">............</span><span>${ace.date.toLocaleDateString()}</span></div>`).join('') : ''}
-                                    ${aceQs < 10 && aceQs >= 0 ? `<div class="ace-info"><span>Q's until next Ace:</span> <strong>${10 - (aceQs % 10)}</strong></div>` :
+                                    ${aceQs < 10 && aceQs >= 0 ? `<div class="ace-info"><span>Q's until next Ace:</span> <strong>${10 - (aceQs % 10)}</strong></div>` : 
                                     aceQs >= 10 ? `<div class="ace-info"><span>Q's until next Ace:</span> <strong>${10 - (aceQs % 10)}</strong></div>` : ''}
                                 ` : `
                                     <div style="color: #dc3545;">
                                         <div><span>Need:</span> ${summary.totalQs < 4 ? `${4 - summary.totalQs} more Q's` : ''}
                                         ${summary.totalQs < 4 && judgeCount < 2 ? ', ' : ''}
                                         ${judgeCount < 2 ? `${2 - judgeCount} more judge${judgeCount === 0 ? 's' : ''}` : ''}
-                                        ${level.startsWith('Games ') && getUniqueGames(summary.records).size < 2 ?
+                                        ${level.startsWith('Games ') && getUniqueGames(summary.records).size < 2 ? 
                                             `${(summary.totalQs < 4 || judgeCount < 2) ? ', ' : ''}${2 - getUniqueGames(summary.records).size} more different game${getUniqueGames(summary.records).size === 0 ? 's' : ''}` : ''}</div>
-                                        ${!isValidated && !level.startsWith('Games ') ? `<div><span>Prerequisites:</span> ${escapeHtml(getPrerequisiteText(level))}</div>` : ''}
+                                        ${!isValidated && !level.startsWith('Games ') ? `<div><span>Prerequisites:</span> ${getPrerequisiteText(level)}</div>` : ''}
                                     </div>
                                 `}
                             </div>
@@ -1911,23 +1874,23 @@
             const sortedRecords = records
                 .filter(r => r.Qs > 0 && r.date instanceof Date && !isNaN(r.date))
                 .sort((a, b) => a.date - b.date);
-
+            
             let cumulativeQs = 0;
             let judges = new Set();
-
+            
             for (const record of sortedRecords) {
                 const prevQs = cumulativeQs;
                 const prevJudgeCount = judges.size;
-
+                
                 cumulativeQs += record.Qs;
                 if (record.judge) judges.add(record.judge);
-
+                
                 const nowHasTitle = cumulativeQs >= 4 && judges.size >= 2;
                 const previouslyHadTitle = prevQs >= 4 && prevJudgeCount >= 2;
-
+                
                 if (nowHasTitle && !previouslyHadTitle) {
                     let QsTowardTitle = record.Qs;
-
+                    
                     if (prevQs >= 4 && prevJudgeCount < 2) {
                         QsTowardTitle = 1;
                     }
@@ -1937,14 +1900,14 @@
                     else if (prevQs < 4 && prevJudgeCount < 2) {
                         QsTowardTitle = Math.min(record.Qs, 4 - prevQs);
                     }
-
+                    
                     return {
                         titleQs: prevQs + QsTowardTitle,
                         titleDate: record.date
                     };
                 }
             }
-
+            
             return {
                 titleQs: cumulativeQs,
                 titleDate: sortedRecords[sortedRecords.length - 1]?.date
@@ -1953,7 +1916,7 @@
 
         function applyValidationRules(levelSummary) {
             const validatedLevels = {};
-
+            
             Object.keys(levelSummary).forEach(level => {
                 if (!prerequisites[level] && !level.startsWith('Games ')) {
                     validatedLevels[level] = true;
@@ -1996,7 +1959,7 @@
         function getUniqueGames(records) {
             const games = new Set();
             const gamesList = ['BJ', 'C', 'P', 'T', 'GB'];
-
+            
             records.forEach(record => {
                 if (record.results) {
                     const results = record.results.toString().toUpperCase();
@@ -2007,7 +1970,7 @@
                     });
                 }
             });
-
+            
             return games;
         }
 
@@ -2018,19 +1981,19 @@
 
         function getPrerequisiteText(level) {
             if (!prerequisites[level]) return 'None';
-
+            
             if (level === "Investigator 3") {
                 return 'Either "Patrol 1" OR "Detective 2" (4+ Qs, 2+ judges each)';
             }
-
+            
             return `"${prerequisites[level][0]}" (4+ Qs, 2+ judges)`;
         }
 
         function showLevelDetails(level, dogName) {
             const records = currentDogRecords.filter(r => r.level === level);
-
+            
             document.getElementById('modalTitle').textContent = `${dogName} - ${level} Details`;
-
+            
             let html = `
                 <table class="records-table">
                     <thead>
@@ -2047,23 +2010,23 @@
             records.sort((a, b) => new Date(a.date) - new Date(b.date));
 
             records.forEach(record => {
-                const date = record.date && record.date instanceof Date && !isNaN(record.date)
-                    ? record.date.toLocaleDateString()
+                const date = record.date && record.date instanceof Date && !isNaN(record.date) 
+                    ? record.date.toLocaleDateString() 
                     : 'N/A';
                 const QsClass = record.Qs > 0 ? 'Qs-badge' : 'Qs-badge zero';
-
+                
                 html += `
                     <tr>
                         <td>${date}</td>
-                        <td>${escapeHtml(record.judge || 'N/A')}</td>
-                        <td>${escapeHtml(record.results || 'N/A')}</td>
-                        <td><span class="${QsClass}">${escapeHtml(record.Qs)}</span></td>
+                        <td>${record.judge || 'N/A'}</td>
+                        <td>${record.results || 'N/A'}</td>
+                        <td><span class="${QsClass}">${record.Qs}</span></td>
                     </tr>
                 `;
             });
 
             html += '</tbody></table>';
-
+            
             document.getElementById('modalBody').innerHTML = html;
             document.getElementById('detailsModal').style.display = 'block';
         }
@@ -2081,12 +2044,12 @@
             document.getElementById('summaryContent').innerHTML = `
                 <div style="text-align: center; padding: 20px;">
                     <h3 style="color: #17a2b8; margin-bottom: 20px;">👤 Owner View</h3>
-                    <p style="margin-bottom: 20px;">Enter the middle 4 digits from your registration number:</p>
+                    <p style="margin-bottom: 20px;">Enter one or more handler numbers (the middle 4 digits), separated by commas:</p>
 
                     <div style="background: #f8f9fa; padding: 20px; border-radius: 12px; border: 2px solid #dee2e6; margin: 20px 0;">
-                        <input type="text" id="ownerIdInput" placeholder="e.g., 1734"
-                               style="padding: 15px 20px; font-size: 1.2rem; border: 2px solid #ddd; border-radius: 10px; width: 100%; max-width: 200px; text-align: center;"
-                               onkeypress="handleOwnerKeyPress(event)" maxlength="4">
+                        <input type="text" id="ownerIdInput" placeholder="e.g., 1734, 2841, 5620"
+                               style="padding: 15px 20px; font-size: 1.1rem; border: 2px solid #ddd; border-radius: 10px; width: 100%; max-width: 420px; text-align: center;"
+                               onkeypress="handleOwnerKeyPress(event)" autocomplete="off" inputmode="numeric">
                         <br><br>
                         <button onclick="loadOwnerView()" style="background: #28a745; color: white; border: none; padding: 15px 30px; border-radius: 10px; cursor: pointer; font-size: 1.1rem; min-width: 180px;">
                             📊 Load Owner View
@@ -2098,12 +2061,8 @@
                     </button>
                 </div>
             `;
-            restoreOwnerId();
         }
 
-        function restoreOwnerId() {
-            try { const input=document.getElementById('ownerIdInput'); if(input) input.value=localStorage.getItem('cwags-last-owner') || ''; } catch (_) {}
-        }
         function handleOwnerKeyPress(event) {
             if (event.key === 'Enter') {
                 loadOwnerView();
@@ -2197,7 +2156,6 @@
 
         // Store dogsData for the current owner view so toggleDogCol can refresh the panel
         let currentOwnerDogsData = [];
-        let currentOwnerId = '';
 
         function loadOwnerView() {
             const ownerIdInput = document.getElementById('ownerIdInput');
@@ -2206,46 +2164,42 @@
                 return;
             }
 
-            const ownerId = ownerIdInput.value.trim();
-            try { localStorage.setItem('cwags-last-owner', ownerId); } catch (_) {}
-
-            if (!ownerId) {
-                alert('Please enter the middle 4 digits');
+            // A family may enter several four-digit handler IDs, separated by commas.
+            // Each handler ID matches the middle four digits of YY-HHHH-DD (or YYHHHHDD).
+            const ownerIdText = ownerIdInput.value.trim();
+            if (!ownerIdText) {
+                alert('Please enter at least one 4-digit handler number');
                 return;
             }
 
-            if (!/^\d{4}$/.test(ownerId)) {
-                alert('Please enter exactly 4 digits');
+            const ownerIds = [...new Set(ownerIdText.split(',').map(id => id.trim()).filter(Boolean))];
+            const invalidOwnerIds = ownerIds.filter(id => !/^\d{4}$/.test(id));
+
+            if (ownerIds.length === 0 || invalidOwnerIds.length > 0) {
+                alert('Enter each handler number as exactly 4 digits, separated by commas. Example: 1734, 2841, 5620');
                 return;
             }
+
+            // Extract the HHHH portion from either YY-HHHH-DD or the 8-digit YYHHHHDD format.
+            const getHandlerIdFromRegistration = registrationNumber => {
+                if (registrationNumber === null || registrationNumber === undefined) return null;
+                const digits = registrationNumber.toString().trim().replace(/\D/g, '');
+                return /^\d{8}$/.test(digits) ? digits.substring(2, 6) : null;
+            };
+
+            const ownerIdSet = new Set(ownerIds);
 
             const matchingDogsFromTrialing = trialingData.filter(record => {
-                if (!record.registrationNumber) return false;
-
-                const regNumber = record.registrationNumber.toString().trim();
-
-                if (regNumber.includes('-')) {
-                    const regParts = regNumber.split('-');
-                    return regParts.length >= 2 && regParts[1] === ownerId;
-                } else if (/^\d{8}$/.test(regNumber)) {
-                    const middlePart = regNumber.substring(2, 6);
-                    return middlePart === ownerId;
-                }
-
-                return false;
+                return ownerIdSet.has(getHandlerIdFromRegistration(record.registrationNumber));
             });
 
             const matchingDogsFromInfo = Object.keys(dogInfoData).filter(regNumber => {
-                if (regNumber.includes('-')) {
-                    const regParts = regNumber.split('-');
-                    return regParts.length >= 2 && regParts[1] === ownerId;
-                } else if (/^\d{8}$/.test(regNumber)) {
-                    const middlePart = regNumber.substring(2, 6);
-                    return middlePart === ownerId;
-                }
-                return false;
+                return ownerIdSet.has(getHandlerIdFromRegistration(regNumber));
             });
 
+            // Registration number is the identity of a handler/dog team. Do not merge
+            // records by call name: the same physical dog under different handlers
+            // has a different 8-digit registration number and must appear separately.
             const allMatchingRegNumbers = [...new Set([
                 ...matchingDogsFromTrialing.map(r => r.registrationNumber.toString().trim()),
                 ...matchingDogsFromInfo
@@ -2253,7 +2207,7 @@
 
             if (allMatchingRegNumbers.length === 0) {
                 document.getElementById('summaryContent').innerHTML = `
-                    <div class="error-message">No dogs found with owner ID: <strong>${escapeHtml(ownerId)}</strong></div>
+                    <div class="error-message">No dogs found for handler number(s): <strong>${ownerIds.join(", ")}</strong></div>
                     <div style="text-align: center; margin-top: 20px;">
                         <button onclick="showOwnerView()" style="background: #17a2b8; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer;">
                             ← Try Again
@@ -2283,14 +2237,13 @@
 
             let html = `
                 <div style="background: linear-gradient(45deg, #667eea, #764ba2); color: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; text-align: center;">
-                    <h3 style="margin: 0; font-size: 1.4rem;">${dogCount} dog(s) found</h3>
+                    <h3 style="margin: 0; font-size: 1.4rem;">${dogCount} registration(s) found</h3><div style="margin-top: 5px; font-size: 0.95rem;">Handler number(s): ${ownerIds.join(", ")}</div>
                 </div>
 
                 <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 15px;">
                     <button onclick="showOwnerView()" style="background: #6c757d; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-size: 0.95rem;">
-                        ← Change Owner ID
+                        ← Change Handler Number(s)
                     </button>
-                    <button onclick="showAllOwnerDogs()" style="background: #287c46; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-size: 0.95rem;">Show all dogs</button>
                     <button onclick="showRegistrationCard()" style="background: #34495e; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-size: 0.95rem;">Registration Card</button><button onclick="printOwnerView()" style="background: #6f42c1; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-size: 0.95rem;">
                         🖨️ Print View
                     </button>
@@ -2328,7 +2281,7 @@
                 ) || 'Unknown';
                 const handlerName = getHandlerNameFromDogInfo(regNumber);
 
-                const levelSummary = Object.create(null);
+                const levelSummary = {};
                 dogRecords.forEach(record => {
                     if (!record.level) return;
 
@@ -2359,11 +2312,10 @@
                 };
             });
 
-            // Initialise visibility; restore saved choices after the table has rendered.
+            // Initialise visibility tracking — all visible by default
             ownerViewDogVisibility = {};
             dogsData.forEach(dog => { ownerViewDogVisibility[dog.dogIdx] = true; });
             currentOwnerDogsData = dogsData;
-            currentOwnerId = ownerId;
 
             // Only show levels where at least one dog has Q's
             const levelsWithData = allLevels.filter(level =>
@@ -2377,7 +2329,7 @@
             colgroupHtml += `</colgroup>`;
 
             html += `
-                <div class="owner-table-scroll" style="overflow-x: auto; border: 1px solid #dee2e6; border-radius: 8px;">
+                <div style="overflow-x: auto; border: 1px solid #dee2e6; border-radius: 8px;">
                     <table class="owner-view-table" style="width: max-content; min-width: 100%; border-collapse: collapse; font-size: 14px; table-layout: auto;">
                         ${colgroupHtml}
                         <thead>
@@ -2391,7 +2343,7 @@
                 html += `
                                 <th class="dog-col-${dog.dogIdx}" style="padding: 8px 4px; text-align: center; border-bottom: 2px solid #dee2e6; font-weight: 700; width: ${75/dogsData.length}%; color: #1a1a1a;">
                                     <label class="print-hide" style="display: block; margin-bottom: 3px; cursor: pointer; font-size: 0.8rem; font-weight: normal; color: #2d3748;">
-                                        <input type="checkbox" data-dog-index="${dog.dogIdx}" checked onchange="toggleDogCol(${dog.dogIdx}, this.checked)" style="cursor: pointer; width: 16px; height: 16px;"> Print
+                                        <input type="checkbox" checked onchange="toggleDogCol(${dog.dogIdx}, this.checked)" style="cursor: pointer; width: 16px; height: 16px;"> Print
                                     </label>
                                     <a href="javascript:void(0)" onclick="searchSpecificDog('${escapedRegNumber}')"
                                        style="color: #4a3f8a; text-decoration: none; font-weight: bold; cursor: pointer; font-size: 15px;"
@@ -2414,7 +2366,7 @@
             levelsWithData.forEach(level => {
                 html += `
                             <tr style="border-bottom: 1px solid #e0e0e0;">
-                                <td style="padding: 4px 0; border-right: 1px solid #dee2e6; font-weight: 700; background: #f8f9fa; font-size: 14px; color: #1a1a1a; white-space: nowrap; overflow: hidden; position: sticky; left: 0; z-index: 5; width: 16ch; min-width: 16ch; max-width: 16ch; box-sizing: border-box;">${escapeHtml(level)}</td>`;
+                                <td style="padding: 4px 0; border-right: 1px solid #dee2e6; font-weight: 700; background: #f8f9fa; font-size: 14px; color: #1a1a1a; white-space: nowrap; overflow: hidden; position: sticky; left: 0; z-index: 5; width: 16ch; min-width: 16ch; max-width: 16ch; box-sizing: border-box;">${level}</td>`;
 
                 dogsData.forEach(dog => {
                     const levelData = dog.levelSummary[level];
@@ -2563,36 +2515,10 @@
 
             // Populate the titles earned panel
             refreshTitlesEarnedPanel(dogsData);
-            try {
-                const saved = JSON.parse(localStorage.getItem('cwags-dogs-' + ownerId) || '{}');
-                dogsData.forEach(dog => {
-                    if (saved[dog.regNumber] === false) {
-                        const box = document.querySelector('input[data-dog-index="' + dog.dogIdx + '"]');
-                        if (box) box.checked = false;
-                        toggleDogCol(dog.dogIdx, false);
-                    }
-                });
-            } catch (_) {}
-        }
-
-        function showAllOwnerDogs() {
-            currentOwnerDogsData.forEach(dog => {
-                const checkbox = document.querySelector('input[data-dog-index="' + dog.dogIdx + '"]');
-                if (checkbox) checkbox.checked = true;
-                toggleDogCol(dog.dogIdx, true);
-            });
         }
 
         function toggleDogCol(idx, visible) {
             ownerViewDogVisibility[idx] = visible;
-            try {
-                const ownerId = currentOwnerId;
-                if (ownerId) {
-                    const saved = {};
-                    currentOwnerDogsData.forEach(dog => { saved[dog.regNumber] = ownerViewDogVisibility[dog.dogIdx] !== false; });
-                    localStorage.setItem('cwags-dogs-' + ownerId, JSON.stringify(saved));
-                }
-            } catch (_) {}
 
             document.querySelectorAll('.dog-col-' + idx).forEach(function(el) {
                 el.style.display = visible ? '' : 'none';
@@ -2626,9 +2552,9 @@ function registrationCardDocument(dogs, logoUrl) {
     const sections = Array.from(groups, ([handler, entries]) => `<section><p class="label">HANDLER</p><h2>${escapeHtml(handler)}</h2><table><thead><tr><th>Dog call name</th><th>Registration number</th></tr></thead><tbody>${entries.map(dog => `<tr><td>${escapeHtml(dog.callName || 'Call name not recorded')}</td><td class="number">${escapeHtml(dog.regNumber)}</td></tr>`).join('')}</tbody></table></section>`).join('');
     return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(cardTitle)}</title><style>
     *{box-sizing:border-box}body{margin:0;padding:24px 16px;background:#eef2f6;color:#24374b;font-family:Arial,sans-serif}.card{max-width:600px;margin:auto;background:white;border:1px solid #ccd6e0;border-radius:18px;overflow:hidden}header{display:flex;align-items:center;gap:18px;padding:24px;border-bottom:5px solid #7562ad}header img{width:88px;height:88px;object-fit:contain}h1{font-size:24px;margin:0 0 8px}header p{margin:0;color:#52657a;font-size:14px}section{padding:24px}.label{font-size:11px;letter-spacing:2px;color:#627488;margin:0 0 7px}h2{font-size:24px;margin:0 0 22px;overflow-wrap:anywhere}table{width:100%;border-collapse:collapse;table-layout:fixed}th{text-align:left;font-size:12px;color:#627488;padding:0 0 12px}th:last-child{width:55%;text-align:right}td{padding:16px 0;border-top:1px solid #e3e9ef;overflow-wrap:anywhere}td:first-child{padding-right:12px;font-weight:bold}.number{text-align:right;font:600 17px monospace}footer{padding:16px 24px;background:#f5f7fa;font-size:16px;color:#52657a;line-height:1.6;text-align:center;word-break:normal;overflow-wrap:normal;hyphens:none;break-inside:avoid}footer p{margin:0 0 10px}footer p:last-child{margin-bottom:0}.controls{max-width:600px;margin:20px auto;display:flex;gap:10px;flex-wrap:wrap}button{background:#34495e;color:white;border:0;border-radius:8px;padding:13px 16px;font-size:14px;cursor:pointer}button:disabled{opacity:.5}.help{max-width:600px;margin:12px auto;font-size:14px;line-height:1.6;color:#52657a}#status{max-width:600px;margin:auto;font-size:14px}@media(max-width:380px){header{padding:16px;gap:12px}header img{width:64px;height:64px}section{padding:18px}.number{font-size:14px}}
-    #printSheet{display:none}.wallet-card{position:relative;width:85.6mm;max-width:none;margin:0;border:0.25mm dashed #888;border-radius:0;overflow:visible;background:white;break-inside:avoid}.wallet-card header{padding:3mm;gap:3mm;border-bottom:0.7mm solid #7562ad}.wallet-card header img{width:13mm;height:13mm}.wallet-card h1{font-size:12pt;margin:0 0 1mm}.wallet-card header p{font-size:8pt}.wallet-card section{padding:3mm}.wallet-card .label{font-size:7pt;margin-bottom:1mm;letter-spacing:1px}.wallet-card h2{font-size:12pt;margin:0 0 3mm}.wallet-card th{font-size:8pt;padding:0 0 2mm}.wallet-card td{padding:2mm 0;font-size:10pt;word-break:normal;overflow-wrap:break-word}.wallet-card td:first-child{padding-right:2mm}.wallet-card .number{font-size:10pt;white-space:nowrap}.wallet-card footer{padding:3mm;font-size:10pt;line-height:1.35}.wallet-card footer p{margin:0 0 2mm}.print-note{font-size:9pt;color:#444;margin:0 0 4mm}.print-grid{display:grid;grid-template-columns:85.6mm 85.6mm;gap:6mm;align-items:start;justify-content:center}@media print{@page{size:11in 8.5in;margin:10mm}body{background:white;padding:0}body>#card,.controls,.help,#status{display:none!important}#printSheet{display:block}tr,header,h2,footer{break-inside:avoid}thead{display:table-header-group}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+    #printSheet{display:none}.wallet-card{position:relative;width:85.6mm;max-width:none;margin:0;border:0.25mm dashed #888;border-radius:0;overflow:visible;background:white;break-inside:avoid}.wallet-card header{padding:3mm;gap:3mm;border-bottom:0.7mm solid #7562ad}.wallet-card header img{width:13mm;height:13mm}.wallet-card h1{font-size:12pt;margin:0 0 1mm}.wallet-card header p{font-size:8pt}.wallet-card section{padding:3mm}.wallet-card .label{font-size:7pt;margin-bottom:1mm;letter-spacing:1px}.wallet-card h2{font-size:12pt;margin:0 0 3mm}.wallet-card th{font-size:8pt;padding:0 0 2mm}.wallet-card td{padding:2mm 0;font-size:10pt;word-break:normal;overflow-wrap:break-word}.wallet-card td:first-child{padding-right:2mm}.wallet-card .number{font-size:10pt;white-space:nowrap}.wallet-card footer{padding:3mm;font-size:10pt;line-height:1.35}.wallet-card footer p{margin:0 0 2mm}.print-note{font-size:9pt;color:#444;margin:0 0 4mm}.print-grid{display:grid;grid-template-columns:85.6mm 85.6mm;gap:6mm;align-items:start;justify-content:center}@media print{@page{size:letter landscape;margin:10mm}body{background:white;padding:0}body>#card,.controls,.help,#status{display:none!important}#printSheet{display:block}tr,header,h2,footer{break-inside:avoid}thead{display:table-header-group}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 
-    </style></head><body><article class="card" id="card"><header><img id="cardLogo" src="${escapeHtml(logoUrl)}" alt="C-WAGS logo"><div><h1>Registration Card</h1><p>C-WAGS · Trial entry reference</p></div></header>${sections}<footer><p>For consistency and accuracy, please enter your dog in trials using the name shown on this registration card.</p><p>Create a new card after registration details change.</p><p>Created ${escapeHtml(new Date().toLocaleDateString())}</p></footer></article><div class="controls"><button id="printCardButton" onclick="prepareWalletSheet();window.print()">Print / Save as PDF</button></div><p class="help">Print / Save as PDF creates an 11 × 8½-inch landscape PDF with two larger copies and outside cut guides. Open the saved PDF to print at Actual size. You can also take a screenshot of the single card shown here.</p><p id="status" role="status"></p><div id="printSheet"></div><script>
+    </style></head><body><article class="card" id="card"><header><img id="cardLogo" src="${escapeHtml(logoUrl)}" alt="C-WAGS logo"><div><h1>Registration Card</h1><p>C-WAGS · Trial entry reference</p></div></header>${sections}<footer><p>For consistency and accuracy, please enter your dog in trials using the name shown on this registration card.</p><p>Create a new card after registration details change.</p><p>Created ${escapeHtml(new Date().toLocaleDateString())}</p></footer></article><div class="controls"><button id="printCardButton" onclick="prepareWalletSheet();window.print()">Print / Save as PDF</button></div><p class="help">The printed sheet repeats your card with cut guides. The page prints in landscape. Cards stay wallet-width and grow in height to keep all selected dogs together. Print on Letter paper in landscape at 100% / Actual size with browser headers and footers off. You can also take a screenshot of the single card shown here.</p><p id="status" role="status"></p><div id="printSheet"></div><script>
 function walletLayout(height){
     const cardHeight=Math.max(53.98,height);
     const copies=Math.max(1,Math.floor((181.9+6)/(cardHeight+6)))*2;
@@ -2663,11 +2589,10 @@ async function showRegistrationCard() {
     }
     const cardWindow = window.open('', '_blank');
     if (!cardWindow) { alert('Allow pop-ups for this tracker to open your registration card.'); return; }
-    const logoUrl = new URL('./cwags-logo.png', document.baseURI).href;
+    const logoUrl = new URL('cwags-logo.png', 'https://raw.githubusercontent.com/cwagtracker/Tracker/main/').href;
     cardWindow.document.write(registrationCardDocument(dogs, logoUrl));
     cardWindow.document.close();
     const doc = cardWindow.document;
-    doc.getElementById('printCardButton').onclick = () => saveRegistrationPdf(dogs, cardWindow);
     doc.getElementById('printCardButton').disabled = true;
     doc.getElementById('status').textContent = 'Preparing logo for printing…';
     try {
@@ -2736,7 +2661,7 @@ async function showRegistrationCard() {
 
         function loadDataFromFile() {
             console.log('Starting data load process...');
-
+            
             const timeoutId = setTimeout(() => {
                 console.log('Load timeout - showing manual upload option');
             }, 3000);
@@ -2779,13 +2704,13 @@ async function showRegistrationCard() {
 
         function processExcelData(data) {
             const workbook = XLSX.read(data, {type: 'array', cellDates: true});
-
+            
             const dataSheet = workbook.Sheets['Data'] || workbook.Sheets[workbook.SheetNames[0]];
             const jsonData = XLSX.utils.sheet_to_json(dataSheet, {header: 1, dateNF: 'yyyy-mm-dd'});
-
+            
             trialingData = jsonData.slice(1).map(row => {
                 let processedDate = row[2];
-
+                
                 if (typeof processedDate === 'number') {
                     processedDate = XLSX.SSF.parse_date_code(processedDate);
                     processedDate = new Date(processedDate.y, processedDate.m - 1, processedDate.d);
@@ -2796,7 +2721,7 @@ async function showRegistrationCard() {
                 } else {
                     processedDate = null;
                 }
-
+                
                 return {
                     registrationNumber: row[0],
                     callName: row[1],
@@ -2807,7 +2732,7 @@ async function showRegistrationCard() {
                     Qs: parseFloat(row[6]) || 0
                 };
             }).filter(record => record.registrationNumber && record.level);
-
+            
             console.log('Data processed:', trialingData.length, 'records');
         }
 
@@ -2824,18 +2749,17 @@ async function showRegistrationCard() {
 
             if (validDates.length > 0) {
                 const mostRecentDate = validDates[0];
-                document.getElementById('lastUpdated').textContent =
+                document.getElementById('lastUpdated').textContent = 
                     `Last updated: ${mostRecentDate.toLocaleDateString()}`;
             } else {
                 document.getElementById('lastUpdated').textContent = 'Last updated: Unknown';
             }
         }
 
-        document.addEventListener('DOMContentLoaded', async function() {
-            await window.trackerOfflineReady;
+        document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 CWAGS Tracker initializing...');
             document.getElementById('lastUpdated').textContent = 'Loading data...';
-
+            
             setTimeout(() => {
                 if (typeof fontkit !== 'undefined') {
                     console.log('✅ Fontkit library loaded successfully');
@@ -2843,12 +2767,12 @@ async function showRegistrationCard() {
                     console.warn('⚠️ Fontkit library failed to load - custom fonts will not work');
                 }
             }, 1000);
-
+            
             setTimeout(async () => {
                 try {
                     console.log('📊 Step 1: Loading DogInfo data...');
                     const dogInfoLoaded = await loadDogInfoData();
-
+                    
                     if (dogInfoLoaded) {
                         console.log('✅ Step 1 complete: DogInfo data ready');
                     } else {
@@ -2857,16 +2781,16 @@ async function showRegistrationCard() {
 
                     console.log('📊 Step 2: Loading Title Placement data...');
                     const titlePlacementLoaded = await loadTitlePlacementData();
-
+                    
                     if (titlePlacementLoaded) {
                         console.log('✅ Step 2 complete: Title Placement data ready');
                     } else {
                         console.log('⚠️ Step 2 skipped: Title Placement not available');
                     }
-
+                    
                     console.log('📁 Step 3: Loading main trialing data...');
                     loadDataFromFile();
-
+                    
                 } catch (error) {
                     console.error('❌ Initialization error:', error);
                     document.getElementById('lastUpdated').textContent = 'Initialization failed';
