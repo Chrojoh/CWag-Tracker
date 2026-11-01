@@ -2044,10 +2044,10 @@
             document.getElementById('summaryContent').innerHTML = `
                 <div style="text-align: center; padding: 20px;">
                     <h3 style="color: #17a2b8; margin-bottom: 20px;">👤 Owner View</h3>
-                    <p style="margin-bottom: 20px;">Enter one or more handler numbers (the middle 4 digits), separated by commas:</p>
+                    <p style="margin-bottom: 20px;">Enter the middle 4 digits from your registration number:</p>
 
                     <div style="background: #f8f9fa; padding: 20px; border-radius: 12px; border: 2px solid #dee2e6; margin: 20px 0;">
-                        <input type="text" id="ownerIdInput" placeholder="e.g., 1734, 2841, 5620"
+                        <input type="text" id="ownerIdInput" placeholder="e.g., 1734"
                                style="padding: 15px 20px; font-size: 1.1rem; border: 2px solid #ddd; border-radius: 10px; width: 100%; max-width: 420px; text-align: center;"
                                onkeypress="handleOwnerKeyPress(event)" autocomplete="off" inputmode="numeric">
                         <br><br>
@@ -2232,17 +2232,23 @@
                 }
             });
 
-            const dogRegistrations = allMatchingRegNumbers;
+            // Sort by handler number first, then by full registration number.
+            // This keeps every handler's dog registrations together in the Owner View.
+            const dogRegistrations = allMatchingRegNumbers.sort((a, b) => {
+                const handlerA = getHandlerIdFromRegistration(a) || '';
+                const handlerB = getHandlerIdFromRegistration(b) || '';
+                return handlerA.localeCompare(handlerB) || a.localeCompare(b);
+            });
             const dogCount = dogRegistrations.length;
 
             let html = `
                 <div style="background: linear-gradient(45deg, #667eea, #764ba2); color: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; text-align: center;">
-                    <h3 style="margin: 0; font-size: 1.4rem;">${dogCount} registration(s) found</h3><div style="margin-top: 5px; font-size: 0.95rem;">Handler number(s): ${ownerIds.join(", ")}</div>
+                    <h3 style="margin: 0; font-size: 1.4rem;">${dogCount} registration(s) found</h3>
                 </div>
 
                 <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 15px;">
                     <button onclick="showOwnerView()" style="background: #6c757d; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-size: 0.95rem;">
-                        ← Change Handler Number(s)
+                        ← Change Handler Number
                     </button>
                     <button onclick="showRegistrationCard()" style="background: #34495e; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-size: 0.95rem;">Registration Card</button><button onclick="printOwnerView()" style="background: #6f42c1; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-size: 0.95rem;">
                         🖨️ Print View
@@ -2304,6 +2310,7 @@
 
                 return {
                     regNumber,
+                    handlerId: getHandlerIdFromRegistration(regNumber),
                     callName,
                     handlerName,
                     levelSummary,
@@ -2353,6 +2360,8 @@
                                     </a>
                                     ${handlerInfo}
                                     ${noEntriesNote}
+                                    <br>
+                                    <small style="color: #4a3f8a; font-weight: 700; font-size: 0.8rem;">Handler ${escapeHtml(dog.handlerId || '')}</small>
                                     <br>
                                     <small style="color: #4a5568; font-weight: normal; font-size: 0.8rem;">${escapeHtml(dog.regNumber)}</small>
                                 </th>`;
