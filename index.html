@@ -1729,6 +1729,9 @@
                 return;
             }
 
+            // Remember the last successful dog lookup independently of owner IDs.
+            try { localStorage.setItem('cwags-last-dog', formattedSearch); } catch (_) {}
+
             if (dogRecords.length === 0 && dogExistsInInfo) {
                 currentDogRecords = [];
                 displaySummary([], formattedSearch);
@@ -2837,6 +2840,13 @@ async function showRegistrationCard() {
         }
 
         document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                const savedDog = localStorage.getItem('cwags-last-dog');
+                if (savedDog && /^(?:\d{2}-\d{4}-\d{2}|\d{8})$/.test(savedDog)) {
+                    document.getElementById('searchInput').value = savedDog;
+                }
+            } catch (_) {}
+
             await window.trackerOfflineReady;
             console.log('🚀 CWAGS Tracker initializing...');
             document.getElementById('lastUpdated').textContent = 'Loading data...';
